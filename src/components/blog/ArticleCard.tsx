@@ -9,19 +9,28 @@ import { Calendar, Tag } from "lucide-react";
 export function ArticleCard({
   article,
   basePath,
+  href,
   dark = false,
+  index = 0,
 }: {
   article: ArticleMeta;
-  basePath: string;
+  basePath?: string;
+  href?: string;
   dark?: boolean;
+  index?: number;
 }) {
+  const linkHref = href || `${basePath}/${article.slug}`;
+
   return (
     <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: (index % 3) * 0.1 }}
       whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
     >
       <Link
-        href={`${basePath}/${article.slug}`}
+        href={linkHref}
         className={cn(
           "block rounded-2xl p-6 h-full transition-shadow duration-300",
           dark

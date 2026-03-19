@@ -1,5 +1,6 @@
 import { getArticles } from "@/lib/mdx";
-import { ArticleCard } from "@/components/blog/ArticleCard";
+import { ArticleGrid } from "@/components/blog/ArticleGrid";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { BackgroundBeams } from "@/components/aceternity/BackgroundBeams";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
@@ -35,6 +36,10 @@ export default async function AiPage({
         </div>
       </section>
 
+      <div className="flex justify-center py-4">
+        <AdSlot size="leaderboard" slotId="ai-top" dark />
+      </div>
+
       {/* Articles */}
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
@@ -48,16 +53,7 @@ export default async function AiPage({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {articles.map((article) => (
-                <ArticleCard
-                  key={article.slug}
-                  article={article}
-                  basePath="/ai"
-                  dark
-                />
-              ))}
-            </div>
+            <ArticleGrid articles={articles} basePath="/ai" dark />
           )}
         </div>
       </section>

@@ -1,5 +1,7 @@
-import { getArticle, getArticleSlugs } from "@/lib/mdx";
+import { getArticle, getArticles, getArticleSlugs } from "@/lib/mdx";
 import { ArticleContent } from "@/components/blog/ArticleContent";
+import { RelatedArticles } from "@/components/blog/RelatedArticles";
+import { getRelatedArticles } from "@/lib/related";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
@@ -21,7 +23,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const article = getArticle("nail-knowledge", locale, slug);
+  const article = await getArticle("nail-knowledge", locale, slug);
   if (!article) return {};
   return {
     title: article.title,
@@ -35,10 +37,12 @@ export default async function KnowledgeArticlePage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const article = getArticle("nail-knowledge", locale, slug);
+  const article = await getArticle("nail-knowledge", locale, slug);
 
   if (!article) notFound();
 
+  const allArticles = getArticles("nail-knowledge", locale);
+  const related = getRelatedArticles(article, allArticles);
   const backLabel = locale === "zh-TW" ? "返回美甲知識" : "Back to Nail Knowledge";
 
   return (
@@ -46,6 +50,13 @@ export default async function KnowledgeArticlePage({
       article={article}
       backPath="/nail/knowledge"
       backLabel={backLabel}
+      relatedArticles={
+        <RelatedArticles
+          articles={related}
+          basePath="/nail/knowledge"
+          locale={locale}
+        />
+      }
     />
   );
 }

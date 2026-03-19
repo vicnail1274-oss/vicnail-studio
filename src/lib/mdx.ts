@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { remark } from "remark";
+import remarkHtml from "remark-html";
 
 export interface ArticleMeta {
   slug: string;
@@ -60,19 +62,22 @@ export function getArticles(
 }
 
 /**
- * Get a single article by slug.
+ * Get a single article by slug. Converts markdown content to HTML.
  */
-export function getArticle(
+export async function getArticle(
   section: string,
   locale: string,
   slug: string
-): Article | null {
+): Promise<Article | null> {
   const filePath = path.join(contentRoot, section, locale, `${slug}.mdx`);
 
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(raw);
+
+  const result = await remark().use(remarkHtml).process(content);
+  const htmlContent = result.toString();
 
   return {
     slug,
@@ -84,7 +89,7 @@ export function getArticle(
     author: data.author,
     source: data.source || "manual",
     draft: data.draft || false,
-    content,
+    content: htmlContent,
   };
 }
 

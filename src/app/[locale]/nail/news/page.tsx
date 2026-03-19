@@ -1,5 +1,6 @@
 import { getArticles } from "@/lib/mdx";
-import { ArticleCard } from "@/components/blog/ArticleCard";
+import { ArticleGrid } from "@/components/blog/ArticleGrid";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 
@@ -29,6 +30,10 @@ export default async function NailNewsPage({
         </div>
       </section>
 
+      <div className="flex justify-center py-4">
+        <AdSlot size="leaderboard" slotId="news-top" />
+      </div>
+
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
           {articles.length === 0 ? (
@@ -36,15 +41,7 @@ export default async function NailNewsPage({
               {locale === "zh-TW" ? "即將推出更多內容..." : "More content coming soon..."}
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {articles.map((article) => (
-                <ArticleCard
-                  key={article.slug}
-                  article={article}
-                  basePath="/nail/news"
-                />
-              ))}
-            </div>
+            <ArticleGrid articles={articles} basePath="/nail/news" />
           )}
         </div>
       </section>

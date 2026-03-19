@@ -1,5 +1,7 @@
-import { getArticle, getArticleSlugs } from "@/lib/mdx";
+import { getArticle, getArticles, getArticleSlugs } from "@/lib/mdx";
 import { ArticleContent } from "@/components/blog/ArticleContent";
+import { RelatedArticles } from "@/components/blog/RelatedArticles";
+import { getRelatedArticles } from "@/lib/related";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
@@ -21,7 +23,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const article = getArticle("ai", locale, slug);
+  const article = await getArticle("ai", locale, slug);
   if (!article) return {};
   return {
     title: article.title,
@@ -35,10 +37,12 @@ export default async function AiArticlePage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const article = getArticle("ai", locale, slug);
+  const article = await getArticle("ai", locale, slug);
 
   if (!article) notFound();
 
+  const allArticles = getArticles("ai", locale);
+  const related = getRelatedArticles(article, allArticles);
   const backLabel = locale === "zh-TW" ? "返回 AI 實驗室" : "Back to AI Lab";
 
   return (
@@ -47,6 +51,14 @@ export default async function AiArticlePage({
       backPath="/ai"
       backLabel={backLabel}
       dark
+      relatedArticles={
+        <RelatedArticles
+          articles={related}
+          basePath="/ai"
+          dark
+          locale={locale}
+        />
+      }
     />
   );
 }
