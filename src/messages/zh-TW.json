@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "home": "首頁",
+    "courses": "美甲課程",
+    "nailKnowledge": "美甲知識",
+    "nailNews": "美甲新聞",
+    "ai": "AI 不務正業",
+    "about": "關於我們"
+  },
+  "hero": {
+    "title": "VicNail Studio",
+    "subtitle": "美甲藝術 × AI 科技",
+    "description": "專業美甲教學與 AI 自動化的跨界探索",
+    "ctaCourses": "探索美甲課程",
+    "ctaAi": "AI 不務正業"
+  },
+  "sections": {
+    "courses": "美甲課程",
+    "coursesDesc": "專業實體課程，從基礎到進階",
+    "knowledge": "美甲知識",
+    "knowledgeDesc": "技巧教學、趨勢分析、材料指南",
+    "news": "美甲新聞",
+    "newsDesc": "產業動態、流行趨勢、活動資訊",
+    "ai": "AI 實驗室",
+    "aiDesc": "AI 工具、自動化心得、科技新知"
+  },
+  "founder": {
+    "title": "關於 Vic",
+    "description": "美甲工作室老闆，同時也是 AI 自動化系統的打造者。用科技讓創意無限延伸。",
+    "cta": "了解更多"
+  },
+  "footer": {
+    "copyright": "© 2026 VicNail Studio. All rights reserved.",
+    "followUs": "追蹤我們",
+    "quickLinks": "快速連結",
+    "contact": "聯繫我們"
+  },
+  "common": {
+    "readMore": "閱讀更多",
+    "backToList": "返回列表",
+    "publishedOn": "發布於",
+    "tags": "標籤",
+    "share": "分享"
+  }
+}

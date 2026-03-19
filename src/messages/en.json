@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "home": "Home",
+    "courses": "Nail Courses",
+    "nailKnowledge": "Nail Knowledge",
+    "nailNews": "Nail News",
+    "ai": "AI Lab",
+    "about": "About"
+  },
+  "hero": {
+    "title": "VicNail Studio",
+    "subtitle": "Nail Art × AI Technology",
+    "description": "Where professional nail artistry meets AI-powered innovation",
+    "ctaCourses": "Explore Courses",
+    "ctaAi": "AI Side Hustle"
+  },
+  "sections": {
+    "courses": "Nail Courses",
+    "coursesDesc": "Professional hands-on courses, from basics to advanced",
+    "knowledge": "Nail Knowledge",
+    "knowledgeDesc": "Techniques, trends, and material guides",
+    "news": "Nail News",
+    "newsDesc": "Industry updates, trending styles, and events",
+    "ai": "AI Lab",
+    "aiDesc": "AI tools, automation stories, and tech insights"
+  },
+  "founder": {
+    "title": "About Vic",
+    "description": "Nail studio owner and AI automation builder. Using technology to extend creativity without limits.",
+    "cta": "Learn More"
+  },
+  "footer": {
+    "copyright": "© 2026 VicNail Studio. All rights reserved.",
+    "followUs": "Follow Us",
+    "quickLinks": "Quick Links",
+    "contact": "Contact Us"
+  },
+  "common": {
+    "readMore": "Read More",
+    "backToList": "Back to List",
+    "publishedOn": "Published on",
+    "tags": "Tags",
+    "share": "Share"
+  }
+}
