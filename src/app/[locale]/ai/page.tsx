@@ -2,11 +2,27 @@ import { getArticles } from "@/lib/mdx";
 import { ArticleGrid } from "@/components/blog/ArticleGrid";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { BackgroundBeams } from "@/components/aceternity/BackgroundBeams";
+import { ItemListJsonLd } from "@/components/seo/JsonLd";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 
+const BASE_URL = "https://vicnail-studio.com";
+
 export const metadata: Metadata = {
   title: "AI Lab — 不務正業",
+  description: "AI tool reviews, automation experiments, and tech insights. AI 工具評測、自動化探索與科技趨勢。",
+  openGraph: {
+    type: "website",
+    title: "AI Lab — 不務正業 | VicNail Studio",
+    description: "AI tool reviews, automation experiments, and tech insights.",
+    images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Lab — 不務正業 | VicNail Studio",
+    description: "AI tool reviews, automation experiments, and tech insights.",
+    images: ["/og-default.svg"],
+  },
 };
 
 export default async function AiPage({
@@ -19,8 +35,21 @@ export default async function AiPage({
   const articles = getArticles("ai", locale);
   const t = await getTranslations("sections");
 
+  const listItems = articles.slice(0, 20).map((article) => ({
+    name: article.title,
+    url: `${BASE_URL}/${locale}/ai/${article.slug}`,
+    description: article.description,
+  }));
+
   return (
     <>
+      {listItems.length > 0 && (
+        <ItemListJsonLd
+          name={locale === "zh-TW" ? "AI 實驗室" : "AI Lab"}
+          description={locale === "zh-TW" ? "AI 工具評測與自動化探索" : "AI tool reviews and automation experiments"}
+          items={listItems}
+        />
+      )}
       {/* Hero */}
       <section className="relative py-24 px-4 overflow-hidden">
         <BackgroundBeams />

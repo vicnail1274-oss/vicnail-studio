@@ -45,11 +45,21 @@ export const metadata: Metadata = {
     title: "VicNail Studio — 美甲藝術 × AI 科技",
     description: "專業美甲教學與 AI 自動化的跨界探索",
     locale: "zh_TW",
+    url: "https://vicnail-studio.com",
+    images: [
+      {
+        url: "/og-default.svg",
+        width: 1200,
+        height: 630,
+        alt: "VicNail Studio — 美甲藝術 × AI 科技",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "VicNail Studio",
     description: "專業美甲教學與 AI 自動化的跨界探索",
+    images: ["/og-default.svg"],
   },
 };
 

@@ -1,7 +1,7 @@
 import { getArticle, getArticles, getArticleSlugs } from "@/lib/mdx";
 import { ArticleContent } from "@/components/blog/ArticleContent";
 import { RelatedArticles } from "@/components/blog/RelatedArticles";
-import { ArticleJsonLd } from "@/components/seo/JsonLd";
+import { ArticleJsonLd, BreadcrumbListJsonLd } from "@/components/seo/JsonLd";
 import { getRelatedArticles } from "@/lib/related";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -40,6 +40,13 @@ export async function generateMetadata({
       description: article.description,
       publishedTime: article.date,
       tags: article.tags,
+      images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.description,
+      images: ["/og-default.svg"],
     },
   };
 }
@@ -58,10 +65,18 @@ export default async function NewsArticlePage({
   const related = getRelatedArticles(article, allArticles);
   const backLabel = locale === "zh-TW" ? "返回美甲新聞" : "Back to Nail News";
   const url = `${BASE_URL}/${locale}/nail/news/${slug}`;
+  const sectionLabel = locale === "zh-TW" ? "美甲新聞" : "Nail News";
 
   return (
     <>
       <ArticleJsonLd article={article} url={url} />
+      <BreadcrumbListJsonLd
+        items={[
+          { name: "VicNail Studio", url: BASE_URL },
+          { name: sectionLabel, url: `${BASE_URL}/${locale}/nail/news` },
+          { name: article.title, url },
+        ]}
+      />
       <ArticleContent
         article={article}
         backPath="/nail/news"
