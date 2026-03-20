@@ -89,7 +89,7 @@ export function Footer({ locale }: { locale: string }) {
                 <Facebook size={20} />
               </a>
               <a
-                href="#"
+                href="mailto:hello@vicnail-studio.com"
                 className="text-gray-400 hover:text-nail-gold transition-colors"
                 aria-label="Email"
               >
@@ -99,8 +99,22 @@ export function Footer({ locale }: { locale: string }) {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">{t("copyright")}</p>
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <Link
+              href="/privacy"
+              className="hover:text-gray-300 transition-colors"
+            >
+              {locale === "zh-TW" ? "隱私政策" : "Privacy Policy"}
+            </Link>
+            <a
+              href="mailto:hello@vicnail-studio.com"
+              className="hover:text-gray-300 transition-colors"
+            >
+              hello@vicnail-studio.com
+            </a>
+          </div>
         </div>
       </div>
     </footer>
