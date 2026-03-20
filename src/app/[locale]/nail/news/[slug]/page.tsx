@@ -32,7 +32,13 @@ export async function generateMetadata({
   return {
     title: article.title,
     description: article.description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: {
+        "zh-TW": `${BASE_URL}/zh-TW/nail/news/${slug}`,
+        en: `${BASE_URL}/en/nail/news/${slug}`,
+      },
+    },
     openGraph: {
       type: "article",
       url,
