@@ -5,10 +5,15 @@ import { FounderSection } from "@/components/sections/FounderSection";
 import { NewsletterCTA } from "@/components/sections/NewsletterCTA";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { getArticles } from "@/lib/mdx";
-import { getLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 
-export default async function Home() {
-  const locale = await getLocale();
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
 
   // Gather latest articles from all sections
   const knowledge = getArticles("nail-knowledge", locale).map((a) => ({

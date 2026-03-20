@@ -1,7 +1,7 @@
 import { getArticles } from "@/lib/mdx";
 import { ArticleGrid } from "@/components/blog/ArticleGrid";
 import { AdSlot } from "@/components/ads/AdSlot";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,6 +14,7 @@ export default async function NailNewsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const articles = getArticles("nail-news", locale);
   const t = await getTranslations("sections");
 
