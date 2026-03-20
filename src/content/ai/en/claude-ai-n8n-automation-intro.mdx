@@ -1,0 +1,83 @@
+---
+title: "Claude AI + n8n: Build Your Own AI Automation Workflow With Zero Code"
+description: "A practical guide to combining Claude AI with the n8n automation platform to build auto-reply, content generation, and data organization workflows — no programming required."
+date: "2026-03-20"
+tags:
+  - Claude AI
+  - n8n
+  - automation
+  - workflow
+author: "AI Bot"
+source: "bot"
+draft: false
+---
+
+Do you spend large chunks of your day replying to client messages, organizing form submissions, or writing social posts? These repetitive tasks can be handed off to AI. This guide shows you how to use Claude AI with the n8n automation platform to build workflows that run themselves.
+
+## What Is n8n?
+
+n8n is an open-source workflow automation platform. Think of it as a "digital assembly line" — you connect different tools and let data flow and get processed automatically.
+
+**How it differs from Zapier:** n8n can be self-hosted (free), has no node count limits, and supports more complex conditional logic.
+
+## What Is Claude AI?
+
+Claude is Anthropic's AI model. It excels at understanding long-form content, generating high-quality text, and following complex instructions. In an automation workflow, Claude handles the "thinking" — analyzing data, generating responses, making judgment calls.
+
+## Three Practical Starter Workflows
+
+### Workflow 1: Auto-Reply to Common Client Questions
+
+**Flow:** Client sends a message → n8n receives it → Claude identifies the question type → auto-generates a reply → sends it back to the client
+
+**Use cases:** LINE Business Account, email support, website chat
+
+**Setup notes:**
+- Put your business info in Claude's System Prompt (hours, pricing, FAQ)
+- Add keyword filters so only qualifying messages trigger AI replies
+- Build in a human escalation node for questions Claude flags as complex
+
+### Workflow 2: Auto-Generate Social Media Posts
+
+**Flow:** Schedule trigger → pull content material from database → Claude generates post → publish to social platforms
+
+**Use cases:** Instagram captions, Facebook posts, blog articles
+
+**Setup notes:**
+- Give Claude examples of your brand voice ("upbeat but professional, in Traditional Chinese")
+- Generate 3–5 versions each run; select the best manually
+- Pair with a scheduling node to auto-generate a fixed volume of content weekly
+
+### Workflow 3: Auto-Organize Form Submissions
+
+**Flow:** Google Form submitted → n8n receives it → Claude categorizes and summarizes → writes to Google Sheets → notifies the responsible person
+
+**Use cases:** Booking form classification, survey analysis, registration data cleanup
+
+**Setup notes:**
+- Define clear category criteria for Claude to follow
+- Specify structured output format (JSON) for downstream processing
+- Add anomaly detection: if data is incomplete, auto-send a notification
+
+## Getting Started: Step by Step
+
+1. **Install n8n:** The easiest way is via Docker — one command and you're up
+2. **Get a Claude API key:** Register at the Anthropic Console and generate your key
+3. **Build your first workflow:** Drag and drop nodes in the n8n interface, connect your trigger to a Claude HTTP node
+4. **Test and refine:** Run it with test data a few times, adjust the prompt until the output satisfies you
+5. **Activate scheduling:** Set it to run automatically — 24/7 without intervention
+
+## Common Questions
+
+**Q: Does n8n cost money?**
+Self-hosted is completely free. The cloud version has a free tier. Claude API charges by usage — for light use, expect a few dollars a month.
+
+**Q: I have zero coding experience. Can I really do this?**
+Yes. n8n is a visual drag-and-drop interface. Setting up Claude is just writing a description (a prompt). The whole process requires no code.
+
+**Q: Is my data safe?**
+Self-hosted n8n data stays entirely on your own server. Claude API data is not used for model training.
+
+---
+
+Automation isn't just for large companies. One person plus the right AI tools can accomplish what used to require a team of three or four. Build your first workflow today.
