@@ -1,10 +1,13 @@
 import { getArticle, getArticles, getArticleSlugs } from "@/lib/mdx";
 import { ArticleContent } from "@/components/blog/ArticleContent";
 import { RelatedArticles } from "@/components/blog/RelatedArticles";
+import { ArticleJsonLd } from "@/components/seo/JsonLd";
 import { getRelatedArticles } from "@/lib/related";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
+
+const BASE_URL = "https://vicnail-studio.com";
 
 export async function generateStaticParams() {
   const params: { locale: string; slug: string }[] = [];
@@ -25,9 +28,19 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const article = await getArticle("nail-knowledge", locale, slug);
   if (!article) return {};
+  const url = `${BASE_URL}/${locale}/nail/knowledge/${slug}`;
   return {
     title: article.title,
     description: article.description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: article.title,
+      description: article.description,
+      publishedTime: article.date,
+      tags: article.tags,
+    },
   };
 }
 
@@ -44,19 +57,23 @@ export default async function KnowledgeArticlePage({
   const allArticles = getArticles("nail-knowledge", locale);
   const related = getRelatedArticles(article, allArticles);
   const backLabel = locale === "zh-TW" ? "返回美甲知識" : "Back to Nail Knowledge";
+  const url = `${BASE_URL}/${locale}/nail/knowledge/${slug}`;
 
   return (
-    <ArticleContent
-      article={article}
-      backPath="/nail/knowledge"
-      backLabel={backLabel}
-      relatedArticles={
-        <RelatedArticles
-          articles={related}
-          basePath="/nail/knowledge"
-          locale={locale}
-        />
-      }
-    />
+    <>
+      <ArticleJsonLd article={article} url={url} />
+      <ArticleContent
+        article={article}
+        backPath="/nail/knowledge"
+        backLabel={backLabel}
+        relatedArticles={
+          <RelatedArticles
+            articles={related}
+            basePath="/nail/knowledge"
+            locale={locale}
+          />
+        }
+      />
+    </>
   );
 }
