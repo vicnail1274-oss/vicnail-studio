@@ -13,6 +13,14 @@ type Article = {
   tags: string[];
 };
 
+type GitStatus = {
+  branch: string;
+  lastCommit: string;
+  unpushed: number;
+  changedFiles: { status: string; file: string }[];
+  hasChanges: boolean;
+};
+
 const SECTIONS = [
   { value: "nail-news", label: "美甲新聞" },
   { value: "nail-knowledge", label: "美甲知識" },
@@ -32,6 +40,13 @@ export default function AdminArticlesPage() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
+  // 推播狀態
+  const [gitStatus, setGitStatus] = useState<GitStatus | null>(null);
+  const [publishing, setPublishing] = useState(false);
+  const [publishMsg, setPublishMsg] = useState("");
+  const [showPublish, setShowPublish] = useState(false);
+  const [commitMessage, setCommitMessage] = useState("");
+
   const fetchArticles = useCallback(async () => {
     setLoading(true);
     const res = await fetch("/api/admin/article", {
@@ -48,13 +63,46 @@ export default function AdminArticlesPage() {
     setLoading(false);
   }, [section, locale, router]);
 
+  const fetchGitStatus = useCallback(async () => {
+    const res = await fetch("/api/admin/publish");
+    if (res.ok) {
+      const data = await res.json();
+      setGitStatus(data);
+    }
+  }, []);
+
   useEffect(() => {
     fetchArticles();
   }, [fetchArticles]);
 
+  useEffect(() => {
+    fetchGitStatus();
+  }, [fetchGitStatus]);
+
   async function handleLogout() {
     await fetch("/api/admin/auth", { method: "DELETE" });
     router.push("/admin/login");
+  }
+
+  async function handlePublish() {
+    setPublishing(true);
+    setPublishMsg("");
+
+    const res = await fetch("/api/admin/publish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: commitMessage || undefined }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      setPublishMsg(`推播成功！${data.filesChanged} 個檔案已上線 (${data.commit})`);
+      setCommitMessage("");
+      fetchGitStatus();
+    } else {
+      setPublishMsg(data.error || "推播失敗");
+    }
+    setPublishing(false);
   }
 
   const filtered = articles.filter(
@@ -62,6 +110,8 @@ export default function AdminArticlesPage() {
       a.title.toLowerCase().includes(search.toLowerCase()) ||
       a.slug.toLowerCase().includes(search.toLowerCase())
   );
+
+  const hasChanges = gitStatus?.hasChanges || (gitStatus?.unpushed ?? 0) > 0;
 
   return (
     <div className="min-h-screen">
@@ -71,16 +121,112 @@ export default function AdminArticlesPage() {
           <span className="text-2xl">💅</span>
           <div>
             <h1 className="text-lg font-bold text-white">VicNail 後台</h1>
-            <p className="text-xs text-gray-400">文章管理</p>
+            <p className="text-xs text-gray-400">文章管理（本地）</p>
           </div>
         </div>
-        <button
-          onClick={handleLogout}
-          className="text-sm text-gray-400 hover:text-white transition-colors"
-        >
-          登出
-        </button>
+        <div className="flex items-center gap-3">
+          {/* 推播按鈕 */}
+          <button
+            onClick={() => { setShowPublish(!showPublish); if (!showPublish) fetchGitStatus(); }}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+              hasChanges
+                ? "bg-green-700 text-white hover:bg-green-600"
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            }`}
+          >
+            <span>🚀</span>
+            推播上線
+            {hasChanges && (
+              <span className="bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {(gitStatus?.changedFiles.length || 0) + (gitStatus?.unpushed || 0)}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={handleLogout}
+            className="text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            登出
+          </button>
+        </div>
       </header>
+
+      {/* 推播面板 */}
+      {showPublish && (
+        <div className="border-b border-green-900/50 bg-green-950/30 px-6 py-5">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-sm font-semibold text-green-300 mb-3 flex items-center gap-2">
+              🚀 推播上線
+              {gitStatus && (
+                <span className="text-xs text-gray-500 font-normal">
+                  分支: {gitStatus.branch} | 最近: {gitStatus.lastCommit}
+                </span>
+              )}
+            </h2>
+
+            {gitStatus && !gitStatus.hasChanges && gitStatus.unpushed === 0 ? (
+              <p className="text-sm text-gray-400">目前沒有需要推播的變更，所有內容已是最新。</p>
+            ) : (
+              <>
+                {/* 變更清單 */}
+                {gitStatus && gitStatus.changedFiles.length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-400 mb-1">
+                      待推播檔案（{gitStatus.changedFiles.length} 個）：
+                    </p>
+                    <div className="max-h-32 overflow-y-auto rounded-lg bg-gray-900/60 p-2 text-xs font-mono text-gray-400 space-y-0.5">
+                      {gitStatus.changedFiles.map((f, i) => (
+                        <div key={i} className="flex gap-2">
+                          <span className={
+                            f.status === "M" ? "text-yellow-400" :
+                            f.status === "?" || f.status === "??" ? "text-green-400" :
+                            f.status === "D" ? "text-red-400" : "text-gray-400"
+                          }>
+                            {f.status === "??" ? "新增" : f.status === "M" ? "修改" : f.status === "D" ? "刪除" : f.status}
+                          </span>
+                          <span>{f.file}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {gitStatus && gitStatus.unpushed > 0 && (
+                  <p className="text-xs text-yellow-400 mb-3">
+                    有 {gitStatus.unpushed} 個已儲存但未推播的 commit
+                  </p>
+                )}
+
+                {/* Commit 訊息 + 推播 */}
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1">
+                    <label className="block text-xs text-gray-500 mb-1">推播說明（選填）</label>
+                    <input
+                      value={commitMessage}
+                      onChange={(e) => setCommitMessage(e.target.value)}
+                      placeholder="例：更新春季美甲文章"
+                      className="w-full rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-green-500 focus:outline-none"
+                    />
+                  </div>
+                  <button
+                    onClick={handlePublish}
+                    disabled={publishing}
+                    className="px-6 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-500 disabled:opacity-50 transition-colors flex-shrink-0"
+                  >
+                    {publishing ? "推播中..." : "確認推播"}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {publishMsg && (
+              <p className={`text-sm mt-3 ${publishMsg.includes("失敗") || publishMsg.includes("沒有") ? "text-red-400" : "text-green-400"}`}>
+                {publishMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* 篩選器 */}

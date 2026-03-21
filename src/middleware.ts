@@ -13,51 +13,29 @@ const intlMiddleware = createMiddleware(routing);
 export default function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
-  // /admin 路由：獨立處理，不走 i18n
-  if (pathname.startsWith("/admin")) {
-    const gateCode = process.env.ADMIN_GATE_CODE || "vicnail";
-    const gateCookie = req.cookies.get("admin_gate");
+  // /admin 與 /api/admin 路由：只允許 localhost 存取
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
+    const host = req.headers.get("host") || "";
+    const isLocal = host.startsWith("localhost") || host.startsWith("127.0.0.1");
+
+    // 線上環境直接 404，後台只在本地用
+    if (!isLocal) {
+      return new NextResponse("Not Found", { status: 404 });
+    }
+
     const adminPassword = process.env.ADMIN_PASSWORD;
 
-    // === 步驟 1：檢查隱密入口 ===
-    // 訪問 /admin/login?gate=GATE_CODE → 設定 gate cookie，放行
+    // /admin/login → 直接放行
     if (pathname === "/admin/login") {
-      const gateParam = searchParams.get("gate");
-
-      // 帶了正確的 gate code → 設定 cookie 並放行
-      if (gateParam === gateCode) {
-        const res = NextResponse.next();
-        res.cookies.set("admin_gate", "1", {
-          httpOnly: true,
-          path: "/",
-          maxAge: 60 * 60 * 8, // 8 小時
-          sameSite: "lax",
-        });
-        return res;
-      }
-
-      // 已有 gate cookie → 放行
-      if (gateCookie?.value === "1") {
-        return NextResponse.next();
-      }
-
-      // 沒有 gate → 假裝 404
-      return new NextResponse("Not Found", { status: 404 });
+      return NextResponse.next();
     }
 
-    // === 步驟 2：其他 /admin 頁面 ===
-    // 檢查 gate cookie
-    if (gateCookie?.value !== "1") {
-      return new NextResponse("Not Found", { status: 404 });
-    }
-
-    // 檢查登入 cookie（hash 驗證）
+    // 其他 /admin 頁面 → 檢查登入 cookie
     const sessionToken = req.cookies.get("admin_token");
     if (!adminPassword || !sessionToken) {
       return NextResponse.redirect(new URL("/admin/login", req.url));
     }
 
-    // 驗證 hash token
     const expectedHash = simpleHash(adminPassword);
     if (sessionToken.value !== expectedHash) {
       return NextResponse.redirect(new URL("/admin/login", req.url));
