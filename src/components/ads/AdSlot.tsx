@@ -2,6 +2,9 @@
 
 import { cn } from "@/lib/utils";
 
+// 廣告暫時隱藏（AdSense 審核中）
+const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED === "true";
+
 type AdSize = "leaderboard" | "rectangle" | "large-rectangle" | "skyscraper" | "in-feed";
 
 const sizeMap: Record<AdSize, { w: number; h: number; label: string }> = {
@@ -23,6 +26,8 @@ export function AdSlot({
   dark?: boolean;
   className?: string;
 }) {
+  if (!ADS_ENABLED) return null;
+
   const { w, h, label } = sizeMap[size];
 
   return (

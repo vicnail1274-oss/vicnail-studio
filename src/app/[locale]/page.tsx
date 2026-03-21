@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/sections/HeroSection";
 import { LatestArticles } from "@/components/sections/LatestArticles";
 import { CategoryGrid } from "@/components/sections/CategoryGrid";
+import { ToolsSection } from "@/components/sections/ToolsSection";
 import { FounderSection } from "@/components/sections/FounderSection";
 import { NewsletterCTA } from "@/components/sections/NewsletterCTA";
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -45,6 +46,7 @@ export default async function Home({
         <AdSlot size="leaderboard" slotId="home-mid" />
       </div>
       <CategoryGrid locale={locale} />
+      <ToolsSection locale={locale} />
       <NewsletterCTA locale={locale} />
       <FounderSection />
     </>

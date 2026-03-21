@@ -8,22 +8,38 @@ import type { Metadata } from "next";
 
 const BASE_URL = "https://vicnail-studio.com";
 
-export const metadata: Metadata = {
-  title: "AI Lab — 不務正業",
-  description: "AI tool reviews, automation experiments, and tech insights. AI 工具評測、自動化探索與科技趨勢。",
-  openGraph: {
-    type: "website",
-    title: "AI Lab — 不務正業 | VicNail Studio",
-    description: "AI tool reviews, automation experiments, and tech insights.",
-    images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI Lab — 不務正業 | VicNail Studio",
-    description: "AI tool reviews, automation experiments, and tech insights.",
-    images: ["/og-default.svg"],
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const url = `${BASE_URL}/${locale}/ai`;
+  return {
+    title: "AI Lab — 不務正業",
+    description: "AI tool reviews, automation experiments, and tech insights. AI 工具評測、自動化探索與科技趨勢。",
+    alternates: {
+      canonical: url,
+      languages: {
+        "zh-TW": `${BASE_URL}/zh-TW/ai`,
+        en: `${BASE_URL}/en/ai`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title: "AI Lab — 不務正業 | VicNail Studio",
+      description: "AI tool reviews, automation experiments, and tech insights.",
+      images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "AI Lab — 不務正業 | VicNail Studio",
+      description: "AI tool reviews, automation experiments, and tech insights.",
+      images: ["/og-default.svg"],
+    },
+  };
+}
 
 export default async function AiPage({
   params,

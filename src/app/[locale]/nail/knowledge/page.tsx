@@ -7,22 +7,38 @@ import type { Metadata } from "next";
 
 const BASE_URL = "https://vicnail-studio.com";
 
-export const metadata: Metadata = {
-  title: "Nail Knowledge",
-  description: "Nail art techniques, care tips, and material guides. 美甲技術教學、保養知識與材質比較。",
-  openGraph: {
-    type: "website",
-    title: "Nail Knowledge | VicNail Studio",
-    description: "Nail art techniques, care tips, and material guides.",
-    images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Nail Knowledge | VicNail Studio",
-    description: "Nail art techniques, care tips, and material guides.",
-    images: ["/og-default.svg"],
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const url = `${BASE_URL}/${locale}/nail/knowledge`;
+  return {
+    title: "Nail Knowledge",
+    description: "Nail art techniques, care tips, and material guides. 美甲技術教學、保養知識與材質比較。",
+    alternates: {
+      canonical: url,
+      languages: {
+        "zh-TW": `${BASE_URL}/zh-TW/nail/knowledge`,
+        en: `${BASE_URL}/en/nail/knowledge`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title: "Nail Knowledge | VicNail Studio",
+      description: "Nail art techniques, care tips, and material guides.",
+      images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Nail Knowledge | VicNail Studio",
+      description: "Nail art techniques, care tips, and material guides.",
+      images: ["/og-default.svg"],
+    },
+  };
+}
 
 export default async function NailKnowledgePage({
   params,

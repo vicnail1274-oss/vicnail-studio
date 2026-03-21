@@ -7,22 +7,38 @@ import type { Metadata } from "next";
 
 const BASE_URL = "https://vicnail-studio.com";
 
-export const metadata: Metadata = {
-  title: "Nail News",
-  description: "Latest nail art trends, seasonal guides, and style inspiration. 最新美甲趨勢、季節指南與靈感分享。",
-  openGraph: {
-    type: "website",
-    title: "Nail News | VicNail Studio",
-    description: "Latest nail art trends, seasonal guides, and style inspiration.",
-    images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Nail News | VicNail Studio",
-    description: "Latest nail art trends, seasonal guides, and style inspiration.",
-    images: ["/og-default.svg"],
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const url = `${BASE_URL}/${locale}/nail/news`;
+  return {
+    title: "Nail News",
+    description: "Latest nail art trends, seasonal guides, and style inspiration. 最新美甲趨勢、季節指南與靈感分享。",
+    alternates: {
+      canonical: url,
+      languages: {
+        "zh-TW": `${BASE_URL}/zh-TW/nail/news`,
+        en: `${BASE_URL}/en/nail/news`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title: "Nail News | VicNail Studio",
+      description: "Latest nail art trends, seasonal guides, and style inspiration.",
+      images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Nail News | VicNail Studio",
+      description: "Latest nail art trends, seasonal guides, and style inspiration.",
+      images: ["/og-default.svg"],
+    },
+  };
+}
 
 export default async function NailNewsPage({
   params,
