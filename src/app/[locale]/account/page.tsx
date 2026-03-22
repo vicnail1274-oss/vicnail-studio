@@ -1,6 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Profile } from "@/lib/supabase/types";
 import { redirect } from "next/navigation";
+
+type ProfileRow = {
+  display_name: string | null;
+  avatar_url: string | null;
+  phone: string | null;
+  locale: string;
+};
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -10,10 +16,10 @@ export default async function AccountPage() {
 
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("*")
+    .select("display_name, avatar_url, phone, locale")
     .eq("id", user.id)
     .maybeSingle();
-  const profile = profileData as Profile | null;
+  const profile = profileData as ProfileRow | null;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
