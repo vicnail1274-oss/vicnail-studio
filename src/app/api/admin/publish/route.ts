@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/admin-auth";
-import { execSync } from "child_process";
+import { execSync, execFileSync } from "child_process";
 import path from "path";
 
 const repoRoot = path.join(process.cwd());
 
 function run(cmd: string): string {
   return execSync(cmd, { cwd: repoRoot, encoding: "utf-8", timeout: 30_000 }).trim();
+}
+
+function runGit(...args: string[]): string {
+  return execFileSync("git", args, { cwd: repoRoot, encoding: "utf-8", timeout: 30_000 }).trim();
 }
 
 // GET /api/admin/publish — 取得目前 git 狀態
@@ -64,11 +68,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "沒有需要推播的變更" }, { status: 400 });
     }
 
-    // 2. Commit
-    run(`git commit -m "${commitMsg.replace(/"/g, '\\"')}"`);
+    // 2. Commit (use execFileSync to prevent command injection)
+    runGit("commit", "-m", commitMsg);
 
     // 3. Push
-    const pushResult = run("git push origin HEAD");
+    runGit("push", "origin", "HEAD");
 
     const lastCommit = run('git log -1 --format="%h %s"');
 

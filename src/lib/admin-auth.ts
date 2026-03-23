@@ -14,7 +14,7 @@ export function simpleHash(input: string): string {
   let hash2 = 0;
   for (let i = 0; i < salted.length; i++) {
     const char = salted.charCodeAt(i);
-    hash2 = ((hash << 7) - hash2 + char) | 0;
+    hash2 = ((hash2 << 7) - hash2 + char) | 0;
   }
   return `vn_${Math.abs(hash).toString(36)}_${Math.abs(hash2).toString(36)}`;
 }

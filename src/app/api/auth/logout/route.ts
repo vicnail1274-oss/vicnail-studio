@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return NextResponse.redirect(new URL("/", process.env.NEXT_PUBLIC_SUPABASE_URL!.replace("supabase.co", "vercel.app") || "http://localhost:3001"), { status: 302 });
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || req.headers.get("origin") || `https://${req.headers.get("host")}` || "http://localhost:3001";
+  return NextResponse.redirect(new URL("/", siteUrl), { status: 302 });
 }
