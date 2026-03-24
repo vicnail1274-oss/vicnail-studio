@@ -15,16 +15,13 @@ export function NewsletterCTA({ locale, dark = false }: { locale: string; dark?:
     if (!email) return;
     setStatus("loading");
 
-    // Send to n8n webhook (configure URL in env)
+    // Send to our Next.js API route → n8n workflow
     try {
-      const webhookUrl = process.env.NEXT_PUBLIC_NEWSLETTER_WEBHOOK;
-      if (webhookUrl) {
-        await fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, source: "vicnail-studio", timestamp: new Date().toISOString() }),
-        });
-      }
+      await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
     } catch {
       // Silent fail — don't block UX
     }
