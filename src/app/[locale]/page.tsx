@@ -41,6 +41,7 @@ export default async function Home({
   return (
     <>
       <HeroSection />
+      <NewsletterCTA locale={locale} />
       <LatestArticles articles={allArticles} locale={locale} />
       <div className="flex justify-center py-6 bg-white">
         <AdSlot size="leaderboard" slotId="home-mid" />

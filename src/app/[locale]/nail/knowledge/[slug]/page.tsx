@@ -87,6 +87,7 @@ export default async function KnowledgeArticlePage({
         article={article}
         backPath="/nail/knowledge"
         backLabel={backLabel}
+        locale={locale}
         relatedArticles={
           <RelatedArticles
             articles={related}

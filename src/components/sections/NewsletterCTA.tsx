@@ -54,7 +54,7 @@ export function NewsletterCTA({ locale, dark = false }: { locale: string; dark?:
             dark ? "text-white" : "text-foreground"
           )}
         >
-          {isZh ? "訂閱最新內容" : "Stay Updated"}
+          {isZh ? "訂閱每週凝膠美甲靈感" : "Stay Updated"}
         </h2>
         <p className={cn("text-sm mb-6", dark ? "text-gray-400" : "text-muted-foreground")}>
           {isZh

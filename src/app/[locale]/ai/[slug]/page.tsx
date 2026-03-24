@@ -87,6 +87,7 @@ export default async function AiArticlePage({
         article={article}
         backPath="/ai"
         backLabel={backLabel}
+        locale={locale}
         dark
         relatedArticles={
           <RelatedArticles

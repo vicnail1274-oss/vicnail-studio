@@ -4,17 +4,20 @@ import type { Article } from "@/lib/mdx";
 import { cn } from "@/lib/utils";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { SidebarAds } from "@/components/ads/SidebarAds";
+import { NewsletterCTA } from "@/components/sections/NewsletterCTA";
 
 export function ArticleContent({
   article,
   backPath,
   backLabel,
+  locale = "zh-TW",
   dark = false,
   relatedArticles,
 }: {
   article: Article;
   backPath: string;
   backLabel: string;
+  locale?: string;
   dark?: boolean;
   relatedArticles?: React.ReactNode;
 }) {
@@ -146,6 +149,9 @@ export function ArticleContent({
             <div className="flex justify-center mt-10 mb-8">
               <AdSlot size="leaderboard" slotId="article-bottom" dark={dark} />
             </div>
+
+            {/* Newsletter CTA */}
+            <NewsletterCTA locale={locale} dark={dark} />
 
             {/* Related articles slot */}
             {relatedArticles}
