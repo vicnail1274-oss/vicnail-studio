@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
 
     // 1. Always save to Supabase as primary store
     const supabase = await createClient();
-    const { error: dbError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: dbError } = await (supabase as any)
       .from("newsletter_subscribers")
       .upsert(
         { email, source: "vicnail-studio", is_active: true, subscribed_at: new Date().toISOString() },
