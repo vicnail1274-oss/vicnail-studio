@@ -52,8 +52,8 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // === 2. /api/auth 路由：放行 ===
-  if (pathname.startsWith("/api/auth")) {
+  // === 2. /api/auth 及 /api/v1 路由：放行 ===
+  if (pathname.startsWith("/api/auth") || pathname.startsWith("/api/v1")) {
     return NextResponse.next();
   }
 
