@@ -42,5 +42,20 @@
     "publishedOn": "發布於",
     "tags": "標籤",
     "share": "分享"
+  },
+  "services": {
+    "pageTitle": "美甲服務項目",
+    "heroSubtitle": "從日常光療到精細彩繪，每一款服務都由專業美甲師親手完成，為您的指尖注入個性與品味。",
+    "bookNow": "立即預約",
+    "bookViaLine": "LINE 立即預約",
+    "bookThisService": "立即預約此服務",
+    "viewAll": "瀏覽全部服務",
+    "viewDetails": "查看服務細節",
+    "dmInstagram": "Instagram 私訊",
+    "readyToBook": "準備好預約了嗎？",
+    "contactCta": "有任何疑問或想了解更多服務細節？歡迎透過 LINE 或 Instagram 與我們聯繫，我們會盡快回覆。",
+    "replyTime": "通常 24 小時內回覆",
+    "location": "台北市 · 捷運可達",
+    "askFirst": "歡迎先詢問再預約"
   }
 }

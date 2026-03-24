@@ -42,5 +42,20 @@
     "publishedOn": "Published on",
     "tags": "Tags",
     "share": "Share"
+  },
+  "services": {
+    "pageTitle": "Nail Services",
+    "heroSubtitle": "From everyday gel polish to intricate nail art — every service is crafted by our professional nail artists with precision and care.",
+    "bookNow": "Book Now",
+    "bookViaLine": "Book via LINE",
+    "bookThisService": "Book This Service",
+    "viewAll": "View All Services",
+    "viewDetails": "View Details",
+    "dmInstagram": "DM on Instagram",
+    "readyToBook": "Ready to Book?",
+    "contactCta": "Questions or want to learn more about our services? Reach out via LINE or Instagram — we'll get back to you soon.",
+    "replyTime": "Usually replies within 24h",
+    "location": "Taipei · Metro Accessible",
+    "askFirst": "Feel free to ask before booking"
   }
 }
