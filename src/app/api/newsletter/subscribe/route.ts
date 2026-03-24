@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Always save to Supabase as primary store
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error: dbError } = await supabase
       .from("newsletter_subscribers")
       .upsert(

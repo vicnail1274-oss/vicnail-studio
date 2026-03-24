@@ -16,13 +16,14 @@ const SERVICES = [
     slug: "gel-nails",
     icon: "💅",
     zh: {
-      title: "凝膠指甲",
+      title: "凝膠美甲",
       subtitle: "Gel Nail Art",
       description:
         "日本頂級凝膠品牌，持色 3–4 週不脫落。提供素色、法式、漸層、立體彩繪等豐富款式，讓指尖成為個人風格的延伸。",
-      keywords: ["凝膠指甲", "光療指甲", "台北美甲", "凝膠美甲推薦"],
+      keywords: ["凝膠指甲", "凝膠美甲", "台北美甲", "凝膠美甲推薦"],
       duration: "90–120 分鐘",
       highlight: "持色 3-4 週",
+      price: "NT$ 800 起",
     },
     en: {
       title: "Gel Nail Art",
@@ -32,6 +33,7 @@ const SERVICES = [
       keywords: ["gel nails", "gel manicure Taipei", "nail art", "gel nail salon"],
       duration: "90–120 min",
       highlight: "3–4 Week Hold",
+      price: "From NT$ 800",
     },
   },
   {
@@ -45,6 +47,7 @@ const SERVICES = [
       keywords: ["日式美甲", "美甲彩繪", "手繪美甲", "台北日式美甲"],
       duration: "120–180 分鐘",
       highlight: "全手工設計",
+      price: "NT$ 1,200 起",
     },
     en: {
       title: "Japanese Nail Art",
@@ -54,19 +57,45 @@ const SERVICES = [
       keywords: ["Japanese nail art", "hand-painted nails", "nail design", "Taipei nail salon"],
       duration: "120–180 min",
       highlight: "100% Hand-Crafted",
+      price: "From NT$ 1,200",
+    },
+  },
+  {
+    slug: "gel-extensions",
+    icon: "💎",
+    zh: {
+      title: "凝膠延甲",
+      subtitle: "Gel Nail Extensions",
+      description:
+        "使用頂級凝膠延甲技術，打造自然修長的指甲外形。可搭配彩繪設計，持久牢固不易斷裂。適合短甲想留長的客人。",
+      keywords: ["凝膠延甲", "延甲", "台北延甲", "凝膠美甲延甲"],
+      duration: "120–150 分鐘",
+      highlight: "自然修長",
+      price: "NT$ 1,500 起",
+    },
+    en: {
+      title: "Gel Nail Extensions",
+      subtitle: "Sculpted Gel Extensions",
+      description:
+        "Premium gel extensions for naturally elongated nails. Durable, chip-resistant, and combinable with any nail art design. Perfect for short nails.",
+      keywords: ["gel extensions", "nail extensions", "sculpted nails", "Taipei nail extensions"],
+      duration: "120–150 min",
+      highlight: "Natural Length",
+      price: "From NT$ 1,500",
     },
   },
   {
     slug: "gel-polish",
     icon: "✨",
     zh: {
-      title: "光療指甲",
+      title: "凝膠指甲油",
       subtitle: "Gel Polish Manicure",
       description:
-        "保留自然甲，用 UV 固化光療膠打造亮澤光滑的色彩質感。不傷甲面、快速完成，適合日常上班族與初學者。",
-      keywords: ["光療指甲", "凝膠指甲油", "不傷甲美甲", "自然甲美甲"],
+        "保留自然甲，用 UV 固化凝膠打造亮澤光滑的色彩質感。不傷甲面、快速完成，適合日常上班族與初學者。",
+      keywords: ["凝膠指甲油", "凝膠美甲", "不傷甲美甲", "自然甲美甲"],
       duration: "60–90 分鐘",
       highlight: "不傷天然甲",
+      price: "NT$ 600 起",
     },
     en: {
       title: "Gel Polish",
@@ -76,6 +105,7 @@ const SERVICES = [
       keywords: ["gel polish", "no-chip manicure", "natural nail gel", "Taiwan nail salon"],
       duration: "60–90 min",
       highlight: "No Nail Damage",
+      price: "From NT$ 600",
     },
   },
   {
@@ -85,19 +115,21 @@ const SERVICES = [
       title: "手足保養護理",
       subtitle: "Manicure & Pedicure",
       description:
-        "從角質軟化到保濕按摩，完整的手足護理療程讓你煥然一新。可搭配凝膠或光療，享受一站式美甲體驗。",
+        "從角質軟化到保濕按摩，完整的手足護理療程讓你煥然一新。可搭配凝膠美甲，享受一站式美甲體驗。",
       keywords: ["手部護理", "足部護理", "美足", "台北美甲保養"],
       duration: "60–90 分鐘",
       highlight: "完整護理療程",
+      price: "NT$ 700 起",
     },
     en: {
       title: "Manicure & Pedicure",
       subtitle: "Hand & Foot Care",
       description:
-        "Cuticle care, exfoliation, moisturizing massage — full hand and foot treatment to rejuvenate your skin. Combinable with gel or gel polish.",
+        "Cuticle care, exfoliation, moisturizing massage — full hand and foot treatment to rejuvenate your skin. Combinable with gel nails.",
       keywords: ["manicure", "pedicure", "hand care", "foot care Taipei"],
       duration: "60–90 min",
       highlight: "Full Spa Treatment",
+      price: "From NT$ 700",
     },
   },
   {
@@ -107,19 +139,21 @@ const SERVICES = [
       title: "卸甲服務",
       subtitle: "Nail Removal",
       description:
-        "專業安全卸甲，不傷真甲。無論是凝膠、光療膠還是水晶甲，均使用溫和配方，保護指甲健康。",
+        "專業安全卸甲，不傷真甲。無論是凝膠美甲還是水晶甲，均使用溫和配方，保護指甲健康。",
       keywords: ["卸甲", "安全卸甲", "凝膠卸除", "台北卸甲服務"],
       duration: "30–45 分鐘",
       highlight: "零損傷工法",
+      price: "NT$ 200 起",
     },
     en: {
       title: "Nail Removal",
       subtitle: "Safe & Gentle Soak-Off",
       description:
-        "Safe, professional removal of gel, gel polish, or acrylic nails using gentle formulas that protect your natural nails.",
+        "Safe, professional removal of gel nails or acrylic nails using gentle formulas that protect your natural nails.",
       keywords: ["nail removal", "gel removal", "soak off nails", "Taipei nail salon"],
       duration: "30–45 min",
       highlight: "Zero Damage Method",
+      price: "From NT$ 200",
     },
   },
   {
@@ -289,10 +323,15 @@ export default async function ServicesPage({
                     {t.description}
                   </p>
 
-                  {/* Duration */}
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{t.duration}</span>
+                  {/* Duration + Price */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{t.duration}</span>
+                    </div>
+                    {t.price && (
+                      <span className="text-sm font-semibold text-nail-gold">{t.price}</span>
+                    )}
                   </div>
 
                   {/* Keywords (hidden, SEO) */}
@@ -324,29 +363,34 @@ export default async function ServicesPage({
       <section className="py-16 px-4 bg-nail-cream/50">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
-            {isZh ? "預約諮詢" : "Book a Consultation"}
+            {isZh ? "立即預約" : "Book Now"}
           </h2>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-8">
             {isZh
               ? "有任何疑問或想了解更多服務細節？歡迎透過 LINE 或 Instagram 與我們聯繫，我們會盡快回覆。"
               : "Questions or want to learn more about our services? Reach out via LINE or Instagram — we'll get back to you soon."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
+              href="https://line.me/ti/p/vicnail_studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#06C755] text-white text-base font-semibold hover:bg-[#05b04c] transition-colors shadow-md"
+            >
+              💬 {isZh ? "LINE 立即預約" : "Book via LINE"}
+            </a>
+            <a
               href="https://www.instagram.com/vicnail_studio/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-nail-gold text-white text-sm font-medium hover:bg-nail-gold/90 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-nail-gold text-white text-base font-semibold hover:bg-nail-gold/90 transition-colors shadow-md"
             >
-              📷 Instagram
+              📷 {isZh ? "Instagram 私訊" : "DM on Instagram"}
             </a>
-            <Link
-              href="/about"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-nail-gold text-nail-gold text-sm font-medium hover:bg-nail-pink/20 transition-colors"
-            >
-              {isZh ? "了解更多" : "About Us"}
-            </Link>
           </div>
+          <p className="text-xs text-muted-foreground mt-6">
+            {isZh ? "通常 24 小時內回覆 · 歡迎先詢問再預約" : "Usually replies within 24h · Feel free to ask before booking"}
+          </p>
         </div>
       </section>
     </>
