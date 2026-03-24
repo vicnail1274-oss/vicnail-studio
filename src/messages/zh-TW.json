@@ -10,10 +10,15 @@
   },
   "hero": {
     "title": "VicNail Studio",
-    "subtitle": "美甲藝術 × AI 科技",
-    "description": "專業美甲教學與 AI 自動化的跨界探索",
+    "subtitle": "台北信義區・凝膠美甲專門店",
+    "description": "日系技術・嚴選凝膠・為妳打造專屬指尖風格",
+    "ctaBook": "立即預約",
+    "ctaServices": "服務項目",
     "ctaCourses": "探索美甲課程",
-    "ctaAi": "AI 不務正業"
+    "ctaAi": "AI 不務正業",
+    "trustReviews": "50+ Google 好評",
+    "trustCertified": "日本凝膠認證",
+    "trustLocation": "台北信義區"
   },
   "sections": {
     "courses": "美甲課程",

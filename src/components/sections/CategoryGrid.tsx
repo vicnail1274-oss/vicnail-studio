@@ -14,7 +14,7 @@ const categories = [
     hoverBorder: "hover:border-nail-gold/40",
     zhTitle: "美甲知識",
     enTitle: "Nail Knowledge",
-    zhDesc: "從入門到進階的凝膠、光療技術教學",
+    zhDesc: "從入門到進階的凝膠美甲技術教學",
     enDesc: "Gel & UV nail techniques from beginner to advanced",
   },
   {

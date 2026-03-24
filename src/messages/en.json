@@ -10,10 +10,15 @@
   },
   "hero": {
     "title": "VicNail Studio",
-    "subtitle": "Nail Art × AI Technology",
-    "description": "Where professional nail artistry meets AI-powered innovation",
+    "subtitle": "Xinyi, Taipei · Gel Nail Specialist",
+    "description": "Japanese technique · Premium gel brands · Your signature nail style",
+    "ctaBook": "Book Now",
+    "ctaServices": "Our Services",
     "ctaCourses": "Explore Courses",
-    "ctaAi": "AI Side Hustle"
+    "ctaAi": "AI Side Hustle",
+    "trustReviews": "50+ Google Reviews",
+    "trustCertified": "Japan Gel Certified",
+    "trustLocation": "Xinyi, Taipei"
   },
   "sections": {
     "courses": "Nail Courses",

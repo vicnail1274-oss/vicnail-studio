@@ -1,10 +1,15 @@
 import { HeroSection } from "@/components/sections/HeroSection";
+import { HomepageServices } from "@/components/sections/HomepageServices";
+import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+import { LocationSection } from "@/components/sections/LocationSection";
+import { FAQSection } from "@/components/sections/FAQSection";
 import { LatestArticles } from "@/components/sections/LatestArticles";
 import { CategoryGrid } from "@/components/sections/CategoryGrid";
 import { ToolsSection } from "@/components/sections/ToolsSection";
 import { FounderSection } from "@/components/sections/FounderSection";
 import { NewsletterCTA } from "@/components/sections/NewsletterCTA";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { HomepageFAQJsonLd, WebsiteJsonLd } from "@/components/seo/JsonLd";
 import { getArticles } from "@/lib/mdx";
 import { setRequestLocale } from "next-intl/server";
 
@@ -40,7 +45,13 @@ export default async function Home({
 
   return (
     <>
+      <WebsiteJsonLd />
+      <HomepageFAQJsonLd locale={locale as "zh-TW" | "en"} />
       <HeroSection />
+      <HomepageServices locale={locale} />
+      <TestimonialsSection locale={locale} />
+      <LocationSection locale={locale} />
+      <FAQSection locale={locale} />
       <NewsletterCTA locale={locale} />
       <LatestArticles articles={allArticles} locale={locale} />
       <div className="flex justify-center py-6 bg-white">

@@ -35,22 +35,48 @@ export function HeroSection() {
           {t("description")}
         </p>
 
-        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-fade-up">
+        {/* Trust badges */}
+        <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-muted-foreground animate-fade-up">
+          <span className="flex items-center gap-1">
+            <span className="text-yellow-400">★★★★★</span>
+            <span>{t("trustReviews")}</span>
+          </span>
+          <span className="hidden sm:block text-nail-gold/40">|</span>
+          <span>{t("trustCertified")}</span>
+          <span className="hidden sm:block text-nail-gold/40">|</span>
+          <span>{t("trustLocation")}</span>
+        </div>
+
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center animate-fade-up">
+          {/* Primary CTA: Book now via LINE */}
           <Button
             asChild
             size="lg"
-            className="bg-nail-gold hover:bg-nail-gold/90 text-white rounded-full px-8 text-base"
+            className="bg-nail-gold hover:bg-nail-gold/90 text-white rounded-full px-8 text-base font-semibold shadow-lg shadow-nail-gold/20"
           >
-            <Link href="/courses">{t("ctaCourses")}</Link>
+            <a href="https://lin.ee/vicnail" target="_blank" rel="noopener noreferrer">
+              {t("ctaBook")}
+            </a>
           </Button>
           <Button
             asChild
             size="lg"
             variant="outline"
-            className="border-ai-purple/30 text-ai-purple hover:bg-ai-purple/5 rounded-full px-8 text-base"
+            className="border-nail-gold/30 text-nail-gold hover:bg-nail-pink/30 rounded-full px-8 text-base"
           >
-            <Link href="/ai">{t("ctaAi")}</Link>
+            <Link href="/services">{t("ctaServices")}</Link>
           </Button>
+        </div>
+
+        {/* Secondary links */}
+        <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center text-sm animate-fade-up">
+          <Link href="/courses" className="text-muted-foreground hover:text-nail-gold transition-colors underline underline-offset-4">
+            {t("ctaCourses")}
+          </Link>
+          <span className="hidden sm:block text-nail-gold/40">·</span>
+          <Link href="/ai" className="text-muted-foreground hover:text-ai-purple transition-colors underline underline-offset-4">
+            {t("ctaAi")}
+          </Link>
         </div>
       </div>
     </section>

@@ -18,8 +18,8 @@ export function NailServicesJsonLd({
     "@type": "NailSalon",
     name: "VicNail Studio",
     description: isZh
-      ? "台北專業美甲工作室，提供凝膠指甲、日式彩繪、光療指甲、手足保養及美甲課程。"
-      : "Professional nail salon in Taipei offering gel nails, Japanese nail art, gel polish, manicure & pedicure, and nail courses.",
+      ? "台北信義區專業美甲工作室，提供凝膠美甲、凝膠延甲、凝膠保養、日式彩繪及美甲課程。"
+      : "Professional nail salon in Taipei's Xinyi District offering gel nails, gel extensions, gel care, Japanese nail art, and nail courses.",
     url: pageUrl,
     image: "https://vicnail-studio.com/og-default.svg",
     priceRange: "$$",
@@ -57,6 +57,76 @@ export function NailServicesJsonLd({
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusiness) }}
+    />
+  );
+}
+
+export function HomepageFAQJsonLd({ locale }: { locale: "zh-TW" | "en" }) {
+  const isZh = locale === "zh-TW";
+
+  const faqs = isZh
+    ? [
+        {
+          q: "如何預約凝膠美甲？",
+          a: "透過 LINE 加入好友後傳訊預約最方便。請告知服務項目、日期與時間，30 分鐘內回覆確認。",
+        },
+        {
+          q: "凝膠美甲可以維持多久？",
+          a: "一般凝膠美甲可維持 3–4 週，凝膠延甲約 3 週。日常使用凝膠保養油可延長持久度。",
+        },
+        {
+          q: "凝膠美甲和凝膠延甲有什麼差別？",
+          a: "凝膠美甲是在原本甲面上塗覆凝膠色彩；凝膠延甲則利用凝膠雕塑延長甲型，適合想讓指甲更長的客人。",
+        },
+        {
+          q: "凝膠保養包含哪些項目？",
+          a: "凝膠保養包含去除角質、整修甲緣、手部按摩及凝膠護甲油，約 60 分鐘。",
+        },
+        {
+          q: "如需取消或改期，需要提前多久通知？",
+          a: "請於預約時間 24 小時前透過 LINE 告知，以便安排其他客人。",
+        },
+      ]
+    : [
+        {
+          q: "How do I book a gel nail appointment?",
+          a: "Add us on LINE and send a message with your preferred service, date and time. We'll confirm within 30 minutes.",
+        },
+        {
+          q: "How long do gel nails last?",
+          a: "Gel nails last 3–4 weeks and gel extensions about 3 weeks with proper care.",
+        },
+        {
+          q: "What's the difference between gel nails and gel extensions?",
+          a: "Gel nails apply color on your natural nails; gel extensions sculpt and lengthen the nail with gel.",
+        },
+        {
+          q: "What's included in the gel care treatment?",
+          a: "Gel care includes dead skin removal, nail shaping, hand massage, and a gel nail treatment coat. About 60 minutes.",
+        },
+        {
+          q: "How far in advance should I cancel or reschedule?",
+          a: "Please notify us via LINE at least 24 hours before your appointment.",
+        },
+      ];
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.a,
+      },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
   );
 }

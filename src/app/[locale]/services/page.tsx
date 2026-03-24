@@ -193,15 +193,15 @@ export async function generateMetadata({
   return {
     title: isZh ? "美甲服務項目" : "Nail Services",
     description: isZh
-      ? "VicNail Studio 專業美甲服務：凝膠指甲、日式彩繪、光療指甲、手足護理、卸甲服務。台北專業美甲，品質保證。"
+      ? "VicNail Studio 專業美甲服務：凝膠美甲、凝膠延甲、日式彩繪、凝膠保養、卸甲服務。台北專業美甲，品質保證。"
       : "VicNail Studio nail services: gel nails, Japanese nail art, gel polish, manicure & pedicure, nail removal. Professional nail salon in Taipei.",
     keywords: isZh
-      ? ["美甲服務", "台北美甲", "凝膠指甲", "日式美甲", "光療指甲", "手足保養", "美甲推薦"]
+      ? ["美甲服務", "台北美甲", "凝膠美甲", "日式美甲", "凝膠延甲", "手足保養", "美甲推薦"]
       : ["nail salon", "gel nails", "Japanese nail art", "Taipei nail salon", "gel polish", "manicure"],
     openGraph: {
       title: isZh ? "VicNail Studio — 美甲服務項目" : "VicNail Studio — Nail Services",
       description: isZh
-        ? "專業凝膠美甲、日式彩繪、光療指甲與手足護理。品質保證，預約洽詢。"
+        ? "專業凝膠美甲、凝膠延甲、日式彩繪與凝膠保養。品質保證，預約洽詢。"
         : "Professional gel nails, Japanese nail art, gel polish & hand care in Taipei.",
       url: `${BASE_URL}/${locale}/services`,
       type: "website",
@@ -262,7 +262,7 @@ export default async function ServicesPage({
           </h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             {isZh
-              ? "從日常光療到精細彩繪，每一款服務都由專業美甲師親手完成，為您的指尖注入個性與品味。"
+              ? "從日常凝膠美甲到精細彩繪，每一款服務都由專業美甲師親手完成，為您的指尖注入個性與品味。"
               : "From everyday gel polish to intricate nail art — every service is crafted by our professional nail artists with precision and care."}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
