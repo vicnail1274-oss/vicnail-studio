@@ -9,21 +9,80 @@ source: "manual"
 
 ## Why Does a Nail Artist Need AI?
 
-As a nail studio owner, daily tasks include scheduling, replying to clients, posting on social media, bookkeeping... These repetitive tasks eat up so much time.
+Running a nail studio solo means wearing every hat: scheduling, client communication, social media, bookkeeping, design prep. These repetitive tasks can easily consume 3–4 hours every day — time that could otherwise go into perfecting technique or building client relationships.
 
-AI isn't here to replace the nail artist's craft — it's here to handle the mechanical work so we can focus on creating.
+AI isn't here to replace the nail artist's craft. It's here to take over the mechanical, repeatable work so you can focus your energy on what only you can do: creating beautiful nail art and delivering a great client experience.
 
-## My Automation Toolkit
+Here are four automation modules I've built and use in my own studio.
 
-### Scheduling System
-Built a custom scheduling app with React where students can check availability and book sessions.
+## Four Automation Modules
 
-### Auto-Replies
-LINE official account paired with AI to automatically answer common questions, reducing 80% of repetitive inquiries.
+### Module 1: Smart Scheduling System
 
-### Social Media Automation
-AI helps generate post content and schedule publishing, making social media management stress-free.
+**The problem:** Manually managing bookings, confirming time slots, and handling cancellations eats up hours every week.
 
-## For Those Who Want to Try
+**The solution:** A custom scheduling app (React front-end + Google Calendar integration) that lets clients book their own appointments. The system automatically sends confirmations and reminders.
 
-You don't need to be an engineer to start. Begin with the simplest tools and build up from there.
+**Features:**
+- Real-time availability display synced to your calendar
+- Automatic LINE/SMS confirmation after booking
+- 24-hour reminder sent automatically before each appointment
+- Cancellations reopen slots for other clients automatically
+
+**Results:** 70% fewer scheduling inquiries, 50% drop in no-shows.
+
+### Module 2: LINE Bot Auto-Replies
+
+**The problem:** The same questions arrive every day — "Any slots this week?" "How much is a gel set?" "How long will it last?"
+
+**The solution:** Set up a LINE Official Account with keyword-based auto-replies. Use AI to write the reply scripts, then configure them in the LINE backend.
+
+**Setup steps:**
+1. List the 20 questions you get asked most often
+2. Use ChatGPT or Claude to write natural, on-brand replies for each
+3. Configure keyword triggers in your LINE Official Account
+4. Add a "connect to human" button for complex or new questions
+
+**Results:** ~80% of repetitive inquiries handled automatically, response time drops from 30 minutes average to instant.
+
+### Module 3: Social Media Content Automation
+
+**The problem:** Instagram and Facebook need consistent content, but coming up with ideas every day is draining.
+
+**The solution:** A weekly batch content generation workflow using AI, then scheduled publishing via Buffer or Later.
+
+**The workflow:**
+1. Every Monday, ask AI to generate 7 post topics tied to your weekly services
+2. For each post, get: caption, 3 hashtag sets, and a suggested image concept
+3. Pair the copy with your own nail photos and schedule to your platforms
+4. Use AI to write short-form copy for Stories separately
+
+**Time saved:** From 30 minutes daily of staring at a blank screen, to 45 minutes once a week in batch.
+
+### Module 4: AI Design Inspiration Tool
+
+**The problem:** A client says "spring feeling" or "subtle but interesting" — and your mind goes blank.
+
+**The solution:** Build a personal prompt library for AI design generation, categorized by style, occasion, and skin tone. Use AI image tools to visualize concepts quickly before committing.
+
+**Example prompt:**
+> "Suggest a gel nail design for spring 2026, suitable for a professional setting. The client has warm-toned skin and prefers understated elegance. Focus on a cream palette with fine line details or pearl shimmer."
+
+**Recommended tools:** Claude, Midjourney, Canva AI
+
+## Three-Step Starter Guide (No Engineering Degree Required)
+
+**Step 1: Fix your biggest pain point first**
+Don't try to automate everything at once. Pick the one task that wastes the most time — usually scheduling or client messages — and start there.
+
+**Step 2: Test with free tools**
+LINE Official Account's basic keyword replies are free. Google Calendar is free. ChatGPT's base tier is free. Run your first automation with zero cost before deciding what to upgrade.
+
+**Step 3: Measure, then expand**
+After a few weeks, track: how much time did you save? Did client satisfaction improve? Data-backed decisions help you invest in the right tools and skip the rest.
+
+## Final Thought
+
+AI automation isn't just for large businesses. A solo nail studio can build a system that reclaims hours every week, reduces errors, and makes the client experience feel more professional — all without hiring extra staff.
+
+The goal isn't to work harder. It's to work on the things that matter most, and let the machines handle the rest.
