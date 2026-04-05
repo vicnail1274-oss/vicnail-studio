@@ -1,0 +1,148 @@
+---
+title: "LINE Bot Smart Booking for Nail Studios: Complete Automation Workflow Guide 2026"
+date: "2026-04-05"
+readTime: "10 min"
+tags: ["LINE Bot", "Smart Booking", "Nail Studio Automation", "Taiwan Nail", "AI Booking"]
+description: "Build a fully automated client intake and appointment workflow for your nail studio using LINE Bot + AI booking integration. Step-by-step guide for Taiwan-based nail techs in 2026."
+---
+
+## Still Manually Replying to Every Booking Message?
+
+In Taiwan, nail studio bookings happen almost exclusively through LINE. The problem? 90% of booking messages are identical:
+
+"Do you have availability on Saturday?"
+"How long does a gel manicure take?"
+"Do you offer gel extensions? How much?"
+
+Each message needs a personal reply. Over the course of a day, that adds up to 1–2 hours of admin time that AI can handle for you.
+
+---
+
+## The Architecture of a Smart Booking System
+
+A complete AI-powered booking workflow for a Taiwan nail studio typically operates across three layers:
+
+### Layer 1: LINE Bot Automated Q&A
+
+Client sends a LINE message → the bot identifies the question type → automatically replies with the right template or guides the client into the booking flow.
+
+Common setup scenarios:
+- Keyword triggers: "book," "availability," "pricing," "nail appointment" → auto-reply with the corresponding template
+- Menu buttons: "View Services," "Book Now," "Contact the Nail Tech"
+- After-hours: "We're currently closed. Your message has been received and will be replied to by [time]."
+
+### Layer 2: Online Booking Form (LINE-Integrated)
+
+The LINE Bot directs clients to a booking form at the right moment, collecting:
+- Service type (gel nails / gel extensions / gel maintenance / gel removal)
+- Preferred date and time (3 options)
+- Nail condition notes (e.g., current length, existing gel residue)
+- Reference photo upload (reduces in-person discussion)
+
+Recommended tools: **Calendly** (supports LINE link integration), **Setmore** (free tier), or a custom Google Forms + n8n automation flow.
+
+### Layer 3: Automatic Confirmations and Reminders
+
+After a booking is confirmed, the system automatically:
+1. Sends a confirmation message (with date, time, and service summary)
+2. Sends a reminder 24 hours before the appointment
+3. Sends a final confirmation 2 hours before
+4. Sends a rebooking invitation 3 days after the completed service
+
+---
+
+## Setup Tutorial: LINE Bot + Calendly + n8n
+
+### Prerequisites
+
+- LINE Official Account (free tier works)
+- Calendly account (free tier supports basic booking)
+- n8n (free cloud version or self-hosted)
+
+### Step 1: Configure LINE Bot Keyword Auto-Replies
+
+LINE Official Account Dashboard → "Auto-Reply Messages" → "Keyword Reply"
+
+Set up these keyword trigger groups:
+
+| Keywords | Auto-Reply Content |
+|----------|--------------------|
+| book, availability, schedule | "Hi! Click here to view available slots: [Calendly link]" |
+| pricing, cost, how much | [Pricing image card + first-visit discount note] |
+| how long, duration | "Gel nails take approximately 60–90 min; gel extensions take 90–120 min. Please allow extra buffer time!" |
+| gel removal, remove | "Gel removal service is $XX. We recommend booking in advance to ensure enough time. Book here: [link]" |
+
+### Step 2: Configure Your Calendly Booking Page
+
+1. Create a "Nail Appointment" event type
+2. Set the service duration (by appointment type)
+3. Enable "Collect additional information" fields: service type, nail condition notes, reference photo link
+4. Customize the confirmation page: "Booking confirmed! We'll follow up by [time]. Please arrive on time!"
+
+### Step 3: Set Up n8n Automated Reminders
+
+Build the following workflow in n8n:
+
+```
+Calendly new booking trigger
+  → Wait until 24 hours before appointment
+  → Send LINE Bot reminder message
+  → Wait until 2 hours before appointment
+  → Send LINE Bot final confirmation
+  → 3 days after appointment time
+  → Send LINE Bot rebooking invitation
+```
+
+Once this workflow is live, every booking runs through the full sequence automatically — zero manual effort required.
+
+---
+
+## Going Further: AI Pre-Visit Intake Form
+
+Adding a smart intake questionnaire to your booking form lets you understand the client's situation before they arrive:
+
+**Recommended intake form fields:**
+- Current nail status (natural / existing gel / extended nails)
+- Preferred nail length
+- Any allergy history or nail health concerns
+- Style direction for this visit (include photo options)
+
+Build the questionnaire in Typeform or Google Forms, configure it to send automatically after booking confirmation, and have responses flow directly into your booking management dashboard.
+
+---
+
+## FAQ and Solutions
+
+**Q: Does LINE Bot have a character limit for auto-replies?**
+Yes — 500 characters per message. Keep key info concise, or use image cards to display pricing tables instead.
+
+**Q: My clients aren't comfortable with Calendly — what should I do?**
+Add "Or just reply here and I'll sort it out for you" next to the Calendly link. This preserves a manual fallback for clients who prefer direct messaging.
+
+**Q: What happens if a client needs to reschedule?**
+Calendly allows clients to self-reschedule and cancel. When they reschedule, n8n automatically triggers a new reminder sequence for the updated appointment.
+
+---
+
+## Expected Outcomes
+
+For a studio serving 25 clients per week:
+
+| Metric | Before Automation | After Automation |
+|--------|--------------------|------------------|
+| Daily message reply time | 60–90 minutes | 10–15 minutes |
+| No-show rate | ~15% | ~5% |
+| Client intake data completeness | Low (gathered in-person) | High (collected pre-visit) |
+| Rebooking invitation reach | Low (manual, often forgotten) | 100% (auto-triggered) |
+
+---
+
+## Your First Step — Right Now
+
+You don't need to build all three layers at once. Start small:
+
+1. **Today:** Set up 5 keyword auto-replies in your LINE Official Account
+2. **This week:** Create a Calendly booking page and add the link to your LINE profile bio
+3. **Next month:** Evaluate whether the n8n automated reminder workflow is worth the setup investment
+
+Each step delivers immediate results. Build the system one layer at a time.
