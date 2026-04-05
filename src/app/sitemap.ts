@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getArticleSlugs } from "@/lib/mdx";
+import { getArticles } from "@/lib/mdx";
 
 const BASE_URL = "https://vicnail-studio.com";
 
@@ -39,11 +39,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   for (const section of sections) {
     for (const locale of locales) {
-      const slugs = getArticleSlugs(section, locale);
-      for (const slug of slugs) {
+      const articles = getArticles(section, locale);
+      for (const article of articles) {
         entries.push({
-          url: `${BASE_URL}/${locale}${pathMap[section]}/${slug}`,
-          lastModified: new Date(),
+          url: `${BASE_URL}/${locale}${pathMap[section]}/${article.slug}`,
+          lastModified: article.date ? new Date(article.date) : new Date(),
           changeFrequency: "weekly",
           priority: 0.7,
         });

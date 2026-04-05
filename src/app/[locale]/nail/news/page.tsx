@@ -15,26 +15,33 @@ export async function generateMetadata({
   const { locale } = await params;
   const url = `${BASE_URL}/${locale}/nail/news`;
   return {
-    title: "Nail News",
-    description: "Latest nail art trends, seasonal guides, and style inspiration. 最新美甲趨勢、季節指南與靈感分享。",
+    title: locale === "zh-TW" ? "美甲新聞" : "Nail News",
+    description: locale === "zh-TW"
+      ? "最新凝膠美甲趨勢、季節指南與靈感分享。"
+      : "Latest nail art trends, seasonal guides, and style inspiration.",
     alternates: {
       canonical: url,
       languages: {
         "zh-TW": `${BASE_URL}/zh-TW/nail/news`,
         en: `${BASE_URL}/en/nail/news`,
+        "x-default": `${BASE_URL}/zh-TW/nail/news`,
       },
     },
     openGraph: {
       type: "website",
       url,
-      title: "Nail News | VicNail Studio",
-      description: "Latest nail art trends, seasonal guides, and style inspiration.",
+      title: locale === "zh-TW" ? "美甲新聞 | VicNail Studio" : "Nail News | VicNail Studio",
+      description: locale === "zh-TW"
+        ? "最新凝膠美甲趨勢、季節指南與靈感分享。"
+        : "Latest nail art trends, seasonal guides, and style inspiration.",
       images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Nail News | VicNail Studio",
-      description: "Latest nail art trends, seasonal guides, and style inspiration.",
+      title: locale === "zh-TW" ? "美甲新聞 | VicNail Studio" : "Nail News | VicNail Studio",
+      description: locale === "zh-TW"
+        ? "最新凝膠美甲趨勢、季節指南與靈感分享。"
+        : "Latest nail art trends, seasonal guides, and style inspiration.",
       images: ["/og-default.svg"],
     },
   };

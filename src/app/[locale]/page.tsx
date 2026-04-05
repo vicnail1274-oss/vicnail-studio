@@ -9,7 +9,7 @@ import { ToolsSection } from "@/components/sections/ToolsSection";
 import { FounderSection } from "@/components/sections/FounderSection";
 import { NewsletterCTA } from "@/components/sections/NewsletterCTA";
 import { AdSlot } from "@/components/ads/AdSlot";
-import { HomepageFAQJsonLd, WebsiteJsonLd } from "@/components/seo/JsonLd";
+import { HomepageFAQJsonLd } from "@/components/seo/JsonLd";
 import { getArticles } from "@/lib/mdx";
 import { setRequestLocale } from "next-intl/server";
 
@@ -45,7 +45,6 @@ export default async function Home({
 
   return (
     <>
-      <WebsiteJsonLd />
       <HomepageFAQJsonLd locale={locale as "zh-TW" | "en"} />
       <HeroSection />
       <HomepageServices locale={locale} />

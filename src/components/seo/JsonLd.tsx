@@ -138,6 +138,8 @@ export function ArticleJsonLd({ article, url }: { article: Article; url: string 
     headline: article.title,
     description: article.description,
     datePublished: article.date,
+    dateModified: article.date,
+    image: article.coverImage || "https://vicnail-studio.com/og-default.svg",
     author: {
       "@type": "Person",
       name: article.author || "Vic",
@@ -145,6 +147,10 @@ export function ArticleJsonLd({ article, url }: { article: Article; url: string 
     publisher: {
       "@type": "Organization",
       name: "VicNail Studio",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://vicnail-studio.com/og-default.svg",
+      },
     },
     url,
     keywords: article.tags.join(", "),

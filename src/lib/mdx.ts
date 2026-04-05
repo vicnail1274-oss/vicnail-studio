@@ -94,13 +94,8 @@ export async function getArticle(
 }
 
 /**
- * Get all slugs for static generation.
+ * Get all slugs for static generation. Excludes drafts (consistent with getArticles).
  */
 export function getArticleSlugs(section: string, locale: string): string[] {
-  const dir = path.join(contentRoot, section, locale);
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".mdx"))
-    .map((f) => f.replace(/\.mdx$/, ""));
+  return getArticles(section, locale).map((a) => a.slug);
 }
