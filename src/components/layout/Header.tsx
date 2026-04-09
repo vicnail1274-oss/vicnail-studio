@@ -5,13 +5,14 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
 const navItems = [
   { href: "/", key: "home", zhOnly: false },
   { href: "/courses", key: "courses", zhOnly: true },
+  { href: "/shop", key: "shop", zhOnly: true },
   { href: "/services", key: "services", zhOnly: false },
   { href: "/nail/knowledge", key: "nailKnowledge", zhOnly: false },
   { href: "/nail/news", key: "nailNews", zhOnly: false },
@@ -25,6 +26,7 @@ export function Header({ locale }: { locale: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const isAiSection = pathname.startsWith("/ai");
 
@@ -36,6 +38,20 @@ export function Header({ locale }: { locale: string }) {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
+  }, []);
+
+  // 購物車數量
+  useEffect(() => {
+    function updateCartCount() {
+      try {
+        const raw = localStorage.getItem("vicnail_cart");
+        const items = raw ? JSON.parse(raw) : [];
+        setCartCount(items.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0));
+      } catch { setCartCount(0); }
+    }
+    updateCartCount();
+    window.addEventListener("cart-updated", updateCartCount);
+    return () => window.removeEventListener("cart-updated", updateCartCount);
   }, []);
 
   // 點外部關閉用戶選單
@@ -105,6 +121,24 @@ export function Header({ locale }: { locale: string }) {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
+            {/* 購物車 */}
+            {locale === "zh-TW" && (
+              <Link
+                href="/cart"
+                className={cn(
+                  "relative p-2 rounded-md transition-colors",
+                  isAiSection ? "text-gray-300 hover:text-white" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <ShoppingCart size={20} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-pink-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {cartCount > 9 ? "9+" : cartCount}
+                  </span>
+                )}
+              </Link>
+            )}
+
             <LanguageSwitcher isAiSection={isAiSection} />
 
             {/* 登入狀態 */}
