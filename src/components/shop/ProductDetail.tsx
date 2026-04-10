@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { addToCart } from "@/lib/cart-store";
+import { StockNotifyForm } from "./StockNotifyForm";
 
 interface Product {
   id: string;
@@ -314,6 +315,8 @@ export function ProductDetail({ product }: { product: Product }) {
                 <>
                   <Check size={20} /> 已加入
                 </>
+              ) : outOfStock ? (
+                <>已售完</>
               ) : (
                 <>
                   <ShoppingCart size={20} /> 加入購物車
@@ -321,6 +324,9 @@ export function ProductDetail({ product }: { product: Product }) {
               )}
             </button>
           </div>
+
+          {/* 缺貨時：到貨通知 */}
+          {outOfStock && <StockNotifyForm productId={product.id} />}
 
           {/* 商品描述 */}
           {product.description && (

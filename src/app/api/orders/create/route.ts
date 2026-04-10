@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
     }
 
     const subtotal = orderItems.reduce((s, i) => s + i.total_price, 0);
-    const shippingFee = calculateShippingFee(shipping.type);
+    const shippingFee = calculateShippingFee(shipping.type, subtotal);
     const total = subtotal + shippingFee;
 
     // 產生訂單編號

@@ -415,6 +415,34 @@ export type Database = {
           },
         ];
       };
+      stock_notifications: {
+        Row: {
+          id: string;
+          product_id: string;
+          email: string;
+          user_id: string | null;
+          notified_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          email: string;
+          user_id?: string | null;
+        };
+        Update: {
+          notified_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "stock_notifications_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       newsletter_subscribers: {
         Row: {
           id: string;

@@ -179,18 +179,35 @@ export function getLogisticsLabel(type: LogisticsType): string {
 }
 
 /**
- * 計算運費
+ * 運費基礎價
  */
-export function calculateShippingFee(type: LogisticsType): number {
-  const fees: Record<LogisticsType, number> = {
-    cvs_711: 65,
-    cvs_fami: 65,
-    cvs_hilife: 65,
-    cvs_ok: 65,
-    home_tcat: 120,
-    home_post: 80,
-    home_sf: 180,
-    self_pickup: 0,
-  };
-  return fees[type] ?? 0;
+export const BASE_SHIPPING_FEES: Record<LogisticsType, number> = {
+  cvs_711: 65,
+  cvs_fami: 65,
+  cvs_hilife: 65,
+  cvs_ok: 65,
+  home_tcat: 120,
+  home_post: 80,
+  home_sf: 180,
+  self_pickup: 0,
+};
+
+/**
+ * 免運門檻（商品小計達此金額免運費）
+ */
+export const FREE_SHIPPING_THRESHOLD = 1500;
+
+/**
+ * 計算運費（考慮免運門檻）
+ */
+export function calculateShippingFee(
+  type: LogisticsType,
+  subtotal?: number
+): number {
+  const base = BASE_SHIPPING_FEES[type] ?? 0;
+  if (base === 0) return 0;
+  if (typeof subtotal === "number" && subtotal >= FREE_SHIPPING_THRESHOLD) {
+    return 0;
+  }
+  return base;
 }

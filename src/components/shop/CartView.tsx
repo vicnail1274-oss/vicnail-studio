@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Truck, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   getCart,
@@ -12,6 +12,7 @@ import {
   getCartTotal,
   type CartItem,
 } from "@/lib/cart-store";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/ecpay/logistics";
 
 export function CartView() {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -157,8 +158,45 @@ export function CartView() {
         })}
       </div>
 
+      {/* 免運進度條 */}
+      {(() => {
+        const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - total);
+        const progress = Math.min(100, (total / FREE_SHIPPING_THRESHOLD) * 100);
+        const reached = remaining === 0;
+        return (
+          <div className="mt-6 p-4 bg-gradient-to-r from-nail-cream to-white rounded-xl border border-nail-gold/20">
+            <div className="flex items-center gap-2 mb-2">
+              {reached ? (
+                <>
+                  <Sparkles size={16} className="text-nail-gold" />
+                  <p className="text-sm font-semibold text-nail-gold">
+                    🎉 恭喜！已符合免運條件
+                  </p>
+                </>
+              ) : (
+                <>
+                  <Truck size={16} className="text-muted-foreground" />
+                  <p className="text-sm text-foreground">
+                    再買 <span className="font-bold text-nail-gold">NT$ {remaining.toLocaleString()}</span> 即可享 <span className="font-semibold">免運</span>
+                  </p>
+                </>
+              )}
+            </div>
+            <div className="w-full h-2 bg-white rounded-full overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all duration-500",
+                  reached ? "bg-gradient-to-r from-nail-gold to-amber-400" : "bg-nail-gold/80"
+                )}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        );
+      })()}
+
       {/* 合計 + 結帳 */}
-      <div className="mt-8 p-6 bg-gray-50 rounded-xl">
+      <div className="mt-4 p-6 bg-gray-50 rounded-xl">
         <div className="flex items-center justify-between text-lg">
           <span className="text-muted-foreground">商品小計</span>
           <span className="font-bold text-foreground">
@@ -166,7 +204,7 @@ export function CartView() {
           </span>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          運費將於結帳時計算
+          運費將於結帳時計算（滿 NT$ {FREE_SHIPPING_THRESHOLD.toLocaleString()} 免運）
         </p>
 
         <Link

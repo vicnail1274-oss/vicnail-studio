@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProductDetail } from "@/components/shop/ProductDetail";
+import { RelatedProducts } from "@/components/shop/RelatedProducts";
 import type { Product } from "@/lib/supabase/types";
 import type { Metadata } from "next";
 
@@ -52,10 +53,13 @@ export default async function ProductPage({ params }: Props) {
 
   if (!product) notFound();
 
+  const p = product as Product;
+
   return (
     <section className="py-12 px-4">
       <div className="max-w-5xl mx-auto">
-        <ProductDetail product={product as Product} />
+        <ProductDetail product={p} />
+        <RelatedProducts currentProductId={p.id} category={p.category} />
       </div>
     </section>
   );
