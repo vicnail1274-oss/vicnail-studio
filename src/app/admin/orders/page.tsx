@@ -1,7 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Package, Truck, Check, X, Clock, RefreshCw } from "lucide-react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  Package,
+  Truck,
+  Check,
+  X,
+  Clock,
+  RefreshCw,
+  AlertTriangle,
+  Copy,
+} from "lucide-react";
 
 interface Order {
   id: string;
@@ -38,15 +47,62 @@ const SOURCE_LABELS: Record<string, string> = {
   admin: "後台",
 };
 
+const REMINDER_THRESHOLD_HOURS = 24;
+
+function hoursSince(iso: string): number {
+  return (Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60);
+}
+
+function formatRelativeAge(iso: string): string {
+  const h = hoursSince(iso);
+  if (h < 1) return `${Math.round(h * 60)} 分鐘前`;
+  if (h < 24) return `${Math.floor(h)} 小時前`;
+  return `${Math.floor(h / 24)} 天前`;
+}
+
+/**
+ * 產生催單訊息範本（給 Vic 一鍵複製貼到 LINE）
+ * 走「熟學生」溫和語氣，不是冷冰冰的系統訊息
+ */
+function buildReminderMessage(order: {
+  order_number: string;
+  shipping_name: string | null;
+  total: number;
+  shipping_fee: number;
+  created_at: string;
+  order_items: { item_title: string; quantity: number; unit_price: number }[];
+}): string {
+  const name = order.shipping_name?.trim() || "親愛的";
+  const ageH = Math.floor(hoursSince(order.created_at));
+  const itemsText = (order.order_items || [])
+    .map((it) => `・${it.item_title} x${it.quantity}`)
+    .join("\n");
+
+  return `Hi ${name} 👋
+你 ${ageH < 24 ? `${ageH} 小時前` : `${Math.floor(ageH / 24)} 天前`}下的訂單還沒付款喔～
+怕你忘記再提醒一下 🙈
+
+📦 訂單編號：${order.order_number}
+${itemsText}
+💰 總計：NT$ ${order.total.toLocaleString()}${order.shipping_fee > 0 ? `（含運費 $${order.shipping_fee}）` : ""}
+
+如果想繼續完成訂單，回我「+1」我幫你重發付款連結
+有任何問題隨時跟我說 💕`;
+}
+
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  // filter: "" | status name | "reminder"（24h+ 待付款）
   const [filter, setFilter] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const loadOrders = useCallback(async () => {
-    const url = filter
-      ? `/api/admin/orders?status=${filter}`
+    // reminder 模式：拉 pending 全部，前端過濾 24h+
+    const statusParam = filter === "reminder" ? "pending" : filter;
+    const url = statusParam
+      ? `/api/admin/orders?status=${statusParam}`
       : "/api/admin/orders";
     const res = await fetch(url);
     if (res.ok) setOrders(await res.json());
@@ -81,12 +137,48 @@ export default function AdminOrdersPage() {
     loadOrders();
   }
 
+  async function copyReminderMessage(order: Order) {
+    const msg = buildReminderMessage(order);
+    try {
+      await navigator.clipboard.writeText(msg);
+      setCopiedId(order.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      // Clipboard 失敗 fallback：直接跳出讓 Vic 手動複製
+      window.prompt("請手動複製以下訊息：", msg);
+    }
+  }
+
+  // 顯示用清單：reminder 模式只看 24h+ pending
+  const visibleOrders = useMemo(() => {
+    if (filter !== "reminder") return orders;
+    return orders.filter(
+      (o) =>
+        o.status === "pending" &&
+        hoursSince(o.created_at) >= REMINDER_THRESHOLD_HOURS
+    );
+  }, [orders, filter]);
+
+  // 待催單數量徽章（總是顯示，不受目前 filter 影響）
+  const [reminderCount, setReminderCount] = useState<number | null>(null);
+  useEffect(() => {
+    fetch("/api/admin/orders?status=pending")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: Order[]) => {
+        const n = data.filter(
+          (o) => hoursSince(o.created_at) >= REMINDER_THRESHOLD_HOURS
+        ).length;
+        setReminderCount(n);
+      })
+      .catch(() => setReminderCount(null));
+  }, [orders]);
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">訂單管理</h1>
 
       {/* 篩選 */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="flex gap-2 mb-6 flex-wrap items-center">
         {["", "pending", "paid", "shipped", "completed", "cancelled"].map(
           (s) => (
             <button
@@ -102,26 +194,59 @@ export default function AdminOrdersPage() {
             </button>
           )
         )}
+        {/* 24h+ 待催單 — 特別標記 */}
+        <button
+          onClick={() => setFilter("reminder")}
+          className={`px-3 py-1.5 rounded-full text-sm inline-flex items-center gap-1.5 ${
+            filter === "reminder"
+              ? "bg-amber-500 text-white"
+              : "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200"
+          }`}
+          title={`未付款超過 ${REMINDER_THRESHOLD_HOURS} 小時的訂單`}
+        >
+          <AlertTriangle size={14} />
+          待催單
+          {reminderCount !== null && reminderCount > 0 && (
+            <span
+              className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                filter === "reminder"
+                  ? "bg-white/20 text-white"
+                  : "bg-amber-500 text-white"
+              }`}
+            >
+              {reminderCount}
+            </span>
+          )}
+        </button>
       </div>
 
       {loading ? (
         <p className="text-gray-500">載入中...</p>
-      ) : orders.length === 0 ? (
+      ) : visibleOrders.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
           <Package size={48} className="mx-auto mb-4" />
-          <p>沒有訂單</p>
+          <p>
+            {filter === "reminder"
+              ? "目前沒有需要催單的訂單 🎉"
+              : "沒有訂單"}
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
-          {orders.map((order) => {
+          {visibleOrders.map((order) => {
             const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.pending;
             const StatusIcon = cfg.icon;
             const expanded = expandedId === order.id;
+            const isOverdue =
+              order.status === "pending" &&
+              hoursSince(order.created_at) >= REMINDER_THRESHOLD_HOURS;
 
             return (
               <div
                 key={order.id}
-                className="bg-white rounded-xl border overflow-hidden"
+                className={`bg-white rounded-xl border overflow-hidden ${
+                  isOverdue ? "border-amber-300 ring-1 ring-amber-100" : ""
+                }`}
               >
                 {/* 訂單概要 */}
                 <button
@@ -144,6 +269,12 @@ export default function AdminOrdersPage() {
                       {order.source && order.source !== "web" && (
                         <span className="px-2 py-0.5 rounded-full text-xs bg-indigo-100 text-indigo-700">
                           {SOURCE_LABELS[order.source] || order.source}
+                        </span>
+                      )}
+                      {isOverdue && (
+                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 inline-flex items-center gap-1">
+                          <AlertTriangle size={10} />
+                          待催 {formatRelativeAge(order.created_at)}
                         </span>
                       )}
                     </div>
@@ -211,9 +342,28 @@ export default function AdminOrdersPage() {
                     )}
 
                     {/* 操作按鈕 */}
-                    <div className="flex gap-2 pt-2">
+                    <div className="flex gap-2 pt-2 flex-wrap">
                       {order.status === "pending" && (
                         <>
+                          <button
+                            onClick={() => copyReminderMessage(order)}
+                            className={`px-3 py-1.5 text-sm rounded-lg inline-flex items-center gap-1.5 transition-colors ${
+                              copiedId === order.id
+                                ? "bg-green-500 text-white"
+                                : "bg-amber-500 text-white hover:bg-amber-600"
+                            }`}
+                            title="複製催單訊息到剪貼簿，貼到 LINE 給學生"
+                          >
+                            {copiedId === order.id ? (
+                              <>
+                                <Check size={14} /> 已複製到剪貼簿
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={14} /> 複製催單訊息
+                              </>
+                            )}
+                          </button>
                           <button
                             onClick={() => updateStatus(order.id, "paid")}
                             className="px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600"
