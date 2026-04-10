@@ -42,6 +42,7 @@ export default async function AccountPage() {
           {[
             { href: "/account/courses", icon: "🎬", label: "我的課程" },
             { href: "/account/orders", icon: "📦", label: "我的訂單" },
+            { href: "/account/wishlist", icon: "💖", label: "願望清單" },
             { href: "/account/profile", icon: "✏️", label: "編輯資料" },
           ].map((item) => (
             <a

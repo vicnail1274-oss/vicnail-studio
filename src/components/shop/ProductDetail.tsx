@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { addToCart } from "@/lib/cart-store";
 import { StockNotifyForm } from "./StockNotifyForm";
+import { FavoriteButton } from "./FavoriteButton";
 
 interface Product {
   id: string;
@@ -297,7 +298,7 @@ export function ProductDetail({ product }: { product: Product }) {
             </div>
           </div>
 
-          {/* 加入購物車 */}
+          {/* 加入購物車 + 願望清單 */}
           <div className="mt-8 flex gap-3">
             <button
               onClick={handleAdd}
@@ -323,6 +324,11 @@ export function ProductDetail({ product }: { product: Product }) {
                 </>
               )}
             </button>
+            <FavoriteButton
+              productId={product.id}
+              size="lg"
+              onToast={showToast}
+            />
           </div>
 
           {/* 缺貨時：到貨通知 */}

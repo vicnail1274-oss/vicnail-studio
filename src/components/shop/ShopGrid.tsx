@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
-import { ShoppingCart, Clock, Package, Truck } from "lucide-react";
+import { ShoppingCart, Clock, Package, Truck, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { addToCart } from "@/lib/cart-store";
 import { GroupBuyBanner } from "./GroupBuyBanner";
+import { FavoriteButton } from "./FavoriteButton";
 
 interface Product {
   id: string;
@@ -59,13 +60,24 @@ export function ShopGrid({
   groupBuys: GroupBuy[];
 }) {
   const [category, setCategory] = useState("all");
+  const [search, setSearch] = useState("");
   const [addedId, setAddedId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
-  const filtered =
-    category === "all"
-      ? products
-      : products.filter((p) => p.category === category);
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return products.filter((p) => {
+      if (category !== "all" && p.category !== category) return false;
+      if (!q) return true;
+      const hay = `${p.title} ${p.description ?? ""} ${p.category ?? ""}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [products, category, search]);
+
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  }
 
   function handleAddToCart(product: Product) {
     addToCart({
@@ -77,9 +89,8 @@ export function ShopGrid({
       quantity: 1,
     });
     setAddedId(product.id);
-    setToast("已加入購物車");
+    showToast("已加入購物車");
     setTimeout(() => setAddedId(null), 1500);
-    setTimeout(() => setToast(null), 2000);
   }
 
   return (
@@ -98,6 +109,31 @@ export function ShopGrid({
             </div>
           </div>
         )}
+
+        {/* 搜尋列 */}
+        <div className="relative mb-4 max-w-md">
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+          />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="搜尋商品名稱、品牌、關鍵字…"
+            aria-label="搜尋商品"
+            className="w-full pl-10 pr-10 py-2.5 rounded-full border border-gray-200 bg-white text-sm focus:outline-none focus:border-nail-gold focus:ring-2 focus:ring-nail-gold/20 transition-all"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              aria-label="清除搜尋"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
 
         {/* 分類篩選 */}
         <div className="flex flex-wrap gap-2 mb-8">
@@ -121,7 +157,22 @@ export function ShopGrid({
         {filtered.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">
             <Package size={48} className="mx-auto mb-4 opacity-30" />
-            <p>目前沒有商品，敬請期待！</p>
+            <p>
+              {search.trim() || category !== "all"
+                ? "找不到符合條件的商品，試試其他關鍵字或分類"
+                : "目前沒有商品，敬請期待！"}
+            </p>
+            {(search.trim() || category !== "all") && (
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setCategory("all");
+                }}
+                className="mt-4 text-sm text-nail-gold hover:underline"
+              >
+                清除所有篩選
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -138,8 +189,13 @@ export function ShopGrid({
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
                   viewport={{ once: true }}
-                  className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group"
+                  className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group relative"
                 >
+                  <FavoriteButton
+                    productId={product.id}
+                    variant="card"
+                    onToast={showToast}
+                  />
                   {/* 商品圖片 */}
                   <Link href={`/shop/${product.id}`}>
                     <div className="relative aspect-square bg-gray-50 overflow-hidden">

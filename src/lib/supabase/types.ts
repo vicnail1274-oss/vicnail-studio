@@ -415,6 +415,50 @@ export type Database = {
           },
         ];
       };
+      product_reviews: {
+        Row: {
+          id: string;
+          product_id: string;
+          user_id: string;
+          rating: number;
+          comment: string | null;
+          display_name: string | null;
+          is_published: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          user_id: string;
+          rating: number;
+          comment?: string | null;
+          display_name?: string | null;
+          is_published?: boolean;
+        };
+        Update: {
+          rating?: number;
+          comment?: string | null;
+          display_name?: string | null;
+          is_published?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "product_reviews_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       stock_notifications: {
         Row: {
           id: string;
@@ -587,3 +631,4 @@ export type GroupBuyItem = Database["public"]["Tables"]["group_buy_items"]["Row"
 export type CartItemRow = Database["public"]["Tables"]["cart_items"]["Row"];
 export type LineOrder = Database["public"]["Tables"]["line_orders"]["Row"];
 export type NewsletterSubscriber = Database["public"]["Tables"]["newsletter_subscribers"]["Row"];
+export type ProductReview = Database["public"]["Tables"]["product_reviews"]["Row"];

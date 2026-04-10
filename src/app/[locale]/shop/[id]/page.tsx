@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProductDetail } from "@/components/shop/ProductDetail";
+import { ProductReviews } from "@/components/shop/ProductReviews";
 import { RelatedProducts } from "@/components/shop/RelatedProducts";
 import { RecentlyViewedTracker } from "@/components/shop/RecentlyViewedTracker";
 import { RecentlyViewedList } from "@/components/shop/RecentlyViewedList";
@@ -62,6 +63,7 @@ export default async function ProductPage({ params }: Props) {
       <div className="max-w-5xl mx-auto">
         <RecentlyViewedTracker productId={p.id} />
         <ProductDetail product={p} />
+        <ProductReviews productId={p.id} />
         <RelatedProducts currentProductId={p.id} category={p.category} />
         <RecentlyViewedList excludeId={p.id} />
       </div>

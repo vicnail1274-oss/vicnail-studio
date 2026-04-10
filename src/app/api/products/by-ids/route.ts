@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       .split(",")
       .map((s) => s.trim())
       .filter((s) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s))
-      .slice(0, 20);
+      .slice(0, 200);
 
     if (ids.length === 0) {
       return NextResponse.json({ products: [] });
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     const admin = await createAdminClient();
     const { data } = await admin
       .from("products")
-      .select("id, title, price, sale_price, images")
+      .select("id, title, price, sale_price, images, stock, purchase_type, category")
       .in("id", ids)
       .eq("status", "published");
 

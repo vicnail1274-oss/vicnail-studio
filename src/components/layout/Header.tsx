@@ -185,6 +185,13 @@ export function Header({ locale }: { locale: string }) {
                     >
                       我的訂單
                     </Link>
+                    <Link
+                      href="/account/wishlist"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      願望清單
+                    </Link>
                     <hr className="my-1 border-gray-50" />
                     <button
                       onClick={handleLogout}
