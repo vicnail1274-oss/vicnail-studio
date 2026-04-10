@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Package, Truck, Check, X, Clock, RefreshCw } from "lucide-react";
 
 interface Order {
@@ -44,18 +44,18 @@ export default function AdminOrdersPage() {
   const [filter, setFilter] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  async function loadOrders() {
+  const loadOrders = useCallback(async () => {
     const url = filter
       ? `/api/admin/orders?status=${filter}`
       : "/api/admin/orders";
     const res = await fetch(url);
     if (res.ok) setOrders(await res.json());
     setLoading(false);
-  }
+  }, [filter]);
 
   useEffect(() => {
     loadOrders();
-  }, [filter]);
+  }, [loadOrders]);
 
   async function updateStatus(orderId: string, newStatus: string) {
     await fetch("/api/admin/orders", {

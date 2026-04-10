@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { createPaymentForm } from "@/lib/ecpay/payment";
 import { calculateShippingFee, type LogisticsType } from "@/lib/ecpay/logistics";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import crypto from "crypto";
 
 interface OrderItemInput {
@@ -22,6 +23,16 @@ interface ShippingInput {
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 10 訂單 / 10 分鐘 / IP
+    const ip = getClientIp(req);
+    const rl = rateLimit(`order:${ip}`, 10, 10 * 60 * 1000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: "請求過於頻繁，請稍後再試" },
+        { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+      );
+    }
+
     const body = await req.json();
     const {
       items,

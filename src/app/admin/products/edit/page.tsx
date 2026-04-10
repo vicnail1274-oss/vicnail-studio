@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AdminProductEditPage() {
   const router = useRouter();
@@ -286,7 +287,7 @@ export default function AdminProductEditPage() {
           <div className="flex gap-2 flex-wrap">
             {form.images.map((url, i) => (
               <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border group">
-                <img src={url} alt="" className="w-full h-full object-cover" />
+                <Image src={url} alt="" fill sizes="80px" className="object-cover" />
                 <button
                   type="button"
                   onClick={() => removeImage(i)}

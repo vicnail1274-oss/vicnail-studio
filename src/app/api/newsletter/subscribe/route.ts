@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 5 次 / 10 分鐘 / IP（防垃圾訂閱）
+    const ip = getClientIp(req);
+    const rl = rateLimit(`newsletter:${ip}`, 5, 10 * 60 * 1000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: "請求過於頻繁" },
+        { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+      );
+    }
+
     const body = await req.json();
     const { email } = body;
 
