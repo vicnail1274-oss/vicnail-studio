@@ -25,48 +25,47 @@ export async function POST(req: NextRequest) {
     const admin = await createAdminClient();
 
     // 找到對應訂單：優先用 logistics_id 精確匹配
-    let orders: { id: string }[] | null = null;
+    let orderRow: { id: string; status: string; shipped_at: string | null } | null = null;
 
     if (allPayLogisticsID) {
       const { data } = await admin
         .from("orders")
-        .select("id")
+        .select("id, status, shipped_at")
         .eq("logistics_id", allPayLogisticsID)
         .limit(1);
-      orders = data;
+      if (data?.[0]) orderRow = data[0];
     }
 
     // fallback: 用 order_number 精確匹配
-    if (!orders?.length && merchantTradeNo) {
+    if (!orderRow && merchantTradeNo) {
       const { data } = await admin
         .from("orders")
-        .select("id")
+        .select("id, status, shipped_at")
         .eq("order_number", merchantTradeNo)
         .limit(1);
-      orders = data;
+      if (data?.[0]) orderRow = data[0];
     }
 
-    if (!orders?.length) {
+    if (!orderRow) {
       console.error("ECPay logistics callback: no order found", { allPayLogisticsID, merchantTradeNo });
-    }
-
-    if (orders?.[0]) {
+    } else {
       const updateData: Record<string, string | null> = {
         logistics_status: `${logisticsStatus}: ${logisticsMsg}`,
         logistics_id: allPayLogisticsID,
       };
 
-      // 如果物流狀態為已送達，更新訂單狀態
-      if (logisticsStatus === "2067" || logisticsStatus === "3024") {
-        // 2067: 超商已收到, 3024: 黑貓已送達
+      // 物流已送達 → 進展到 shipped（只允許 paid → shipped，不倒退 completed/cancelled/refunded）
+      const shippedCodes = new Set(["2067", "3024"]); // 2067: 超商已收到, 3024: 黑貓已送達
+      if (
+        shippedCodes.has(logisticsStatus) &&
+        orderRow.status === "paid" &&
+        !orderRow.shipped_at
+      ) {
         updateData.status = "shipped";
         updateData.shipped_at = new Date().toISOString();
       }
 
-      await admin
-        .from("orders")
-        .update(updateData)
-        .eq("id", orders[0].id);
+      await admin.from("orders").update(updateData).eq("id", orderRow.id);
     }
 
     console.log(

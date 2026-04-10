@@ -195,12 +195,24 @@ export async function POST(req: NextRequest) {
         total_price: total,
       });
 
-      // 扣庫存（現貨商品）
+      // 扣庫存（現貨商品）— 原子條件更新防競態
       if (product.purchase_type === "instock") {
-        await admin
+        const { data: stockUpdated } = await admin
           .from("products")
           .update({ stock: product.stock - parsed.quantity })
-          .eq("id", product.id);
+          .eq("id", product.id)
+          .gte("stock", parsed.quantity)
+          .select("id");
+
+        if (!stockUpdated?.length) {
+          // 庫存不足 → 取消訂單
+          await admin.from("orders").update({ status: "cancelled" }).eq("id", order.id);
+          await replyMessage(
+            replyToken,
+            `抱歉，「${product.title}」庫存不足，訂單已取消。`
+          );
+          continue;
+        }
       }
 
       // 記錄 LINE 訂單
