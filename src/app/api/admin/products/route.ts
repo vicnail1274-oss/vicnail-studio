@@ -87,20 +87,47 @@ export async function PUT(req: NextRequest) {
   return NextResponse.json(data);
 }
 
-/** DELETE: 刪除商品 */
+/**
+ * DELETE: 刪除商品
+ * 預設為 soft delete（設為 archived）— 保留歷史訂單引用。
+ * 加上 ?hard=1 強制硬刪除，並要求該商品無任何 order_items 引用。
+ */
 export async function DELETE(req: NextRequest) {
   if (!isAdminAuthed(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
+  const hard = searchParams.get("hard") === "1";
   if (!id) {
     return NextResponse.json({ error: "缺少商品 ID" }, { status: 400 });
   }
 
   const admin = await createAdminClient();
-  const { error } = await admin.from("products").delete().eq("id", id);
+
+  if (hard) {
+    // 檢查是否有歷史訂單引用
+    const { count } = await admin
+      .from("order_items")
+      .select("id", { count: "exact", head: true })
+      .eq("item_id", id);
+    if ((count ?? 0) > 0) {
+      return NextResponse.json(
+        { error: "此商品已有歷史訂單，請改用 soft delete（歸檔）" },
+        { status: 409 }
+      );
+    }
+    const { error } = await admin.from("products").delete().eq("id", id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, mode: "hard" });
+  }
+
+  // Soft delete → archived
+  const { error } = await admin
+    .from("products")
+    .update({ status: "archived" })
+    .eq("id", id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, mode: "soft" });
 }

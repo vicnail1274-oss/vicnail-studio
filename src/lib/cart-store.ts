@@ -16,12 +16,33 @@ export interface CartItem {
 }
 
 const CART_KEY = "vicnail_cart";
+const MAX_CART_ITEMS = 100;
+
+function isValidItem(x: unknown): x is CartItem {
+  if (!x || typeof x !== "object") return false;
+  const i = x as Record<string, unknown>;
+  return (
+    typeof i.productId === "string" &&
+    i.productId.length > 0 &&
+    typeof i.title === "string" &&
+    typeof i.price === "number" &&
+    Number.isFinite(i.price) &&
+    typeof i.quantity === "number" &&
+    Number.isInteger(i.quantity) &&
+    i.quantity > 0 &&
+    i.quantity <= 999
+  );
+}
 
 export function getCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(CART_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    // 過濾無效項，並限制最大筆數
+    return parsed.filter(isValidItem).slice(0, MAX_CART_ITEMS);
   } catch {
     return [];
   }
@@ -29,7 +50,8 @@ export function getCart(): CartItem[] {
 
 export function saveCart(items: CartItem[]) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(CART_KEY, JSON.stringify(items));
+  const sanitized = items.filter(isValidItem).slice(0, MAX_CART_ITEMS);
+  localStorage.setItem(CART_KEY, JSON.stringify(sanitized));
   window.dispatchEvent(new Event("cart-updated"));
 }
 
