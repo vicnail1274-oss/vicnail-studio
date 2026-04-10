@@ -28,6 +28,15 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(data);
 }
 
+const VALID_STATUSES = new Set([
+  "pending",
+  "paid",
+  "shipped",
+  "completed",
+  "cancelled",
+  "refunded",
+]);
+
 /** PUT: 更新訂單狀態、追蹤碼等 */
 export async function PUT(req: NextRequest) {
   if (!isAdminAuthed(req)) {
@@ -37,6 +46,13 @@ export async function PUT(req: NextRequest) {
   const body = await req.json();
   if (!body.id) {
     return NextResponse.json({ error: "缺少訂單 ID" }, { status: 400 });
+  }
+
+  if (body.status && !VALID_STATUSES.has(body.status)) {
+    return NextResponse.json(
+      { error: `無效的狀態：${body.status}` },
+      { status: 400 }
+    );
   }
 
   const admin = await createAdminClient();

@@ -53,6 +53,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 輸入驗證：item 數量、單項數量上限、email、電話
+    if (items.length > 50) {
+      return NextResponse.json(
+        { error: "單筆訂單項目過多（上限 50）" },
+        { status: 400 }
+      );
+    }
+    for (const it of items) {
+      if (
+        !it.productId ||
+        typeof it.quantity !== "number" ||
+        !Number.isInteger(it.quantity) ||
+        it.quantity <= 0 ||
+        it.quantity > 999
+      ) {
+        return NextResponse.json(
+          { error: "商品項目格式錯誤" },
+          { status: 400 }
+        );
+      }
+    }
+    if (shipping.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shipping.email)) {
+      return NextResponse.json(
+        { error: "Email 格式錯誤" },
+        { status: 400 }
+      );
+    }
+    if (!/^(09\d{8}|0\d{1,2}-?\d{6,8})$/.test(shipping.phone.replace(/\s/g, ""))) {
+      return NextResponse.json(
+        { error: "電話格式錯誤（請用台灣手機或市話）" },
+        { status: 400 }
+      );
+    }
+
     // 取得使用者（可選，允許未登入購物）
     const supabase = await createClient();
     const {

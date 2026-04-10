@@ -35,7 +35,8 @@ const securityHeaders = [
       "frame-src 'self' https://www.googletagmanager.com https://www.youtube.com",
       "object-src 'none'",
       "base-uri 'self'",
-      "form-action 'self'",
+      // ECPay 付款 / 物流選店需要 form submit 到 ecpay 網域
+      "form-action 'self' https://payment.ecpay.com.tw https://payment-stage.ecpay.com.tw https://logistics.ecpay.com.tw https://logistics-stage.ecpay.com.tw",
     ].join("; "),
   },
 ];
