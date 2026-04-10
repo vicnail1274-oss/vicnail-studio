@@ -24,8 +24,11 @@ interface PaymentParams {
 export function generateCheckMacValue(
   params: Record<string, string>
 ): string {
-  const hashKey = process.env.ECPAY_HASH_KEY!;
-  const hashIV = process.env.ECPAY_HASH_IV!;
+  const hashKey = process.env.ECPAY_HASH_KEY;
+  const hashIV = process.env.ECPAY_HASH_IV;
+  if (!hashKey || !hashIV) {
+    throw new Error("Missing ECPAY_HASH_KEY or ECPAY_HASH_IV environment variable");
+  }
 
   // 1. 按照 key 排序
   const sorted = Object.keys(params)
@@ -67,10 +70,26 @@ export function createPaymentForm({
   clientBackUrl,
   paymentMethods,
 }: PaymentParams): { url: string; params: Record<string, string> } {
-  const merchantId = process.env.ECPAY_MERCHANT_ID!;
+  const merchantId = process.env.ECPAY_MERCHANT_ID;
+  if (!merchantId) {
+    throw new Error("Missing ECPAY_MERCHANT_ID environment variable");
+  }
 
+  // 明確使用台灣時區
   const now = new Date();
-  const tradeDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+  const twFormatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+  const parts = twFormatter.formatToParts(now);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value || "00";
+  const tradeDate = `${get("year")}/${get("month")}/${get("day")} ${get("hour")}:${get("minute")}:${get("second")}`;
 
   // 預設所有付款方式
   const choosePayment = paymentMethods?.length

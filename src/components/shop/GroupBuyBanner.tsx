@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { Users, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -57,11 +58,16 @@ export function GroupBuyBanner({ groupBuy }: { groupBuy: GroupBuy }) {
           </div>
 
           {groupBuy.cover_image && (
-            <img
-              src={groupBuy.cover_image}
-              alt={groupBuy.title}
-              className="w-20 h-20 rounded-xl object-cover ml-4 flex-shrink-0"
-            />
+            <div className="w-20 h-20 rounded-xl overflow-hidden ml-4 flex-shrink-0 relative">
+              <Image
+                src={groupBuy.cover_image}
+                alt={groupBuy.title}
+                fill
+                className="object-cover"
+                sizes="80px"
+                unoptimized
+              />
+            </div>
           )}
         </div>
 

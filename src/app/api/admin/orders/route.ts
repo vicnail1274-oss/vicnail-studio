@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
     .order("created_at", { ascending: false })
     .limit(100);
 
-  if (status) query = query.eq("status", status);
-  if (source) query = query.eq("source", source);
+  if (status) query = query.eq("status", status as "pending" | "paid" | "shipped" | "completed" | "cancelled" | "refunded");
+  if (source) query = query.eq("source", source as "web" | "line" | "admin");
 
   const { data, error } = await query;
 

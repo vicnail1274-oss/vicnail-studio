@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import {
   ShoppingCart,
@@ -37,12 +38,30 @@ export function ProductDetail({ product }: { product: Product }) {
   >({});
   const [selectedImage, setSelectedImage] = useState(0);
   const [added, setAdded] = useState(false);
+  const [variantErrors, setVariantErrors] = useState<string[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
 
   const displayPrice = product.sale_price ?? product.price;
   const outOfStock =
     product.purchase_type === "instock" && product.stock <= 0;
 
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  }
+
   function handleAdd() {
+    if (product.variants?.length) {
+      const missing = product.variants
+        .filter((v) => !selectedVariants[v.name])
+        .map((v) => v.name);
+      if (missing.length) {
+        setVariantErrors(missing);
+        return;
+      }
+    }
+    setVariantErrors([]);
+
     addToCart({
       productId: product.id,
       title: product.title,
@@ -55,7 +74,18 @@ export function ProductDetail({ product }: { product: Product }) {
       quantity,
     });
     setAdded(true);
+    showToast("已加入購物車");
     setTimeout(() => setAdded(false), 2000);
+  }
+
+  function getPreorderCountdown() {
+    if (!product.preorder_deadline) return null;
+    const deadline = new Date(product.preorder_deadline);
+    const now = new Date();
+    const diffMs = deadline.getTime() - now.getTime();
+    if (diffMs <= 0) return "已截止";
+    const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return `剩餘 ${days} 天`;
   }
 
   const purchaseTypeInfo: Record<
@@ -96,12 +126,15 @@ export function ProductDetail({ product }: { product: Product }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* 左側：圖片 */}
         <div>
-          <div className="aspect-square bg-gray-50 rounded-2xl overflow-hidden mb-3">
+          <div className="aspect-square bg-gray-50 rounded-2xl overflow-hidden mb-3 relative">
             {product.images?.[selectedImage] ? (
-              <img
+              <Image
                 src={product.images[selectedImage]}
                 alt={product.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                unoptimized
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -117,16 +150,19 @@ export function ProductDetail({ product }: { product: Product }) {
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={cn(
-                    "w-16 h-16 rounded-lg overflow-hidden border-2 flex-shrink-0",
+                    "w-16 h-16 rounded-lg overflow-hidden border-2 flex-shrink-0 relative",
                     i === selectedImage
                       ? "border-nail-gold"
                       : "border-gray-200"
                   )}
                 >
-                  <img
+                  <Image
                     src={img}
                     alt=""
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                    unoptimized
                   />
                 </button>
               ))}
@@ -152,7 +188,12 @@ export function ProductDetail({ product }: { product: Product }) {
           {product.preorder_deadline && (
             <p className="text-sm text-red-500 mt-1">
               預購截止：
-              {new Date(product.preorder_deadline).toLocaleDateString("zh-TW")}
+              {new Date(product.preorder_deadline).toLocaleDateString("zh-TW")}{" "}
+              {new Date(product.preorder_deadline).toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" })}
+              {(() => {
+                const countdown = getPreorderCountdown();
+                return countdown ? ` （${countdown}）` : "";
+              })()}
             </p>
           )}
 
@@ -185,34 +226,40 @@ export function ProductDetail({ product }: { product: Product }) {
           )}
 
           {/* 規格選擇 */}
-          {product.variants?.map((v) => (
-            <div key={v.name} className="mt-4">
-              <label className="text-sm font-medium text-foreground">
-                {v.name}
-              </label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {v.options.map((opt) => (
-                  <button
-                    key={opt}
-                    onClick={() =>
-                      setSelectedVariants((prev) => ({
-                        ...prev,
-                        [v.name]: opt,
-                      }))
-                    }
-                    className={cn(
-                      "px-3 py-1.5 rounded-lg border text-sm transition-colors",
-                      selectedVariants[v.name] === opt
-                        ? "border-nail-gold bg-nail-gold/10 text-nail-gold"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300"
-                    )}
-                  >
-                    {opt}
-                  </button>
-                ))}
+          {product.variants?.map((v) => {
+            const hasError = variantErrors.includes(v.name);
+            return (
+              <div key={v.name} className="mt-4">
+                <label className={cn("text-sm font-medium", hasError ? "text-red-500" : "text-foreground")}>
+                  {v.name} {hasError && "— 請選擇"}
+                </label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {v.options.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => {
+                        setSelectedVariants((prev) => ({
+                          ...prev,
+                          [v.name]: opt,
+                        }));
+                        setVariantErrors((prev) => prev.filter((n) => n !== v.name));
+                      }}
+                      className={cn(
+                        "px-3 py-1.5 rounded-lg border text-sm transition-colors",
+                        selectedVariants[v.name] === opt
+                          ? "border-nail-gold bg-nail-gold/10 text-nail-gold"
+                          : hasError
+                            ? "border-red-300 text-gray-600 hover:border-red-400"
+                            : "border-gray-200 text-gray-600 hover:border-gray-300"
+                      )}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* 數量 */}
           <div className="mt-6">
@@ -228,8 +275,21 @@ export function ProductDetail({ product }: { product: Product }) {
                 {quantity}
               </span>
               <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50"
+                onClick={() => {
+                  const maxQty = product.purchase_type === "instock" ? product.stock : 99;
+                  setQuantity(Math.min(maxQty, quantity + 1));
+                }}
+                disabled={
+                  product.purchase_type === "instock"
+                    ? quantity >= product.stock
+                    : quantity >= 99
+                }
+                className={cn(
+                  "w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center",
+                  (product.purchase_type === "instock" ? quantity >= product.stock : quantity >= 99)
+                    ? "text-gray-300 cursor-not-allowed"
+                    : "hover:bg-gray-50"
+                )}
               >
                 <Plus size={16} />
               </button>
@@ -282,6 +342,20 @@ export function ProductDetail({ product }: { product: Product }) {
           </div>
         </div>
       </div>
+
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[toast-in_0.3s_ease-out]">
+          <div className="px-5 py-3 bg-gray-900 text-white rounded-xl shadow-lg text-sm font-medium">
+            {toast}
+          </div>
+          <style>{`
+            @keyframes toast-in {
+              from { opacity: 0; transform: translateY(12px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

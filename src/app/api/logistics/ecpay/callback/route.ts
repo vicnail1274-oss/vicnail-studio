@@ -24,12 +24,31 @@ export async function POST(req: NextRequest) {
 
     const admin = await createAdminClient();
 
-    // 找到對應訂單
-    const { data: orders } = await admin
-      .from("orders")
-      .select("id")
-      .or(`logistics_id.eq.${allPayLogisticsID},order_number.like.%${merchantTradeNo}%`)
-      .limit(1);
+    // 找到對應訂單：優先用 logistics_id 精確匹配
+    let orders: { id: string }[] | null = null;
+
+    if (allPayLogisticsID) {
+      const { data } = await admin
+        .from("orders")
+        .select("id")
+        .eq("logistics_id", allPayLogisticsID)
+        .limit(1);
+      orders = data;
+    }
+
+    // fallback: 用 order_number 精確匹配
+    if (!orders?.length && merchantTradeNo) {
+      const { data } = await admin
+        .from("orders")
+        .select("id")
+        .eq("order_number", merchantTradeNo)
+        .limit(1);
+      orders = data;
+    }
+
+    if (!orders?.length) {
+      console.error("ECPay logistics callback: no order found", { allPayLogisticsID, merchantTradeNo });
+    }
 
     if (orders?.[0]) {
       const updateData: Record<string, string | null> = {

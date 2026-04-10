@@ -1,10 +1,21 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { ShopGrid } from "@/components/shop/ShopGrid";
+import type { Product, GroupBuy } from "@/lib/supabase/types";
 
 export const metadata: Metadata = {
   title: "商品專區",
   description: "VicNail Studio 美甲工具、凝膠材料 — 現貨、預購、代購",
+  openGraph: {
+    title: "商品專區 — VicNail Studio",
+    description: "精選美甲工具與材料 — 現貨直送・預購團購・海外代購",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "商品專區 — VicNail Studio",
+    description: "精選美甲工具與材料 — 現貨直送・預購團購・海外代購",
+  },
 };
 
 export default async function ShopPage() {
@@ -37,8 +48,8 @@ export default async function ShopPage() {
       </section>
 
       <ShopGrid
-        products={products || []}
-        groupBuys={activeGroupBuys || []}
+        products={(products || []) as Product[]}
+        groupBuys={(activeGroupBuys || []) as unknown as GroupBuy[]}
       />
     </>
   );

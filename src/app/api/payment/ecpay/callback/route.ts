@@ -37,33 +37,56 @@ export async function POST(req: NextRequest) {
         paid_at: new Date().toISOString(),
       };
 
-      // 用 order_number 或 CustomField1 找訂單
-      if (orderUUID) {
-        await admin
+      // 優先用 ecpay_trade_no 精確匹配已存在的訂單
+      let matched = false;
+      if (tradeNo) {
+        const { data: existing } = await admin
           .from("orders")
-          .update(updateData)
-          .eq("id", orderUUID);
-      } else {
-        // fallback: 用 MerchantTradeNo 前綴匹配
-        const { data: orders } = await admin
-          .from("orders")
-          .select("id, order_number")
-          .like("order_number", `%${merchantTradeNo}%`)
+          .select("id")
+          .eq("ecpay_trade_no", tradeNo)
           .limit(1);
-
-        if (orders?.[0]) {
-          await admin
-            .from("orders")
-            .update(updateData)
-            .eq("id", orders[0].id);
+        if (existing?.[0]) {
+          await admin.from("orders").update(updateData).eq("id", existing[0].id);
+          matched = true;
         }
       }
 
+      // 次優先用 CustomField1（order UUID）
+      if (!matched && orderUUID) {
+        const { data: existing, error } = await admin
+          .from("orders")
+          .update(updateData)
+          .eq("id", orderUUID)
+          .select("id");
+        if (error) {
+          console.error(`ECPay callback: update by UUID failed`, { orderUUID, error });
+        }
+        matched = !!(existing?.length);
+      }
+
+      // fallback: 用 order_number 精確匹配 MerchantTradeNo
+      if (!matched && merchantTradeNo) {
+        const { data: orders } = await admin
+          .from("orders")
+          .select("id, order_number")
+          .eq("order_number", merchantTradeNo)
+          .limit(1);
+
+        if (orders?.[0]) {
+          await admin.from("orders").update(updateData).eq("id", orders[0].id);
+          matched = true;
+        }
+      }
+
+      if (!matched) {
+        console.error(`ECPay callback: no order found`, { merchantTradeNo, tradeNo, orderUUID });
+      }
+
       console.log(
-        `ECPay payment success: ${merchantTradeNo}, TradeNo: ${tradeNo}, Type: ${paymentType}`
+        `ECPay payment success: ${merchantTradeNo}, TradeNo: ${tradeNo}, Type: ${paymentType}, matched: ${matched}`
       );
     } else {
-      console.log(
+      console.error(
         `ECPay payment failed: ${merchantTradeNo}, Code: ${rtnCode}, Msg: ${body.RtnMsg}`
       );
     }

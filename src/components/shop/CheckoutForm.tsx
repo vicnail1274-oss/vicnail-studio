@@ -58,6 +58,13 @@ export function CheckoutForm() {
 
   useEffect(() => {
     setItems(getCart());
+    try {
+      const saved = localStorage.getItem("vicnail_checkout");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setForm((prev) => ({ ...prev, ...parsed }));
+      }
+    } catch {}
   }, []);
 
   const subtotal = getCartTotal(items);
@@ -67,12 +74,29 @@ export function CheckoutForm() {
   const isHomeDelivery = shipping.startsWith("home_");
 
   function updateField(key: string, value: string) {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      try {
+        const { name, phone, email, address } = next;
+        localStorage.setItem("vicnail_checkout", JSON.stringify({ name, phone, email, address }));
+      } catch {}
+      return next;
+    });
   }
+
+  // 台灣手機/市話驗證
+  const phoneRegex = /^(09\d{8}|0[2-8]\d{7,8})$/;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (items.length === 0) return;
+
+    const cleanPhone = form.phone.replace(/[-\s]/g, "");
+    if (!phoneRegex.test(cleanPhone)) {
+      alert("請輸入正確的台灣手機或市話號碼（例如 0912345678）");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -109,6 +133,24 @@ export function CheckoutForm() {
 
       // 如果有 ECPay 付款表單，跳轉
       if (data.paymentUrl) {
+        // 驗證 URL 為受信任的 ECPay 域名
+        const TRUSTED_ECPAY_DOMAINS = [
+          "payment.ecpay.com.tw",
+          "payment-stage.ecpay.com.tw",
+        ];
+        try {
+          const paymentHost = new URL(data.paymentUrl).hostname;
+          if (!TRUSTED_ECPAY_DOMAINS.includes(paymentHost)) {
+            alert("付款連結異常，請聯繫客服");
+            setSubmitting(false);
+            return;
+          }
+        } catch {
+          alert("付款連結格式錯誤");
+          setSubmitting(false);
+          return;
+        }
+
         // 建立隱藏表單送出到 ECPay
         const ecpayForm = document.createElement("form");
         ecpayForm.method = "POST";

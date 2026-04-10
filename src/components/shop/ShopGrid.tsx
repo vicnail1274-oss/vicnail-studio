@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { ShoppingCart, Clock, Package, Truck } from "lucide-react";
@@ -59,6 +60,7 @@ export function ShopGrid({
 }) {
   const [category, setCategory] = useState("all");
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   const filtered =
     category === "all"
@@ -75,7 +77,9 @@ export function ShopGrid({
       quantity: 1,
     });
     setAddedId(product.id);
+    setToast("已加入購物車");
     setTimeout(() => setAddedId(null), 1500);
+    setTimeout(() => setToast(null), 2000);
   }
 
   return (
@@ -140,10 +144,13 @@ export function ShopGrid({
                   <Link href={`/shop/${product.id}`}>
                     <div className="relative aspect-square bg-gray-50 overflow-hidden">
                       {product.images?.[0] ? (
-                        <img
+                        <Image
                           src={product.images[0]}
                           alt={product.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          unoptimized
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -224,6 +231,20 @@ export function ShopGrid({
           </div>
         )}
       </div>
+
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[toast-in_0.3s_ease-out]">
+          <div className="px-5 py-3 bg-gray-900 text-white rounded-xl shadow-lg text-sm font-medium">
+            {toast}
+          </div>
+          <style>{`
+            @keyframes toast-in {
+              from { opacity: 0; transform: translateY(12px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

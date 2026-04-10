@@ -39,7 +39,10 @@ export function getCvsMapUrl(params: {
   serverReplyUrl: string;
   isCollection?: boolean; // 是否代收貨款
 }): { url: string; formParams: Record<string, string> } {
-  const merchantId = process.env.ECPAY_MERCHANT_ID!;
+  const merchantId = process.env.ECPAY_MERCHANT_ID;
+  if (!merchantId) {
+    throw new Error("Missing ECPAY_MERCHANT_ID environment variable");
+  }
   const subType = LOGISTICS_SUB_TYPE[params.logisticsType];
 
   const formParams: Record<string, string> = {
@@ -81,11 +84,27 @@ interface CreateShipmentParams {
 export async function createShipment(
   params: CreateShipmentParams
 ): Promise<{ success: boolean; data?: Record<string, string>; error?: string }> {
-  const merchantId = process.env.ECPAY_MERCHANT_ID!;
+  const merchantId = process.env.ECPAY_MERCHANT_ID;
+  if (!merchantId) {
+    throw new Error("Missing ECPAY_MERCHANT_ID environment variable");
+  }
   const isCvs = params.logisticsType.startsWith("cvs_");
 
+  // 明確使用台灣時區
   const now = new Date();
-  const tradeDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+  const twFormatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+  const parts = twFormatter.formatToParts(now);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value || "00";
+  const tradeDate = `${get("year")}/${get("month")}/${get("day")} ${get("hour")}:${get("minute")}:${get("second")}`;
 
   const body: Record<string, string> = {
     MerchantID: merchantId,

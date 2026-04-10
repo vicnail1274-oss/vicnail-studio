@@ -42,9 +42,10 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   // 新增團購商品
-  if (body.items?.length && groupBuy) {
+  const gb = groupBuy as { id: string };
+  if (body.items?.length && gb) {
     const items = body.items.map((item: { product_id: string; group_price: number; max_per_person?: number }) => ({
-      group_buy_id: groupBuy.id,
+      group_buy_id: gb.id,
       product_id: item.product_id,
       group_price: item.group_price,
       max_per_person: item.max_per_person || 0,

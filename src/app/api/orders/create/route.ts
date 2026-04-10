@@ -155,14 +155,28 @@ export async function POST(req: NextRequest) {
 
     await admin.from("order_items").insert(itemsWithOrderId);
 
-    // 扣庫存（現貨商品）
+    // 扣庫存（現貨商品）— 用 WHERE stock >= quantity 防止競態條件
     for (const item of items) {
       const product = products.find((p) => p.id === item.productId);
       if (product?.purchase_type === "instock") {
-        await admin
+        const { data: updated, error: stockError } = await admin
           .from("products")
           .update({ stock: product.stock - item.quantity })
-          .eq("id", product.id);
+          .eq("id", product.id)
+          .gte("stock", item.quantity)
+          .select("id");
+
+        if (stockError || !updated?.length) {
+          // 庫存不足，取消訂單
+          await admin
+            .from("orders")
+            .update({ status: "cancelled" })
+            .eq("id", order.id);
+          return NextResponse.json(
+            { error: `${product.title} 庫存不足，訂單已取消` },
+            { status: 409 }
+          );
+        }
       }
     }
 

@@ -195,13 +195,21 @@ export async function POST(req: NextRequest) {
         total_price: total,
       });
 
+      // 扣庫存（現貨商品）
+      if (product.purchase_type === "instock") {
+        await admin
+          .from("products")
+          .update({ stock: product.stock - parsed.quantity })
+          .eq("id", product.id);
+      }
+
       // 記錄 LINE 訂單
       await admin.from("line_orders").insert({
         line_user_id: userId,
         line_group_id: groupId,
         order_id: order.id,
         raw_message: text,
-        parsed_data: parsed,
+        parsed_data: parsed as unknown as Record<string, unknown>,
         status: "confirmed",
       });
 
@@ -266,7 +274,7 @@ export async function POST(req: NextRequest) {
       };
 
       const orderList = lineOrders
-        .map((lo: { order_id: string; orders: { order_number: string; status: string; total: number } | null }) => {
+        .map((lo: { order_id: string | null; orders: { order_number: string; status: string; total: number } | null }) => {
           const o = lo.orders;
           if (!o) return null;
           return `${o.order_number} | ${statusLabels[o.status] || o.status} | NT$${o.total}`;

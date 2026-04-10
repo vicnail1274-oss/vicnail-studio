@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const gb = groupBuy as any;
 
     // 取得所有訂閱團購通知的訂閱者
     const { data: subscribers } = await admin
@@ -56,7 +58,7 @@ export async function POST(req: NextRequest) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vicnail-studio.com";
 
     // 建構商品清單
-    const productList = (groupBuy.group_buy_items || [])
+    const productList = (gb.group_buy_items || [])
       .map((item: { products: { title: string; price: number; sale_price: number | null }; group_price: number }) => ({
         title: item.products?.title || "商品",
         originalPrice: item.products?.price || 0,
@@ -65,15 +67,15 @@ export async function POST(req: NextRequest) {
 
     const payload = {
       to: subscribers.map((s) => s.email),
-      subject: `[VicNail] 團購開團：${groupBuy.title}`,
+      subject: `[VicNail] 團購開團：${gb.title}`,
       groupBuy: {
-        title: groupBuy.title,
-        description: groupBuy.description,
-        startDate: groupBuy.start_date,
-        endDate: groupBuy.end_date,
-        targetQty: groupBuy.target_qty,
+        title: gb.title,
+        description: gb.description,
+        startDate: gb.start_date,
+        endDate: gb.end_date,
+        targetQty: gb.target_qty,
         products: productList,
-        shopUrl: `${siteUrl}/zh-TW/shop?group=${groupBuy.id}`,
+        shopUrl: `${siteUrl}/zh-TW/shop?group=${gb.id}`,
       },
     };
 

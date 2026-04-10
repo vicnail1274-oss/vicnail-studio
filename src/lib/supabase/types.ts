@@ -1,6 +1,6 @@
 /**
  * Supabase Database 型別定義
- * 對應 supabase/migrations/001_initial_schema.sql
+ * 對應 supabase/migrations/001~003
  */
 export type Database = {
   public: {
@@ -31,6 +31,15 @@ export type Database = {
           locale?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       courses: {
         Row: {
@@ -65,6 +74,7 @@ export type Database = {
           sort_order?: number;
           updated_at?: string;
         };
+        Relationships: [];
       };
       lessons: {
         Row: {
@@ -96,6 +106,15 @@ export type Database = {
           sort_order?: number;
           is_preview?: boolean;
         };
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey";
+            columns: ["course_id"];
+            isOneToOne: false;
+            referencedRelation: "courses";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       enrollments: {
         Row: {
@@ -116,6 +135,22 @@ export type Database = {
         Update: {
           expires_at?: string | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "enrollments_course_id_fkey";
+            columns: ["course_id"];
+            isOneToOne: false;
+            referencedRelation: "courses";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       lesson_progress: {
         Row: {
@@ -138,6 +173,22 @@ export type Database = {
           completed?: boolean;
           last_watched_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey";
+            columns: ["lesson_id"];
+            isOneToOne: false;
+            referencedRelation: "lessons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       products: {
         Row: {
@@ -202,6 +253,15 @@ export type Database = {
           sort_order?: number;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "fk_products_group_buy";
+            columns: ["group_buy_id"];
+            isOneToOne: false;
+            referencedRelation: "group_buys";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       group_buys: {
         Row: {
@@ -239,6 +299,7 @@ export type Database = {
           status?: "upcoming" | "active" | "closed" | "completed" | "cancelled";
           notify_subscribers?: boolean;
         };
+        Relationships: [];
       };
       group_buy_items: {
         Row: {
@@ -259,6 +320,22 @@ export type Database = {
           group_price?: number;
           max_per_person?: number;
         };
+        Relationships: [
+          {
+            foreignKeyName: "group_buy_items_group_buy_id_fkey";
+            columns: ["group_buy_id"];
+            isOneToOne: false;
+            referencedRelation: "group_buys";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "group_buy_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       cart_items: {
         Row: {
@@ -281,6 +358,22 @@ export type Database = {
           quantity?: number;
           variant?: Record<string, string>;
         };
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cart_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       line_orders: {
         Row: {
@@ -312,6 +405,39 @@ export type Database = {
           status?: "pending" | "confirmed" | "linked" | "cancelled" | "error";
           error_message?: string | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "line_orders_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      newsletter_subscribers: {
+        Row: {
+          id: string;
+          email: string;
+          source: string;
+          subscribed_at: string;
+          unsubscribed_at: string | null;
+          is_active: boolean;
+          sub_type: "newsletter" | "groupbuy" | "all";
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          source?: string;
+          is_active?: boolean;
+          sub_type?: "newsletter" | "groupbuy" | "all";
+        };
+        Update: {
+          is_active?: boolean;
+          unsubscribed_at?: string | null;
+          sub_type?: "newsletter" | "groupbuy" | "all";
+        };
+        Relationships: [];
       };
       orders: {
         Row: {
@@ -370,6 +496,15 @@ export type Database = {
           shipped_at?: string | null;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "orders_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       order_items: {
         Row: {
@@ -393,6 +528,15 @@ export type Database = {
           total_price: number;
         };
         Update: never;
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: Record<string, never>;
@@ -401,7 +545,7 @@ export type Database = {
   };
 };
 
-// 方便用的 Row 型別別名
+// Row 型別別名
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Course = Database["public"]["Tables"]["courses"]["Row"];
 export type Lesson = Database["public"]["Tables"]["lessons"]["Row"];
@@ -414,3 +558,4 @@ export type GroupBuy = Database["public"]["Tables"]["group_buys"]["Row"];
 export type GroupBuyItem = Database["public"]["Tables"]["group_buy_items"]["Row"];
 export type CartItemRow = Database["public"]["Tables"]["cart_items"]["Row"];
 export type LineOrder = Database["public"]["Tables"]["line_orders"]["Row"];
+export type NewsletterSubscriber = Database["public"]["Tables"]["newsletter_subscribers"]["Row"];
