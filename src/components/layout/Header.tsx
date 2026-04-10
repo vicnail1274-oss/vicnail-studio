@@ -153,9 +153,16 @@ export function Header({ locale }: { locale: string }) {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-10 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
-                    <div className="px-4 py-2 text-xs text-gray-400 border-b border-gray-50">
-                      {user.email}
+                  <div className="absolute right-0 top-10 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
+                    <div className="px-4 py-3 border-b border-gray-50">
+                      <p className="text-sm font-semibold text-gray-900">
+                        {(() => {
+                          const h = new Date().getHours();
+                          const greeting = h < 5 ? "夜深了" : h < 11 ? "早安" : h < 14 ? "午安" : h < 18 ? "午後好" : "晚安";
+                          return `${greeting}，${displayName} 👋`;
+                        })()}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5 truncate">{user.email}</p>
                     </div>
                     <Link
                       href="/account"

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import Script from "next/script";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingLineButton } from "@/components/layout/FloatingLineButton";
 import { WebsiteJsonLd } from "@/components/seo/JsonLd";
 
 const inter = Inter({
@@ -111,6 +112,7 @@ export default async function LocaleLayout({
           <Header locale={locale} />
           <main className="pt-16">{children}</main>
           <Footer locale={locale} />
+          <FloatingLineButton />
         </NextIntlClientProvider>
       </body>
     </html>

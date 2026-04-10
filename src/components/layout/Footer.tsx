@@ -65,6 +65,14 @@ export function Footer({ locale }: { locale: string }) {
                   {nav("ai")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/faq"
+                  className="text-sm text-gray-400 hover:text-nail-gold transition-colors"
+                >
+                  {locale === "zh-TW" ? "常見問題" : "FAQ"}
+                </Link>
+              </li>
             </ul>
           </div>
 

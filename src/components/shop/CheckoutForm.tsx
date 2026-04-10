@@ -10,6 +10,9 @@ import {
   Building2,
   Wallet,
   ArrowLeft,
+  ShieldCheck,
+  Lock,
+  RefreshCw,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -19,6 +22,8 @@ import {
   type CartItem,
 } from "@/lib/cart-store";
 import { calculateShippingFee, getLogisticsLabel, type LogisticsType } from "@/lib/ecpay";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/ecpay/logistics";
+import { AddressPicker } from "./AddressPicker";
 
 const SHIPPING_OPTIONS: {
   key: LogisticsType;
@@ -68,8 +73,9 @@ export function CheckoutForm() {
   }, []);
 
   const subtotal = getCartTotal(items);
-  const shippingFee = calculateShippingFee(shipping);
+  const shippingFee = calculateShippingFee(shipping, subtotal);
   const total = subtotal + shippingFee;
+  const freeShipReached = subtotal >= FREE_SHIPPING_THRESHOLD;
   const isCvs = shipping.startsWith("cvs_");
   const isHomeDelivery = shipping.startsWith("home_");
 
@@ -167,7 +173,7 @@ export function CheckoutForm() {
         document.body.appendChild(ecpayForm);
         ecpayForm.submit();
       } else {
-        router.push(`/account/orders`);
+        router.push(`/checkout/success?order=${data.orderNumber}`);
       }
     } catch {
       alert("網路錯誤，請稍後再試");
@@ -261,7 +267,7 @@ export function CheckoutForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {SHIPPING_OPTIONS.map((opt) => {
             const Icon = opt.icon;
-            const fee = calculateShippingFee(opt.key);
+            const fee = calculateShippingFee(opt.key, subtotal);
             return (
               <button
                 key={opt.key}
@@ -296,6 +302,13 @@ export function CheckoutForm() {
           })}
         </div>
 
+        {/* 運費提示 */}
+        {freeShipReached && shippingFee === 0 && shipping !== "self_pickup" && (
+          <p className="mt-3 text-sm text-nail-gold font-semibold">
+            🎉 您的訂單金額已達 NT$ {FREE_SHIPPING_THRESHOLD.toLocaleString()}，享免運！
+          </p>
+        )}
+
         {/* 超商門市選擇 */}
         {isCvs && (
           <div className="mt-4 p-4 bg-amber-50 rounded-xl">
@@ -327,13 +340,10 @@ export function CheckoutForm() {
             <label className="text-sm font-medium text-foreground">
               配送地址 *
             </label>
-            <input
-              type="text"
-              required
+            <AddressPicker
               value={form.address}
-              onChange={(e) => updateField("address", e.target.value)}
-              className="mt-1 w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-nail-gold/30"
-              placeholder="完整地址"
+              onChange={(v) => updateField("address", v)}
+              className="mt-2"
             />
           </div>
         )}
@@ -420,6 +430,37 @@ export function CheckoutForm() {
         >
           {submitting ? "處理中..." : "確認訂單並前往付款"}
         </button>
+      </div>
+
+      {/* 信任徽章 */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
+        <div className="flex items-start gap-3 p-4 bg-white rounded-xl border border-gray-100">
+          <ShieldCheck size={22} className="text-green-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">綠界金流</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              付款由 ECPay 處理，個資加密
+            </p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 p-4 bg-white rounded-xl border border-gray-100">
+          <Lock size={22} className="text-blue-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">SSL 安全加密</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              全站 HTTPS 傳輸，保護您的資料
+            </p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 p-4 bg-white rounded-xl border border-gray-100">
+          <RefreshCw size={22} className="text-pink-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">七天鑑賞</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              商品到貨七天內可退換
+            </p>
+          </div>
+        </div>
       </div>
     </form>
   );

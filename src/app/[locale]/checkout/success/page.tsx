@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import { CheckCircle2, Package, ArrowRight, Home } from "lucide-react";
 import { CartClearOnMount } from "@/components/shop/CartClearOnMount";
+import { OrderTimeline } from "@/components/shop/OrderTimeline";
 
 export const metadata: Metadata = {
   title: "訂單完成",
@@ -36,12 +37,13 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
   type OrderSummary = {
     id: string;
     order_number: string;
-    status: string;
+    status: "pending" | "paid" | "shipped" | "completed" | "cancelled" | "refunded";
     total: number;
     shipping_fee: number;
     payment_method: string | null;
     shipping_name: string | null;
     shipping_address: string | null;
+    tracking_number: string | null;
     created_at: string;
   };
   type OrderItemSummary = {
@@ -57,7 +59,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
     const { data: orderData } = await supabase
       .from("orders")
       .select(
-        "id, order_number, status, total, shipping_fee, payment_method, shipping_name, shipping_address, created_at"
+        "id, order_number, status, total, shipping_fee, payment_method, shipping_name, shipping_address, tracking_number, created_at"
       )
       .eq("order_number", orderNumber)
       .maybeSingle();
@@ -106,6 +108,11 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
               >
                 {STATUS_LABELS[order.status]?.text || order.status}
               </span>
+            </div>
+
+            {/* 訂單進度時間軸 */}
+            <div className="py-5 border-b border-gray-100">
+              <OrderTimeline status={order.status} trackingNumber={order.tracking_number} />
             </div>
 
             {/* 商品明細 */}
