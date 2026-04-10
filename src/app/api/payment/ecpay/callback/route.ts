@@ -29,62 +29,63 @@ export async function POST(req: NextRequest) {
     const admin = await createAdminClient();
 
     if (rtnCode === "1") {
-      // 付款成功
-      const updateData: Record<string, string> = {
-        status: "paid",
-        payment_id: tradeNo,
-        ecpay_trade_no: tradeNo,
-        paid_at: new Date().toISOString(),
-      };
+      // 付款成功 — 三層查找定位訂單
+      let orderRow: { id: string; status: string } | null = null;
 
-      // 優先用 ecpay_trade_no 精確匹配已存在的訂單
-      let matched = false;
-      if (tradeNo) {
-        const { data: existing } = await admin
+      // 1. CustomField1（Supabase order UUID）— 最可靠
+      if (orderUUID) {
+        const { data } = await admin
           .from("orders")
-          .select("id")
+          .select("id, status")
+          .eq("id", orderUUID)
+          .limit(1);
+        if (data?.[0]) orderRow = data[0];
+      }
+      // 2. ecpay_trade_no 精確比對
+      if (!orderRow && tradeNo) {
+        const { data } = await admin
+          .from("orders")
+          .select("id, status")
           .eq("ecpay_trade_no", tradeNo)
           .limit(1);
-        if (existing?.[0]) {
-          await admin.from("orders").update(updateData).eq("id", existing[0].id);
-          matched = true;
-        }
+        if (data?.[0]) orderRow = data[0];
       }
-
-      // 次優先用 CustomField1（order UUID）
-      if (!matched && orderUUID) {
-        const { data: existing, error } = await admin
+      // 3. order_number 比對 MerchantTradeNo
+      if (!orderRow && merchantTradeNo) {
+        const { data } = await admin
           .from("orders")
-          .update(updateData)
-          .eq("id", orderUUID)
-          .select("id");
-        if (error) {
-          console.error(`ECPay callback: update by UUID failed`, { orderUUID, error });
-        }
-        matched = !!(existing?.length);
-      }
-
-      // fallback: 用 order_number 精確匹配 MerchantTradeNo
-      if (!matched && merchantTradeNo) {
-        const { data: orders } = await admin
-          .from("orders")
-          .select("id, order_number")
+          .select("id, status")
           .eq("order_number", merchantTradeNo)
           .limit(1);
-
-        if (orders?.[0]) {
-          await admin.from("orders").update(updateData).eq("id", orders[0].id);
-          matched = true;
-        }
+        if (data?.[0]) orderRow = data[0];
       }
 
-      if (!matched) {
-        console.error(`ECPay callback: no order found`, { merchantTradeNo, tradeNo, orderUUID });
-      }
+      if (!orderRow) {
+        console.error(`ECPay callback: no order found`, {
+          merchantTradeNo,
+          tradeNo,
+          orderUUID,
+        });
+      } else if (orderRow.status === "paid") {
+        // Idempotency：已處理過，直接回應 OK 不重複更新
+        console.log(
+          `ECPay callback: order ${orderRow.id} already paid, skip`
+        );
+      } else {
+        await admin
+          .from("orders")
+          .update({
+            status: "paid",
+            payment_id: tradeNo,
+            ecpay_trade_no: tradeNo,
+            paid_at: new Date().toISOString(),
+          })
+          .eq("id", orderRow.id);
 
-      console.log(
-        `ECPay payment success: ${merchantTradeNo}, TradeNo: ${tradeNo}, Type: ${paymentType}, matched: ${matched}`
-      );
+        console.log(
+          `ECPay payment success: ${merchantTradeNo}, TradeNo: ${tradeNo}, Type: ${paymentType}`
+        );
+      }
     } else {
       console.error(
         `ECPay payment failed: ${merchantTradeNo}, Code: ${rtnCode}, Msg: ${body.RtnMsg}`

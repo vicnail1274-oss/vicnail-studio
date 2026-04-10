@@ -10,7 +10,8 @@ const ECPAY_PAYMENT_URL =
     : "https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5";
 
 interface PaymentParams {
-  orderId: string;
+  orderNumber: string; // 商店訂單編號（會變成 MerchantTradeNo）
+  orderUuid: string;   // Supabase 內部 UUID（會存進 CustomField1 供精確回查）
   totalAmount: number;
   itemName: string;
   returnUrl: string;
@@ -63,7 +64,8 @@ export function generateCheckMacValue(
  * 建立 ECPay 付款表單參數
  */
 export function createPaymentForm({
-  orderId,
+  orderNumber,
+  orderUuid,
   totalAmount,
   itemName,
   returnUrl,
@@ -98,7 +100,7 @@ export function createPaymentForm({
 
   const params: Record<string, string> = {
     MerchantID: merchantId,
-    MerchantTradeNo: orderId.replace(/-/g, "").slice(0, 20),
+    MerchantTradeNo: orderNumber.replace(/-/g, "").slice(0, 20),
     MerchantTradeDate: tradeDate,
     PaymentType: "aio",
     TotalAmount: String(totalAmount),
@@ -108,7 +110,7 @@ export function createPaymentForm({
     ClientBackURL: clientBackUrl,
     ChoosePayment: choosePayment,
     EncryptType: "1",
-    CustomField1: orderId, // 存完整 order UUID
+    CustomField1: orderUuid, // 完整 Supabase order UUID 供回查
   };
 
   params.CheckMacValue = generateCheckMacValue(params);

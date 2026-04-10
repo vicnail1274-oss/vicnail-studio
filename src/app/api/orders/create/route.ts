@@ -204,7 +204,8 @@ export async function POST(req: NextRequest) {
     };
 
     const { url, params } = createPaymentForm({
-      orderId: order.order_number,
+      orderNumber: order.order_number,
+      orderUuid: order.id,
       totalAmount: total,
       itemName: itemName.slice(0, 200),
       returnUrl: `${baseUrl}/api/payment/ecpay/callback`,
