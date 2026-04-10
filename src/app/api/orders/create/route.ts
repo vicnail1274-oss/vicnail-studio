@@ -243,7 +243,7 @@ export async function POST(req: NextRequest) {
       totalAmount: total,
       itemName: itemName.slice(0, 200),
       returnUrl: `${baseUrl}/api/payment/ecpay/callback`,
-      clientBackUrl: `${baseUrl}/zh-TW/account/orders`,
+      clientBackUrl: `${baseUrl}/zh-TW/checkout/success?order=${order.order_number}`,
       paymentMethods: paymentMethodMap[payment],
     });
 

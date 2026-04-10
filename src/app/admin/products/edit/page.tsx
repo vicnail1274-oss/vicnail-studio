@@ -1,12 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function AdminProductEditPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-gray-500">載入中...</div>}>
+      <AdminProductEditInner />
+    </Suspense>
+  );
+}
+
+function AdminProductEditInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
