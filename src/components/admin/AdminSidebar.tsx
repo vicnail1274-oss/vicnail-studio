@@ -8,11 +8,15 @@ import {
   ShoppingCart,
   Users,
   Home,
+  GraduationCap,
+  Ticket,
 } from "lucide-react";
 
 const navItems = [
   { href: "/admin/articles", label: "文章管理", icon: FileText },
   { href: "/admin/products", label: "商品管理", icon: Package },
+  { href: "/admin/courses", label: "課程管理", icon: GraduationCap },
+  { href: "/admin/promo-codes", label: "優惠碼", icon: Ticket },
   { href: "/admin/orders", label: "訂單管理", icon: ShoppingCart },
   { href: "/admin/group-buys", label: "團購管理", icon: Users },
 ];

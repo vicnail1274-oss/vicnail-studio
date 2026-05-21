@@ -1,7 +1,17 @@
 /**
  * Supabase Database 型別定義
- * 對應 supabase/migrations/001~003
+ * 對應 supabase/migrations/001~008
+ *
+ * 注意：手動維護。若改 schema，記得同步更新此檔。
  */
+type Jsonish =
+  | string
+  | number
+  | boolean
+  | null
+  | Jsonish[]
+  | { [key: string]: Jsonish };
+
 export type Database = {
   public: {
     Tables: {
@@ -44,34 +54,72 @@ export type Database = {
       courses: {
         Row: {
           id: string;
+          slug: string | null;
           title: string;
           description: string | null;
+          long_description: string | null;
           price: number;
           sale_price: number | null;
           thumbnail_url: string | null;
+          cover_video_url: string | null;
           status: "draft" | "published" | "archived";
           sort_order: number;
+          what_youll_learn: Jsonish;
+          prerequisites: Jsonish;
+          target_audience: Jsonish;
+          category: string | null;
+          level: "beginner" | "intermediate" | "advanced" | "all" | null;
+          instructor_name: string | null;
+          instructor_bio: string | null;
+          total_lessons: number;
+          total_duration_seconds: number;
+          featured: boolean;
+          published_at: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
+          slug?: string | null;
           title: string;
           description?: string | null;
+          long_description?: string | null;
           price?: number;
           sale_price?: number | null;
           thumbnail_url?: string | null;
+          cover_video_url?: string | null;
           status?: "draft" | "published" | "archived";
           sort_order?: number;
+          what_youll_learn?: Jsonish;
+          prerequisites?: Jsonish;
+          target_audience?: Jsonish;
+          category?: string | null;
+          level?: "beginner" | "intermediate" | "advanced" | "all" | null;
+          instructor_name?: string | null;
+          instructor_bio?: string | null;
+          featured?: boolean;
+          published_at?: string | null;
         };
         Update: {
+          slug?: string | null;
           title?: string;
           description?: string | null;
+          long_description?: string | null;
           price?: number;
           sale_price?: number | null;
           thumbnail_url?: string | null;
+          cover_video_url?: string | null;
           status?: "draft" | "published" | "archived";
           sort_order?: number;
+          what_youll_learn?: Jsonish;
+          prerequisites?: Jsonish;
+          target_audience?: Jsonish;
+          category?: string | null;
+          level?: "beginner" | "intermediate" | "advanced" | "all" | null;
+          instructor_name?: string | null;
+          instructor_bio?: string | null;
+          featured?: boolean;
+          published_at?: string | null;
           updated_at?: string;
         };
         Relationships: [];
@@ -83,9 +131,21 @@ export type Database = {
           title: string;
           description: string | null;
           video_id: string | null;
+          bunny_video_id: string | null;
+          hls_url: string | null;
+          thumbnail_url: string | null;
           duration_seconds: number;
           sort_order: number;
           is_preview: boolean;
+          attachments: Jsonish;
+          resolution_height: number | null;
+          upload_status:
+            | "pending"
+            | "uploading"
+            | "processing"
+            | "ready"
+            | "failed";
+          uploaded_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -94,17 +154,41 @@ export type Database = {
           title: string;
           description?: string | null;
           video_id?: string | null;
+          bunny_video_id?: string | null;
+          hls_url?: string | null;
+          thumbnail_url?: string | null;
           duration_seconds?: number;
           sort_order?: number;
           is_preview?: boolean;
+          attachments?: Jsonish;
+          resolution_height?: number | null;
+          upload_status?:
+            | "pending"
+            | "uploading"
+            | "processing"
+            | "ready"
+            | "failed";
+          uploaded_at?: string | null;
         };
         Update: {
           title?: string;
           description?: string | null;
           video_id?: string | null;
+          bunny_video_id?: string | null;
+          hls_url?: string | null;
+          thumbnail_url?: string | null;
           duration_seconds?: number;
           sort_order?: number;
           is_preview?: boolean;
+          attachments?: Jsonish;
+          resolution_height?: number | null;
+          upload_status?:
+            | "pending"
+            | "uploading"
+            | "processing"
+            | "ready"
+            | "failed";
+          uploaded_at?: string | null;
         };
         Relationships: [
           {
@@ -124,6 +208,11 @@ export type Database = {
           order_id: string | null;
           purchased_at: string;
           expires_at: string | null;
+          device_limit: number;
+          source: "purchase" | "gift" | "promo_free" | "manual_grant";
+          granted_by: string | null;
+          notes: string | null;
+          last_accessed_at: string | null;
         };
         Insert: {
           id?: string;
@@ -131,9 +220,16 @@ export type Database = {
           course_id: string;
           order_id?: string | null;
           expires_at?: string | null;
+          device_limit?: number;
+          source?: "purchase" | "gift" | "promo_free" | "manual_grant";
+          granted_by?: string | null;
+          notes?: string | null;
         };
         Update: {
           expires_at?: string | null;
+          device_limit?: number;
+          notes?: string | null;
+          last_accessed_at?: string | null;
         };
         Relationships: [
           {
@@ -158,7 +254,10 @@ export type Database = {
           user_id: string;
           lesson_id: string;
           progress_pct: number;
+          position_seconds: number;
+          total_watch_seconds: number;
           completed: boolean;
+          completed_at: string | null;
           last_watched_at: string;
         };
         Insert: {
@@ -166,11 +265,18 @@ export type Database = {
           user_id: string;
           lesson_id: string;
           progress_pct?: number;
+          position_seconds?: number;
+          total_watch_seconds?: number;
           completed?: boolean;
+          completed_at?: string | null;
+          last_watched_at?: string;
         };
         Update: {
           progress_pct?: number;
+          position_seconds?: number;
+          total_watch_seconds?: number;
           completed?: boolean;
+          completed_at?: string | null;
           last_watched_at?: string;
         };
         Relationships: [
@@ -189,6 +295,122 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      promo_codes: {
+        Row: {
+          id: string;
+          code: string;
+          description: string | null;
+          discount_type: "percentage" | "fixed_amount" | "free";
+          discount_value: number;
+          applies_to: "all" | "courses" | "products" | "specific";
+          applicable_course_ids: Jsonish;
+          applicable_product_ids: Jsonish;
+          min_purchase_amount: number;
+          max_uses: number | null;
+          max_uses_per_user: number;
+          used_count: number;
+          starts_at: string;
+          expires_at: string | null;
+          is_active: boolean;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          code: string;
+          description?: string | null;
+          discount_type: "percentage" | "fixed_amount" | "free";
+          discount_value: number;
+          applies_to?: "all" | "courses" | "products" | "specific";
+          applicable_course_ids?: Jsonish;
+          applicable_product_ids?: Jsonish;
+          min_purchase_amount?: number;
+          max_uses?: number | null;
+          max_uses_per_user?: number;
+          starts_at?: string;
+          expires_at?: string | null;
+          is_active?: boolean;
+          created_by?: string | null;
+        };
+        Update: {
+          code?: string;
+          description?: string | null;
+          discount_type?: "percentage" | "fixed_amount" | "free";
+          discount_value?: number;
+          applies_to?: "all" | "courses" | "products" | "specific";
+          applicable_course_ids?: Jsonish;
+          applicable_product_ids?: Jsonish;
+          min_purchase_amount?: number;
+          max_uses?: number | null;
+          max_uses_per_user?: number;
+          starts_at?: string;
+          expires_at?: string | null;
+          is_active?: boolean;
+        };
+        Relationships: [];
+      };
+      promo_code_redemptions: {
+        Row: {
+          id: string;
+          promo_code_id: string;
+          user_id: string;
+          order_id: string | null;
+          discount_amount: number;
+          redeemed_at: string;
+        };
+        Insert: {
+          id?: string;
+          promo_code_id: string;
+          user_id: string;
+          order_id?: string | null;
+          discount_amount: number;
+        };
+        Update: never;
+        Relationships: [
+          {
+            foreignKeyName: "promo_code_redemptions_promo_code_id_fkey";
+            columns: ["promo_code_id"];
+            isOneToOne: false;
+            referencedRelation: "promo_codes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      video_view_sessions: {
+        Row: {
+          id: string;
+          user_id: string;
+          lesson_id: string;
+          course_id: string;
+          device_fingerprint: string;
+          device_label: string | null;
+          user_agent: string | null;
+          ip_address: string | null;
+          started_at: string;
+          last_heartbeat_at: string;
+          ended_at: string | null;
+          is_active: boolean;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          lesson_id: string;
+          course_id: string;
+          device_fingerprint: string;
+          device_label?: string | null;
+          user_agent?: string | null;
+          ip_address?: string | null;
+          is_active?: boolean;
+        };
+        Update: {
+          lesson_id?: string;
+          last_heartbeat_at?: string;
+          ended_at?: string | null;
+          is_active?: boolean;
+        };
+        Relationships: [];
       };
       products: {
         Row: {
@@ -516,8 +738,18 @@ export type Database = {
           id: string;
           user_id: string | null;
           order_number: string;
-          status: "pending" | "paid" | "shipped" | "completed" | "cancelled" | "refunded";
+          status:
+            | "pending"
+            | "paid"
+            | "shipped"
+            | "completed"
+            | "cancelled"
+            | "refunded";
           total: number;
+          original_total: number | null;
+          discount_amount: number;
+          promo_code: string | null;
+          promo_code_id: string | null;
           shipping_fee: number;
           payment_method: string | null;
           payment_id: string | null;
@@ -543,8 +775,18 @@ export type Database = {
           id?: string;
           user_id?: string | null;
           order_number: string;
-          status?: "pending" | "paid" | "shipped" | "completed" | "cancelled" | "refunded";
+          status?:
+            | "pending"
+            | "paid"
+            | "shipped"
+            | "completed"
+            | "cancelled"
+            | "refunded";
           total: number;
+          original_total?: number | null;
+          discount_amount?: number;
+          promo_code?: string | null;
+          promo_code_id?: string | null;
           shipping_fee?: number;
           payment_method?: string | null;
           shipping_name?: string | null;
@@ -556,9 +798,16 @@ export type Database = {
           logistics_type?: string | null;
           source?: "web" | "line" | "admin";
           notes?: string | null;
+          paid_at?: string | null;
         };
         Update: {
-          status?: "pending" | "paid" | "shipped" | "completed" | "cancelled" | "refunded";
+          status?:
+            | "pending"
+            | "paid"
+            | "shipped"
+            | "completed"
+            | "cancelled"
+            | "refunded";
           payment_id?: string | null;
           tracking_number?: string | null;
           logistics_id?: string | null;
@@ -611,8 +860,70 @@ export type Database = {
         ];
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Views: {
+      my_enrolled_courses: {
+        Row: {
+          user_id: string;
+          course_id: string;
+          slug: string | null;
+          title: string;
+          description: string | null;
+          thumbnail_url: string | null;
+          total_lessons: number;
+          total_duration_seconds: number;
+          level: "beginner" | "intermediate" | "advanced" | "all" | null;
+          instructor_name: string | null;
+          purchased_at: string;
+          expires_at: string | null;
+          last_accessed_at: string | null;
+          completed_lessons: number;
+          progress_percentage: number;
+        };
+        Relationships: [];
+      };
+    };
+    Functions: {
+      validate_promo_code: {
+        Args: {
+          p_code: string;
+          p_user_id: string;
+          p_subtotal: number;
+          p_course_ids?: string[];
+          p_product_ids?: string[];
+        };
+        Returns: {
+          valid: boolean;
+          promo_id: string | null;
+          discount_amount: number;
+          reason: string;
+        }[];
+      };
+      grant_course_enrollments_from_order: {
+        Args: { p_order_id: string };
+        Returns: number;
+      };
+      record_promo_redemption: {
+        Args: {
+          p_promo_id: string;
+          p_user_id: string;
+          p_order_id: string;
+          p_discount_amount: number;
+        };
+        Returns: boolean;
+      };
+      increment_promo_used_count: {
+        Args: { p_id: string };
+        Returns: number;
+      };
+      user_has_course_access: {
+        Args: { p_user_id: string; p_course_id: string };
+        Returns: boolean;
+      };
+      expire_stale_video_sessions: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
+    };
     Enums: Record<string, never>;
   };
 };
@@ -622,13 +933,24 @@ export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Course = Database["public"]["Tables"]["courses"]["Row"];
 export type Lesson = Database["public"]["Tables"]["lessons"]["Row"];
 export type Enrollment = Database["public"]["Tables"]["enrollments"]["Row"];
-export type LessonProgress = Database["public"]["Tables"]["lesson_progress"]["Row"];
+export type LessonProgress =
+  Database["public"]["Tables"]["lesson_progress"]["Row"];
 export type Product = Database["public"]["Tables"]["products"]["Row"];
 export type Order = Database["public"]["Tables"]["orders"]["Row"];
 export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
 export type GroupBuy = Database["public"]["Tables"]["group_buys"]["Row"];
-export type GroupBuyItem = Database["public"]["Tables"]["group_buy_items"]["Row"];
+export type GroupBuyItem =
+  Database["public"]["Tables"]["group_buy_items"]["Row"];
 export type CartItemRow = Database["public"]["Tables"]["cart_items"]["Row"];
 export type LineOrder = Database["public"]["Tables"]["line_orders"]["Row"];
-export type NewsletterSubscriber = Database["public"]["Tables"]["newsletter_subscribers"]["Row"];
-export type ProductReview = Database["public"]["Tables"]["product_reviews"]["Row"];
+export type NewsletterSubscriber =
+  Database["public"]["Tables"]["newsletter_subscribers"]["Row"];
+export type ProductReview =
+  Database["public"]["Tables"]["product_reviews"]["Row"];
+export type PromoCode = Database["public"]["Tables"]["promo_codes"]["Row"];
+export type PromoCodeRedemption =
+  Database["public"]["Tables"]["promo_code_redemptions"]["Row"];
+export type VideoViewSession =
+  Database["public"]["Tables"]["video_view_sessions"]["Row"];
+export type MyEnrolledCourse =
+  Database["public"]["Views"]["my_enrolled_courses"]["Row"];
