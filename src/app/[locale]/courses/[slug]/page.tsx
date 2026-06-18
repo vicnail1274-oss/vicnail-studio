@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CourseJsonLd } from "@/components/seo/JsonLd";
+import { CourseReviews } from "@/components/courses/CourseReviews";
 import type { Course } from "@/lib/supabase/types";
 
 interface PageProps {
@@ -74,6 +75,18 @@ export default async function CourseDetailPage({ params }: PageProps) {
     )
     .eq("course_id", course.id)
     .order("sort_order", { ascending: true });
+
+  // 評分摘要（無資料則不顯示）
+  const { data: ratingSummary } = (await supabase
+    .from("course_rating_summary")
+    .select("avg_rating, review_count")
+    .eq("course_id", course.id)
+    .maybeSingle()) as {
+    data: { avg_rating: number | null; review_count: number } | null;
+  };
+  const avgRating =
+    ratingSummary?.avg_rating != null ? Number(ratingSummary.avg_rating) : null;
+  const reviewCount = ratingSummary?.review_count ?? 0;
 
   const {
     data: { user },
@@ -167,6 +180,31 @@ export default async function CourseDetailPage({ params }: PageProps) {
                 <User size={16} />
                 {course.instructor_name || "Vic 老師"}
               </span>
+              {avgRating !== null && reviewCount > 0 && (
+                <span
+                  className="flex items-center gap-1"
+                  aria-label={`平均評分 ${avgRating} 分，共 ${reviewCount} 則評價`}
+                >
+                  <span className="flex items-center">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star
+                        key={n}
+                        size={16}
+                        className={
+                          n <= Math.round(avgRating)
+                            ? "text-nail-gold"
+                            : "text-gray-300"
+                        }
+                        fill={n <= Math.round(avgRating) ? "currentColor" : "none"}
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      />
+                    ))}
+                  </span>
+                  <span className="font-medium text-foreground">{avgRating}</span>
+                  <span>({reviewCount})</span>
+                </span>
+              )}
             </div>
           </div>
 
@@ -348,6 +386,12 @@ export default async function CourseDetailPage({ params }: PageProps) {
               )}
             </div>
           </section>
+
+          <CourseReviews
+            courseId={course.id}
+            locale={locale}
+            canReview={hasAccess}
+          />
         </div>
 
         {/* Right column: 詳細資訊 */}

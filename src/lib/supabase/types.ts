@@ -681,6 +681,44 @@ export type Database = {
           },
         ];
       };
+      course_reviews: {
+        Row: {
+          id: string;
+          course_id: string;
+          user_id: string;
+          rating: number;
+          comment: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          course_id: string;
+          user_id: string;
+          rating: number;
+          comment?: string | null;
+        };
+        Update: {
+          rating?: number;
+          comment?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "course_reviews_course_id_fkey";
+            columns: ["course_id"];
+            isOneToOne: false;
+            referencedRelation: "courses";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "course_reviews_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       stock_notifications: {
         Row: {
           id: string;
@@ -861,6 +899,14 @@ export type Database = {
       };
     };
     Views: {
+      course_rating_summary: {
+        Row: {
+          course_id: string;
+          avg_rating: number | null;
+          review_count: number;
+        };
+        Relationships: [];
+      };
       my_enrolled_courses: {
         Row: {
           user_id: string;
@@ -947,6 +993,10 @@ export type NewsletterSubscriber =
   Database["public"]["Tables"]["newsletter_subscribers"]["Row"];
 export type ProductReview =
   Database["public"]["Tables"]["product_reviews"]["Row"];
+export type CourseReview =
+  Database["public"]["Tables"]["course_reviews"]["Row"];
+export type CourseRatingSummary =
+  Database["public"]["Views"]["course_rating_summary"]["Row"];
 export type PromoCode = Database["public"]["Tables"]["promo_codes"]["Row"];
 export type PromoCodeRedemption =
   Database["public"]["Tables"]["promo_code_redemptions"]["Row"];
