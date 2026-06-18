@@ -76,19 +76,33 @@ export function ContactCTA() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
+                asChild
                 size="lg"
                 className="bg-[#06C755] hover:bg-[#06C755]/90 text-white rounded-full px-8"
               >
-                <MessageCircle size={18} className="mr-2" />
-                加入官方 LINE 預約諮詢
+                <a
+                  href="https://line.me/ti/p/vicnail_studio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle size={18} className="mr-2" />
+                  加入官方 LINE 預約諮詢
+                </a>
               </Button>
               <Button
+                asChild
                 size="lg"
                 variant="outline"
                 className="border-nail-gold/30 text-nail-gold hover:bg-nail-gold/5 rounded-full px-8"
               >
-                <Instagram size={18} className="mr-2" />
-                Instagram 私訊
+                <a
+                  href="https://www.instagram.com/vicnail_studio/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Instagram size={18} className="mr-2" />
+                  Instagram 私訊
+                </a>
               </Button>
             </div>
           </div>

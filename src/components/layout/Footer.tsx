@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Instagram, Facebook, Mail } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 
 export function Footer({ locale }: { locale: string }) {
   const t = useTranslations("footer");
@@ -75,18 +75,13 @@ export function Footer({ locale }: { locale: string }) {
             </h3>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://www.instagram.com/vicnail_studio/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-nail-gold transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-nail-gold transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook size={20} />
               </a>
               <a
                 href="mailto:hello@vicnail-studio.com"

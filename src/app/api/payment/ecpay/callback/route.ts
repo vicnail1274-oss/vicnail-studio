@@ -73,13 +73,19 @@ export async function POST(req: NextRequest) {
 
     if (rtnCode === "1") {
       // 付款成功 — 三層查找定位訂單
-      let orderRow: { id: string; status: string } | null = null;
+      let orderRow: {
+        id: string;
+        status: string;
+        total: number;
+        ecpay_trade_no: string | null;
+      } | null = null;
+      const SELECT_COLS = "id, status, total, ecpay_trade_no";
 
       // 1. CustomField1（Supabase order UUID）— 最可靠
       if (orderUUID) {
         const { data } = await admin
           .from("orders")
-          .select("id, status")
+          .select(SELECT_COLS)
           .eq("id", orderUUID)
           .limit(1);
         if (data?.[0]) orderRow = data[0];
@@ -88,7 +94,7 @@ export async function POST(req: NextRequest) {
       if (!orderRow && tradeNo) {
         const { data } = await admin
           .from("orders")
-          .select("id, status")
+          .select(SELECT_COLS)
           .eq("ecpay_trade_no", tradeNo)
           .limit(1);
         if (data?.[0]) orderRow = data[0];
@@ -97,7 +103,7 @@ export async function POST(req: NextRequest) {
       if (!orderRow && merchantTradeNo) {
         const { data } = await admin
           .from("orders")
-          .select("id, status")
+          .select(SELECT_COLS)
           .eq("order_number", merchantTradeNo)
           .limit(1);
         if (data?.[0]) orderRow = data[0];
@@ -109,12 +115,20 @@ export async function POST(req: NextRequest) {
           tradeNo,
           orderUUID,
         });
-      } else if (orderRow.status === "paid") {
-        // Idempotency：已處理過，直接回應 OK 不重複更新
-        // 但仍嘗試補建 enrollments（過去版本可能沒建）
-        await tryGrantCourseEnrollments(admin, orderRow.id);
+      } else if (Number(body.TotalAmount) !== Number(orderRow.total)) {
+        // 金額不符：可能遭竄改，記錄並拒絕開通
+        console.error(`ECPay callback: amount mismatch`, {
+          orderId: orderRow.id,
+          tradeNo,
+          merchantTradeNo,
+          received: body.TotalAmount,
+          expected: orderRow.total,
+        });
+        return new NextResponse("0|amount mismatch", { status: 400 });
+      } else if (orderRow.status === "paid" || orderRow.ecpay_trade_no === tradeNo) {
+        // 冪等：訂單已 paid，或此 TradeNo 已處理過 → 不重複更新 / 不重複建 enrollment
         console.log(
-          `ECPay callback: order ${orderRow.id} already paid, skip status update`
+          `ECPay callback: order ${orderRow.id} already processed (status=${orderRow.status}, tradeNo=${tradeNo}), skip`
         );
       } else {
         await admin

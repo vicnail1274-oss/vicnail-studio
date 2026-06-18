@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     url: "https://vicnail-studio.com",
     images: [
       {
-        url: "/og-default.svg",
+        url: "/og-default.png",
         width: 1200,
         height: 630,
         alt: "VicNail Studio — 日系凝膠美甲・專業教學",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "VicNail Studio",
     description: "日系凝膠美甲・延甲・彩繪專業教學",
-    images: ["/og-default.svg"],
+    images: ["/og-default.png"],
   },
 };
 

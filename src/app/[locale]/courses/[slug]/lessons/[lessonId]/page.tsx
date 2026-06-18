@@ -9,7 +9,10 @@ import {
   PlayCircle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { VideoPlayer } from "@/components/video/VideoPlayer";
+import {
+  VideoPlayer,
+  MarkCompleteButton,
+} from "@/components/video/VideoPlayer";
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string; lessonId: string }>;
@@ -132,6 +135,24 @@ export default async function LessonWatchPage({ params }: PageProps) {
     initialPosition = progressMap[lessonId]?.pos ?? 0;
   }
 
+  // 課程整體進度（完成單元數 / 總單元數）
+  const totalLessons = lessonList.length;
+  const completedCount = lessonList.filter(
+    (l) => progressMap[l.id]?.completed
+  ).length;
+  const coursePct =
+    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+  // 傳給播放器的下一堂（僅當影片已就緒才自動播放）
+  const nextLessonInfo =
+    nextLesson && nextLesson.upload_status === "ready"
+      ? {
+          id: nextLesson.id,
+          title: nextLesson.title,
+          href: `/zh-TW/courses/${slug}/lessons/${nextLesson.id}`,
+        }
+      : null;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -148,6 +169,7 @@ export default async function LessonWatchPage({ params }: PageProps) {
           <VideoPlayer
             lessonId={lesson.id}
             initialPosition={initialPosition}
+            nextLesson={nextLessonInfo}
           />
 
           <div className="bg-white border rounded-xl p-5">
@@ -158,6 +180,17 @@ export default async function LessonWatchPage({ params }: PageProps) {
               <p className="text-sm text-muted-foreground whitespace-pre-line">
                 {lesson.description}
               </p>
+            )}
+
+            {/* 標記完成 */}
+            {user && (
+              <div className="mt-4">
+                <MarkCompleteButton
+                  lessonId={lesson.id}
+                  initialCompleted={progressMap[lessonId]?.completed ?? false}
+                  positionSeconds={progressMap[lessonId]?.pos ?? 0}
+                />
+              </div>
             )}
 
             {/* 上下章 */}
@@ -207,6 +240,31 @@ export default async function LessonWatchPage({ params }: PageProps) {
               <p className="text-xs text-muted-foreground">
                 共 {lessonList.length} 堂
               </p>
+
+              {/* 課程整體進度 */}
+              {user && totalLessons > 0 && (
+                <div className="mt-3">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                    <span>學習進度</span>
+                    <span className="font-medium text-nail-gold">
+                      {completedCount}/{totalLessons} 單元 · {coursePct}%
+                    </span>
+                  </div>
+                  <div
+                    className="h-1.5 w-full bg-nail-pink rounded-full overflow-hidden"
+                    role="progressbar"
+                    aria-label="課程整體進度"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={coursePct}
+                  >
+                    <div
+                      className="h-full bg-nail-gold rounded-full transition-all"
+                      style={{ width: `${coursePct}%` }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="max-h-[600px] overflow-y-auto divide-y divide-gray-50">
               {lessonList.map((l, idx) => {

@@ -46,13 +46,13 @@ export async function generateMetadata({
       description: article.description,
       publishedTime: article.date,
       tags: article.tags,
-      images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+      images: [{ url: "/og-default.png", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
       description: article.description,
-      images: ["/og-default.svg"],
+      images: ["/og-default.png"],
     },
   };
 }

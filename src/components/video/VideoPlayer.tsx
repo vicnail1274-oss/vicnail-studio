@@ -1,16 +1,33 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Hls from "hls.js";
 import { Watermark } from "./Watermark";
+import { PlayerControls } from "./PlayerControls";
 import { getDeviceFingerprint, getDeviceLabel } from "@/lib/device";
-import { AlertTriangle, Loader2, MonitorSmartphone } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Loader2,
+  MonitorSmartphone,
+  Play,
+  X,
+} from "lucide-react";
+
+interface NextLessonInfo {
+  id: string;
+  title: string;
+  href: string;
+}
 
 interface VideoPlayerProps {
   lessonId: string;
   initialPosition?: number;
   onProgress?: (positionSeconds: number) => void;
   onComplete?: () => void;
+  /** 下一堂課資訊 — 由觀看頁算好傳入，播完顯示倒數自動播放 */
+  nextLesson?: NextLessonInfo | null;
 }
 
 interface PlaybackToken {
@@ -35,13 +52,20 @@ export function VideoPlayer({
   initialPosition = 0,
   onProgress,
   onComplete,
+  nextLesson = null,
 }: VideoPlayerProps) {
+  const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [token, setToken] = useState<PlaybackToken | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deviceConflict, setDeviceConflict] = useState<ActiveDevice[]>([]);
   const [loading, setLoading] = useState(true);
+  // hls levels 解析完成計數 — 觸發 PlayerControls 重讀畫質清單
+  const [levelsVersion, setLevelsVersion] = useState(0);
+  // 播完自動下一堂倒數
+  const [countdown, setCountdown] = useState<number | null>(null);
 
   const fetchToken = useCallback(async () => {
     setError(null);
@@ -116,6 +140,7 @@ export function VideoPlayer({
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         if (initialPosition > 0) video.currentTime = initialPosition;
+        setLevelsVersion((v) => v + 1);
       });
       hls.on(Hls.Events.ERROR, (_event, data) => {
         if (data.fatal) {
@@ -203,6 +228,7 @@ export function VideoPlayer({
     const handleEnded = () => {
       saveProgress(true, true);
       onComplete?.();
+      if (nextLesson) setCountdown(5);
     };
     const handleBeforeUnload = () => saveProgress(true);
     video.addEventListener("pause", handlePause);
@@ -213,7 +239,18 @@ export function VideoPlayer({
       video.removeEventListener("ended", handleEnded);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [saveProgress, onComplete]);
+  }, [saveProgress, onComplete, nextLesson]);
+
+  // 自動下一堂倒數
+  useEffect(() => {
+    if (countdown === null) return;
+    if (countdown <= 0) {
+      if (nextLesson) router.push(nextLesson.href);
+      return;
+    }
+    const t = setTimeout(() => setCountdown((c) => (c === null ? null : c - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [countdown, nextLesson, router]);
 
   // 裝置衝突 UI
   if (deviceConflict.length > 0) {
@@ -279,16 +316,128 @@ export function VideoPlayer({
   }
 
   return (
-    <div className="relative aspect-video bg-black rounded-xl overflow-hidden">
+    <div
+      ref={containerRef}
+      className="relative aspect-video bg-black rounded-xl overflow-hidden group/player"
+    >
       <video
         ref={videoRef}
-        controls
+        controls={false}
         controlsList="nodownload"
-        disablePictureInPicture
+        playsInline
         onContextMenu={(e) => e.preventDefault()}
         className="w-full h-full"
       />
       <Watermark email={token.watermark.email} />
+
+      <PlayerControls
+        videoRef={videoRef}
+        hlsRef={hlsRef}
+        containerRef={containerRef}
+        levelsVersion={levelsVersion}
+      />
+
+      {/* 播完自動下一堂倒數覆蓋層 */}
+      {countdown !== null && nextLesson && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+          <div className="text-center text-white max-w-sm w-full space-y-4">
+            <p className="text-sm text-white/70">即將播放下一堂</p>
+            <h3 className="text-lg sm:text-xl font-semibold line-clamp-2">
+              {nextLesson.title}
+            </h3>
+            <p className="text-sm text-white/60">
+              {countdown} 秒後自動播放…
+            </p>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setCountdown(null);
+                  router.push(nextLesson.href);
+                }}
+                aria-label="立即播放下一堂"
+                className="inline-flex items-center gap-1.5 bg-nail-gold hover:bg-nail-gold/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <Play size={16} fill="currentColor" />
+                立即播放
+              </button>
+              <button
+                type="button"
+                onClick={() => setCountdown(null)}
+                aria-label="取消自動播放"
+                className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <X size={16} />
+                取消
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+interface MarkCompleteButtonProps {
+  lessonId: string;
+  /** 後端目前已記錄的完成狀態 */
+  initialCompleted: boolean;
+  /** 已存的觀看位置（秒）— 標記完成時一併回傳，避免覆寫續播點 */
+  positionSeconds?: number;
+}
+
+/**
+ * 「標記完成」按鈕 — 呼叫既有 /api/lessons/[id]/progress 帶 { completed: true }
+ * 成功後更新本地 UI（不重新整理頁面）。
+ */
+export function MarkCompleteButton({
+  lessonId,
+  initialCompleted,
+  positionSeconds = 0,
+}: MarkCompleteButtonProps) {
+  const [completed, setCompleted] = useState(initialCompleted);
+  const [saving, setSaving] = useState(false);
+
+  async function markComplete() {
+    if (completed || saving) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/lessons/${lessonId}/progress`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ positionSeconds, completed: true }),
+      });
+      if (res.ok) setCompleted(true);
+    } catch {
+      /* 失敗時保持未完成狀態 */
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (completed) {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-sm font-medium text-green-600">
+        <CheckCircle2 size={18} />
+        已完成此單元
+      </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={markComplete}
+      disabled={saving}
+      aria-label="標記此單元為完成"
+      className="inline-flex items-center gap-1.5 bg-nail-gold hover:bg-nail-gold/90 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-nail-gold/50"
+    >
+      {saving ? (
+        <Loader2 size={16} className="animate-spin" />
+      ) : (
+        <CheckCircle2 size={16} />
+      )}
+      標記完成
+    </button>
   );
 }

@@ -34,7 +34,7 @@ export async function generateMetadata({
       description: locale === "zh-TW"
         ? "凝膠美甲技術教學、保養知識與材質比較。"
         : "Nail art techniques, care tips, and material guides.",
-      images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+      images: [{ url: "/og-default.png", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
@@ -42,7 +42,7 @@ export async function generateMetadata({
       description: locale === "zh-TW"
         ? "凝膠美甲技術教學、保養知識與材質比較。"
         : "Nail art techniques, care tips, and material guides.",
-      images: ["/og-default.svg"],
+      images: ["/og-default.png"],
     },
   };
 }

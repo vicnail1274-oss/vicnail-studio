@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { simpleHash } from "@/lib/admin-auth";
+import crypto from "crypto";
+import { createAdminToken } from "@/lib/admin-auth";
+
+/** 等長 timing-safe 密碼比對；長度不同直接 false（避免 timingSafeEqual 拋錯） */
+function passwordMatches(input: string, expected: string): boolean {
+  const a = Buffer.from(input);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
 
 // === 速率限制：防暴力破解 ===
 // IP → { count, blockedUntil }
@@ -65,7 +74,7 @@ export async function POST(req: NextRequest) {
   const { password } = await req.json();
   const expected = process.env.ADMIN_PASSWORD;
 
-  if (!expected || password !== expected) {
+  if (!expected || typeof password !== "string" || !passwordMatches(password, expected)) {
     recordFailedAttempt(ip);
     const remaining = MAX_ATTEMPTS - (loginAttempts.get(ip)?.count || 0);
 
@@ -80,16 +89,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 登入成功 → 清除失敗記錄，設定 hash cookie
+  // 登入成功 → 清除失敗記錄，簽發 HMAC session token
   clearAttempts(ip);
 
-  const tokenHash = simpleHash(expected);
   const res = NextResponse.json({ ok: true });
-  res.cookies.set("admin_token", tokenHash, {
+  res.cookies.set("admin_token", createAdminToken(), {
     httpOnly: true,
-    path: "/",
-    maxAge: 60 * 60 * 8, // 8 小時自動登出
+    secure: true,
     sameSite: "lax",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60, // 7 天
   });
   return res;
 }

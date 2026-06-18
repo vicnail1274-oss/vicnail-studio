@@ -21,7 +21,7 @@ export function NailServicesJsonLd({
       ? "台北信義區專業美甲工作室，提供凝膠美甲、凝膠延甲、凝膠保養、日式彩繪及美甲課程。"
       : "Professional nail salon in Taipei's Xinyi District offering gel nails, gel extensions, gel care, Japanese nail art, and nail courses.",
     url: pageUrl,
-    image: "https://vicnail-studio.com/og-default.svg",
+    image: "https://vicnail-studio.com/og-default.png",
     priceRange: "$$",
     currenciesAccepted: "TWD",
     paymentAccepted: "Cash, Line Pay",
@@ -139,7 +139,7 @@ export function ArticleJsonLd({ article, url }: { article: Article; url: string 
     description: article.description,
     datePublished: article.date,
     dateModified: article.date,
-    image: article.coverImage || "https://vicnail-studio.com/og-default.svg",
+    image: article.coverImage || "https://vicnail-studio.com/og-default.png",
     author: {
       "@type": "Person",
       name: article.author || "Vic",
@@ -149,7 +149,7 @@ export function ArticleJsonLd({ article, url }: { article: Article; url: string 
       name: "VicNail Studio",
       logo: {
         "@type": "ImageObject",
-        url: "https://vicnail-studio.com/og-default.svg",
+        url: "https://vicnail-studio.com/og-default.png",
       },
     },
     url,

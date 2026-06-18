@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Also trigger n8n workflow (for email sending / welcome flow)
-    const n8nWebhookUrl = process.env.NEXT_PUBLIC_N8N_NEWSLETTER_WEBHOOK;
+    const n8nWebhookUrl = process.env.N8N_NEWSLETTER_WEBHOOK;
     if (n8nWebhookUrl) {
       fetch(n8nWebhookUrl, {
         method: "POST",

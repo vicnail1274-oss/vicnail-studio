@@ -12,6 +12,53 @@ import { AdSlot } from "@/components/ads/AdSlot";
 import { HomepageFAQJsonLd } from "@/components/seo/JsonLd";
 import { getArticles } from "@/lib/mdx";
 import { setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
+
+const SITE_URL = "https://vicnail-studio.com";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isZh = locale === "zh-TW";
+
+  const title = isZh
+    ? "VicNail Studio｜日系凝膠美甲・專業教學"
+    : "VicNail Studio｜Japanese Gel Nail Art & Education";
+  const description = isZh
+    ? "VicNail Studio — 日系凝膠美甲・延甲・彩繪專業教學，線上影片課程與精選美甲商品。"
+    : "VicNail Studio — professional Japanese gel nail, extension & nail-art education, online video courses and curated nail products.";
+
+  return {
+    title: { absolute: title },
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${locale}`,
+      languages: {
+        "zh-TW": `${SITE_URL}/zh-TW`,
+        en: `${SITE_URL}/en`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      siteName: "VicNail Studio",
+      title,
+      description,
+      locale: isZh ? "zh_TW" : "en_US",
+      url: `${SITE_URL}/${locale}`,
+      images: [
+        {
+          url: "/og-default.png",
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+  };
+}
 
 export default async function Home({
   params,

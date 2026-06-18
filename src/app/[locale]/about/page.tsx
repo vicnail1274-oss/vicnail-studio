@@ -30,7 +30,7 @@ export async function generateMetadata({
       description: isZh
         ? "VicNail Studio 是專業日系凝膠美甲教學工作室"
         : "VicNail Studio specializes in Japanese gel nail artistry and education",
-      images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+      images: [{ url: "/og-default.png", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
@@ -38,7 +38,7 @@ export async function generateMetadata({
       description: isZh
         ? "VicNail Studio 是專業日系凝膠美甲教學工作室"
         : "VicNail Studio specializes in Japanese gel nail artistry and education",
-      images: ["/og-default.svg"],
+      images: ["/og-default.png"],
     },
   };
 }

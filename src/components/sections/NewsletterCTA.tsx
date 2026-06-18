@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Send, Check } from "lucide-react";
+import { Mail, Send, Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function NewsletterCTA({ locale, dark = false }: { locale: string; dark?: boolean }) {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle"
+  );
   const isZh = locale === "zh-TW";
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -17,13 +19,18 @@ export function NewsletterCTA({ locale, dark = false }: { locale: string; dark?:
 
     // Send to our Next.js API route → n8n workflow
     try {
-      await fetch("/api/newsletter/subscribe", {
+      const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
+      if (!res.ok) {
+        setStatus("error");
+        return;
+      }
     } catch {
-      // Silent fail — don't block UX
+      setStatus("error");
+      return;
     }
 
     setStatus("success");
@@ -65,12 +72,24 @@ export function NewsletterCTA({ locale, dark = false }: { locale: string; dark?:
             <span>{isZh ? "訂閱成功！" : "Subscribed!"}</span>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex gap-2 max-w-md mx-auto">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md mx-auto">
+            {status === "error" && (
+              <div className="flex items-center justify-center gap-2 text-sm text-red-500">
+                <AlertCircle size={16} />
+                <span>
+                  {isZh
+                    ? "訂閱失敗，請稍後再試"
+                    : "Subscription failed, please try again"}
+                </span>
+              </div>
+            )}
+            <div className="flex gap-2">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={isZh ? "輸入 Email" : "Your email"}
+              aria-label={isZh ? "電子郵件地址" : "Email address"}
               required
               className={cn(
                 "flex-1 px-4 py-2.5 rounded-lg text-sm outline-none transition-colors",
@@ -92,6 +111,7 @@ export function NewsletterCTA({ locale, dark = false }: { locale: string; dark?:
               <Send size={14} />
               {isZh ? "訂閱" : "Subscribe"}
             </button>
+            </div>
           </form>
         )}
       </div>

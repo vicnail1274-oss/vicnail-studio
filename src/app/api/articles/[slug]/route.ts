@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getArticle } from "@/lib/mdx";
-import { deleteArticle } from "@/lib/article-api";
+import { deleteArticle, isValidArticleParams } from "@/lib/article-api";
 
 function authorized(req: NextRequest): boolean {
   const key = req.headers.get("x-api-key") || req.headers.get("authorization")?.replace("Bearer ", "");
@@ -22,6 +22,10 @@ export async function GET(
   const section = searchParams.get("section") || "nail-knowledge";
   const locale = searchParams.get("locale") || "zh-TW";
 
+  if (!isValidArticleParams(section, locale, slug)) {
+    return NextResponse.json({ error: "Invalid section / locale / slug" }, { status: 400 });
+  }
+
   const article = await getArticle(section, locale, slug);
   if (!article) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -42,6 +46,10 @@ export async function DELETE(
   const { searchParams } = new URL(req.url);
   const section = searchParams.get("section") || "nail-knowledge";
   const locale = searchParams.get("locale") || "zh-TW";
+
+  if (!isValidArticleParams(section, locale, slug)) {
+    return NextResponse.json({ error: "Invalid section / locale / slug" }, { status: 400 });
+  }
 
   const deleted = deleteArticle(section, locale, slug);
   if (!deleted) {

@@ -3,8 +3,12 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { isAdminAuthed } from "@/lib/admin-auth";
+import { resolveArticlePath } from "@/lib/article-api";
 
 const contentRoot = path.join(process.cwd(), "src/content");
+
+const ALLOWED_SECTIONS = new Set(["nail-news", "nail-knowledge", "ai"]);
+const ALLOWED_LOCALES = new Set(["zh-TW", "en"]);
 
 // GET /api/admin/article?section=&locale=&slug= — 取得原始 MDX 內容
 export async function GET(req: NextRequest) {
@@ -19,7 +23,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "缺少 section / locale / slug" }, { status: 400 });
   }
 
-  const filePath = path.join(contentRoot, section, locale, `${slug}.mdx`);
+  const filePath = resolveArticlePath(section, locale, slug);
+  if (!filePath) {
+    return NextResponse.json({ error: "section / locale / slug 不合法" }, { status: 400 });
+  }
   if (!fs.existsSync(filePath)) {
     return NextResponse.json({ error: "文章不存在" }, { status: 404 });
   }
@@ -40,7 +47,10 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "缺少必要欄位" }, { status: 400 });
   }
 
-  const filePath = path.join(contentRoot, section, locale, `${slug}.mdx`);
+  const filePath = resolveArticlePath(section, locale, slug);
+  if (!filePath) {
+    return NextResponse.json({ error: "section / locale / slug 不合法" }, { status: 400 });
+  }
   if (!fs.existsSync(filePath)) {
     return NextResponse.json({ error: "文章不存在" }, { status: 404 });
   }
@@ -57,7 +67,16 @@ export async function POST(req: NextRequest) {
   if (!isAdminAuthed(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { section, locale } = await req.json();
-  const dir = path.join(contentRoot, section || "", locale || "");
+
+  if (!ALLOWED_SECTIONS.has(section) || !ALLOWED_LOCALES.has(locale)) {
+    return NextResponse.json({ error: "section / locale 不合法" }, { status: 400 });
+  }
+
+  const dir = path.resolve(contentRoot, section, locale);
+  const rootWithSep = contentRoot.endsWith(path.sep) ? contentRoot : contentRoot + path.sep;
+  if (!dir.startsWith(rootWithSep)) {
+    return NextResponse.json({ error: "section / locale 不合法" }, { status: 400 });
+  }
 
   if (!fs.existsSync(dir)) return NextResponse.json({ articles: [] });
 

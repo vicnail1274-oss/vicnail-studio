@@ -34,7 +34,7 @@ export async function generateMetadata({
       description: locale === "zh-TW"
         ? "最新凝膠美甲趨勢、季節指南與靈感分享。"
         : "Latest nail art trends, seasonal guides, and style inspiration.",
-      images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
+      images: [{ url: "/og-default.png", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
@@ -42,7 +42,7 @@ export async function generateMetadata({
       description: locale === "zh-TW"
         ? "最新凝膠美甲趨勢、季節指南與靈感分享。"
         : "Latest nail art trends, seasonal guides, and style inspiration.",
-      images: ["/og-default.svg"],
+      images: ["/og-default.png"],
     },
   };
 }
