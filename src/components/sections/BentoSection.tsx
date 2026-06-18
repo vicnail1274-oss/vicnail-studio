@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import { BentoGrid, BentoCard } from "@/components/magicui/BentoGrid";
-import { Palette, BookOpen, Newspaper, Bot } from "lucide-react";
+import { Palette, BookOpen, Newspaper } from "lucide-react";
 
 export function BentoSection() {
   const t = useTranslations("sections");
@@ -36,14 +36,6 @@ export function BentoSection() {
       icon: <Newspaper />,
       dark: false,
       className: "",
-    },
-    {
-      title: t("ai"),
-      description: t("aiDesc"),
-      href: "/ai",
-      icon: <Bot />,
-      dark: true,
-      className: locale === "zh-TW" ? "md:col-span-2 lg:col-span-3" : "md:col-span-2 lg:col-span-1",
     },
   ];
 

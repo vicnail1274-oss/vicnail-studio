@@ -19,7 +19,7 @@ export function HeroSection() {
 
       {/* Decorative gradient orbs */}
       <div className="absolute top-1/4 -left-20 w-72 h-72 bg-nail-pink/40 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 -right-20 w-72 h-72 bg-ai-purple/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 -right-20 w-72 h-72 bg-nail-gold/10 rounded-full blur-3xl" />
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <TextGenerateEffect
@@ -72,10 +72,6 @@ export function HeroSection() {
         <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center text-sm animate-fade-up">
           <Link href="/courses" className="text-muted-foreground hover:text-nail-gold transition-colors underline underline-offset-4">
             {t("ctaCourses")}
-          </Link>
-          <span className="hidden sm:block text-nail-gold/40">·</span>
-          <Link href="/ai" className="text-muted-foreground hover:text-ai-purple transition-colors underline underline-offset-4">
-            {t("ctaAi")}
           </Link>
         </div>
       </div>

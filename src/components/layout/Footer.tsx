@@ -20,8 +20,8 @@ export function Footer({ locale }: { locale: string }) {
             </div>
             <p className="text-sm text-gray-400 max-w-xs">
               {locale === "zh-TW"
-                ? "美甲藝術與 AI 科技的跨界探索"
-                : "Where nail artistry meets AI innovation"}
+                ? "日系凝膠美甲・專業教學工作室"
+                : "Japanese gel nail artistry & education"}
             </p>
           </div>
 
@@ -55,14 +55,6 @@ export function Footer({ locale }: { locale: string }) {
                   className="text-sm text-gray-400 hover:text-nail-gold transition-colors"
                 >
                   {nav("nailNews")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/ai"
-                  className="text-sm text-gray-400 hover:text-ai-cyan transition-colors"
-                >
-                  {nav("ai")}
                 </Link>
               </li>
               <li>

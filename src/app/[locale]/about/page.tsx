@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AboutHero } from "@/components/about/AboutHero";
-import { AboutAI } from "@/components/about/AboutAI";
 
 const BASE_URL = "https://vicnail-studio.com";
 
@@ -15,8 +14,8 @@ export async function generateMetadata({
   return {
     title: isZh ? "關於我們" : "About",
     description: isZh
-      ? "VicNail Studio 是結合美甲藝術與 AI 自動化的跨界工作室，由 Vic 主理。"
-      : "VicNail Studio blends nail art expertise with AI automation experiments, run by Vic.",
+      ? "VicNail Studio 是專業日系凝膠美甲教學工作室，由 Vic 主理。"
+      : "VicNail Studio specializes in Japanese gel nail artistry and education, run by Vic.",
     alternates: {
       canonical: url,
       languages: {
@@ -29,16 +28,16 @@ export async function generateMetadata({
       url,
       title: isZh ? "關於我們 | VicNail Studio" : "About | VicNail Studio",
       description: isZh
-        ? "VicNail Studio 是結合美甲藝術與 AI 自動化的跨界工作室"
-        : "VicNail Studio blends nail art expertise with AI automation experiments",
+        ? "VicNail Studio 是專業日系凝膠美甲教學工作室"
+        : "VicNail Studio specializes in Japanese gel nail artistry and education",
       images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title: isZh ? "關於我們 | VicNail Studio" : "About | VicNail Studio",
       description: isZh
-        ? "VicNail Studio 是結合美甲藝術與 AI 自動化的跨界工作室"
-        : "VicNail Studio blends nail art expertise with AI automation experiments",
+        ? "VicNail Studio 是專業日系凝膠美甲教學工作室"
+        : "VicNail Studio specializes in Japanese gel nail artistry and education",
       images: ["/og-default.svg"],
     },
   };
@@ -54,7 +53,6 @@ export default async function AboutPage({
   return (
     <>
       <AboutHero locale={locale} />
-      <AboutAI locale={locale} />
     </>
   );
 }

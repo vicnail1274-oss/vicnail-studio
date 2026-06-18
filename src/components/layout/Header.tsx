@@ -16,7 +16,6 @@ const navItems = [
   { href: "/services", key: "services", zhOnly: false },
   { href: "/nail/knowledge", key: "nailKnowledge", zhOnly: false },
   { href: "/nail/news", key: "nailNews", zhOnly: false },
-  { href: "/ai", key: "ai", zhOnly: false },
   { href: "/about", key: "about", zhOnly: false },
 ] as const;
 

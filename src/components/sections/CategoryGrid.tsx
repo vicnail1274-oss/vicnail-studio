@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
-import { BookOpen, Newspaper, Bot, Sparkles } from "lucide-react";
+import { BookOpen, Newspaper, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const categories = [
@@ -27,17 +27,6 @@ const categories = [
     enTitle: "Nail News",
     zhDesc: "最新趨勢、產品評測與產業動態",
     enDesc: "Latest trends, product reviews & industry updates",
-  },
-  {
-    key: "ai",
-    href: "/ai",
-    icon: Bot,
-    color: "bg-ai-purple/20 text-ai-cyan",
-    hoverBorder: "hover:border-ai-purple/40",
-    zhTitle: "AI 不務正業",
-    enTitle: "AI Side Hustle",
-    zhDesc: "美甲師的 AI 自動化實驗與心得分享",
-    enDesc: "AI automation experiments from a nail artist",
   },
   {
     key: "courses",

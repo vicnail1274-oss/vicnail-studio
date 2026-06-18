@@ -32,14 +32,8 @@ export default async function Home({
     section: "nail-news",
     href: `/nail/news/${a.slug}`,
   }));
-  const ai = getArticles("ai", locale).map((a) => ({
-    ...a,
-    section: "ai",
-    href: `/ai/${a.slug}`,
-  }));
-
   // Merge and sort by date, take latest 6
-  const allArticles = [...knowledge, ...news, ...ai]
+  const allArticles = [...knowledge, ...news]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 6);
 

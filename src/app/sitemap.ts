@@ -8,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
   // Static pages
-  const staticPages = ["", "/nail/knowledge", "/nail/news", "/ai", "/about", "/services"];
+  const staticPages = ["", "/nail/knowledge", "/nail/news", "/about", "/services"];
 
   for (const locale of locales) {
     for (const page of staticPages) {
@@ -30,11 +30,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   });
 
   // Blog articles
-  const sections = ["nail-knowledge", "nail-news", "ai"];
+  const sections = ["nail-knowledge", "nail-news"];
   const pathMap: Record<string, string> = {
     "nail-knowledge": "/nail/knowledge",
     "nail-news": "/nail/news",
-    ai: "/ai",
   };
 
   for (const section of sections) {
