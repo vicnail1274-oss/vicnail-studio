@@ -170,7 +170,7 @@ export function WebsiteJsonLd() {
     "@type": "WebSite",
     name: "VicNail Studio",
     url: "https://vicnail-studio.com",
-    description: "Professional nail art education & AI automation experiments",
+    description: "Professional Japanese gel nail education and tutorials",
     publisher: {
       "@type": "Organization",
       name: "VicNail Studio",

@@ -34,17 +34,17 @@ export function generateStaticParams() {
 
 export const metadata: Metadata = {
   title: {
-    default: "VicNail Studio — 美甲藝術 × AI 科技",
+    default: "VicNail Studio — 日系凝膠美甲・專業教學",
     template: "%s | VicNail Studio",
   },
   description:
-    "Professional nail art education and AI technology insights. 專業美甲教學與 AI 科技分享。",
+    "Professional Japanese gel nail education. 專業日系凝膠美甲教學。",
   metadataBase: new URL("https://vicnail-studio.com"),
   openGraph: {
     type: "website",
     siteName: "VicNail Studio",
-    title: "VicNail Studio — 美甲藝術 × AI 科技",
-    description: "專業美甲教學與 AI 自動化的跨界探索",
+    title: "VicNail Studio — 日系凝膠美甲・專業教學",
+    description: "日系凝膠美甲・延甲・彩繪專業教學",
     locale: "zh_TW",
     url: "https://vicnail-studio.com",
     images: [
@@ -52,14 +52,14 @@ export const metadata: Metadata = {
         url: "/og-default.svg",
         width: 1200,
         height: 630,
-        alt: "VicNail Studio — 美甲藝術 × AI 科技",
+        alt: "VicNail Studio — 日系凝膠美甲・專業教學",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "VicNail Studio",
-    description: "專業美甲教學與 AI 自動化的跨界探索",
+    description: "日系凝膠美甲・延甲・彩繪專業教學",
     images: ["/og-default.svg"],
   },
 };

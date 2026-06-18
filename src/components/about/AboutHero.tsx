@@ -6,32 +6,32 @@ import { Award, Trophy, GraduationCap, MapPin } from "lucide-react";
 const content = {
   "zh-TW": {
     title: "關於 VicNail Studio",
-    subtitle: "美甲藝術與 AI 科技的跨界探索",
+    subtitle: "日系凝膠美甲・專業教學工作室",
     story: [
       "VicNail Studio 由 Vic（東東老師）創立，是一間位於新北板橋的專業美甲教學工作室。",
       "Vic 老師擁有亞洲盃冠軍、OMC 國際評審的豐富資歷，堅持「學會為止」的教學理念，培育了無數優秀的美甲師。",
-      "除了美甲專業，Vic 更是一位 AI 自動化愛好者，從零開始打造了完整的 AI 工作流程系統，讓科技與美學完美結合。",
+      "Vic 老師專精日系凝膠、延甲與彩繪，將多年沙龍實戰與教學經驗融入每一堂課，帶領學員打好扎實基礎。",
     ],
     location: "新北市板橋區南雅南路二段144巷42號7樓",
     coreValues: [
       { icon: "award", label: "技術真正紮實", desc: "堅持基礎打到完美" },
       { icon: "trophy", label: "無限複習跟課", desc: "學會為止，不限次數" },
-      { icon: "grad", label: "專屬排課系統", desc: "AI 驅動的智能排程" },
+      { icon: "grad", label: "專屬排課系統", desc: "彈性預約・隨到隨學" },
     ],
   },
   en: {
     title: "About VicNail Studio",
-    subtitle: "Where Nail Artistry Meets AI Innovation",
+    subtitle: "Professional Japanese Gel Nail Education",
     story: [
       "VicNail Studio was founded by Vic, a professional nail art instructor based in Banqiao, New Taipei City.",
       "With achievements including an Asian Cup championship and OMC international judge credentials, Vic is committed to thorough, mastery-based teaching.",
-      "Beyond nail artistry, Vic is also an AI automation enthusiast who built a complete AI workflow system from scratch — merging technology with beauty.",
+      "Vic specializes in Japanese gel, extensions, and nail art, bringing years of salon and teaching experience into every class.",
     ],
     location: "7F, No. 42, Lane 144, Sec. 2, Nanya S. Rd., Banqiao, New Taipei City",
     coreValues: [
       { icon: "award", label: "Solid Technique", desc: "Perfect the fundamentals" },
       { icon: "trophy", label: "Unlimited Review", desc: "Learn until you master it" },
-      { icon: "grad", label: "Smart Scheduling", desc: "AI-powered booking system" },
+      { icon: "grad", label: "Flexible Scheduling", desc: "Book anytime, learn at your pace" },
     ],
   },
 };
