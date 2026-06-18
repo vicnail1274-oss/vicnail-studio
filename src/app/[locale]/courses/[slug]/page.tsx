@@ -13,6 +13,8 @@ import {
   Star,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { CourseJsonLd } from "@/components/seo/JsonLd";
+import type { Course } from "@/lib/supabase/types";
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -124,6 +126,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
   return (
     <div className="bg-white">
+      <CourseJsonLd course={course as Course} />
       {/* Hero */}
       <section className="bg-gradient-to-b from-nail-cream to-white py-12 px-4">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">

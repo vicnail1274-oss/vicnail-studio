@@ -10,7 +10,7 @@ import Script from "next/script";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingLineButton } from "@/components/layout/FloatingLineButton";
-import { WebsiteJsonLd } from "@/components/seo/JsonLd";
+import { WebsiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -108,6 +108,7 @@ export default async function LocaleLayout({
         )}
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
+        <OrganizationJsonLd />
         <NextIntlClientProvider messages={messages}>
           <Header locale={locale} />
           <main className="pt-16">{children}</main>

@@ -5,6 +5,7 @@ import { ProductReviews } from "@/components/shop/ProductReviews";
 import { RelatedProducts } from "@/components/shop/RelatedProducts";
 import { RecentlyViewedTracker } from "@/components/shop/RecentlyViewedTracker";
 import { RecentlyViewedList } from "@/components/shop/RecentlyViewedList";
+import { ProductJsonLd } from "@/components/seo/JsonLd";
 import type { Product } from "@/lib/supabase/types";
 import type { Metadata } from "next";
 
@@ -61,6 +62,7 @@ export default async function ProductPage({ params }: Props) {
   return (
     <section className="py-12 px-4">
       <div className="max-w-5xl mx-auto">
+        <ProductJsonLd product={p} />
         <RecentlyViewedTracker productId={p.id} />
         <ProductDetail product={p} />
         <ProductReviews productId={p.id} />

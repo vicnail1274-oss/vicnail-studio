@@ -1,4 +1,114 @@
 import type { Article } from "@/lib/mdx";
+import type { Course, Product } from "@/lib/supabase/types";
+
+const SITE_URL = "https://vicnail-studio.com";
+const LOGO_URL = "https://vicnail-studio.com/og-default.png";
+const INSTAGRAM_URL = "https://www.instagram.com/vicnail_studio/";
+
+// ── Organization JSON-LD（全域）─────────────────────────────────────────────
+
+export function OrganizationJsonLd() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "VicNail Studio",
+    url: SITE_URL,
+    logo: LOGO_URL,
+    sameAs: [INSTAGRAM_URL],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// ── Course JSON-LD（課程詳情頁）─────────────────────────────────────────────
+
+export function CourseJsonLd({ course }: { course: Course }) {
+  const price = course.sale_price ?? course.price;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.description || course.long_description || course.title,
+    provider: {
+      "@type": "Organization",
+      name: "VicNail Studio",
+      url: SITE_URL,
+    },
+    ...(course.instructor_name && {
+      instructor: {
+        "@type": "Person",
+        name: course.instructor_name,
+      },
+    }),
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      courseWorkload: course.total_duration_seconds
+        ? `PT${Math.round(course.total_duration_seconds / 60)}M`
+        : undefined,
+    },
+    offers: {
+      "@type": "Offer",
+      price,
+      priceCurrency: "TWD",
+      availability: "https://schema.org/InStock",
+      category: "Paid",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// ── Product JSON-LD（商品詳情頁）─────────────────────────────────────────────
+
+export function ProductJsonLd({ product }: { product: Product }) {
+  const price = product.sale_price ?? product.price;
+  const inStock =
+    product.purchase_type !== "instock" || product.stock > 0;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.description || product.title,
+    ...(product.images?.length && { image: product.images }),
+    ...(product.category && { category: product.category }),
+    brand: {
+      "@type": "Brand",
+      name: "VicNail Studio",
+    },
+    offers: {
+      "@type": "Offer",
+      price,
+      priceCurrency: "TWD",
+      availability: inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: {
+        "@type": "Organization",
+        name: "VicNail Studio",
+      },
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
 
 // ── Nail Services + LocalBusiness JSON-LD ───────────────────────────────────
 
