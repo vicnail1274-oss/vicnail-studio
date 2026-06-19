@@ -36,23 +36,20 @@ export async function createClient() {
  * 只在 API routes 使用，絕不暴露給前端
  */
 export async function createAdminClient() {
-  const cookieStore = await cookies();
-
+  // 純 service_role client：絕不可帶使用者 cookie/session。
+  // createServerClient 若讀到使用者 auth cookie，會用該使用者 JWT 當 Authorization bearer，
+  // 使有效角色從 service_role 降為 authenticated → 讀不到 bunny_video_id 等受限欄位、
+  // 也無法繞過 RLS（播放憑證會 404、訂單/庫存等 admin 寫入也會失敗）。
+  // 回傳空 cookies 讓 client 改用 service_role 金鑰本身作為 bearer。
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SECRET_KEY!,
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll();
+          return [];
         },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {}
-        },
+        setAll() {},
       },
     }
   );
