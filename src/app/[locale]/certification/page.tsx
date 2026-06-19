@@ -94,10 +94,25 @@ const WHY = [
 const CREDENTIALS = [
   {
     icon: BadgeCheck,
-    zh: { heading: "日本檢定資歷", items: ["JNA 日本美甲師協會 衛生士合格", "JNEC 三級日本美甲師檢定合格"] },
+    zh: {
+      heading: "日本檢定資歷",
+      items: [
+        "JNEC 三級 日本美甲師檢定 合格",
+        "JNEC 二級 日本美甲師檢定 合格",
+        "JNA 凝膠初級檢定 合格",
+        "JNA 凝膠中級檢定 合格",
+        "JNA 日本美甲師協會 衛生管理士 合格",
+      ],
+    },
     en: {
       heading: "Japanese Certifications",
-      items: ["JNA Japan Nailist Association — Certified Hygienist", "JNEC Level 3 Japanese Nailist Certification"],
+      items: [
+        "JNEC Level 3 Nailist Certification",
+        "JNEC Level 2 Nailist Certification",
+        "JNA Gel Nail — Basic",
+        "JNA Gel Nail — Intermediate",
+        "JNA Certified Hygiene Manager",
+      ],
     },
   },
   {
@@ -130,39 +145,80 @@ const CREDENTIALS = [
   },
 ];
 
-const LEVELS = [
+const CERT_SYSTEMS = [
   {
-    badge: { zh: "3 級 / 初級", en: "Level 3 / Beginner" },
-    zh: {
-      title: "基礎技術與衛生",
-      desc: "建立美甲基礎觀念、消毒衛生流程與基本指甲護理，是入門檢定的核心。適合零基礎或想取得第一張證書的學員。",
+    org: { zh: "JNEC 日本美甲師技能檢定", en: "JNEC Nailist Skill Test" },
+    sub: { zh: "保養・基礎檢定", en: "Care & Fundamentals" },
+    intro: {
+      zh: "由日本ネイリスト検定試験センター主辦，是日本最具公信力的美甲師基礎技能檢定，須依序應考、不可跳級（3 級 → 2 級 → 1 級）。",
+      en: "Run by JNEC — Japan's most recognized foundational nailist exam. Taken in order, no skipping (Level 3 → 2 → 1).",
     },
-    en: {
-      title: "Fundamentals & Hygiene",
-      desc: "Core nail-care concepts, sanitation procedures, and basic techniques — the foundation level for those new to certification.",
-    },
+    levels: [
+      {
+        badge: { zh: "3 級", en: "Level 3" },
+        title: { zh: "基礎技術與衛生", en: "Fundamentals & Hygiene" },
+        desc: {
+          zh: "美甲入門級。實技 65 分鐘：指甲護理（雙手 10 指）、指甲油上色、指甲彩繪（右手中指・花卉主題）；筆記 30 分鐘（衛生消毒、指甲構造）。",
+          en: "Entry level. 65-min practical: nail care (all 10), polish coloring, nail art (floral, right middle finger); 30-min written (hygiene, nail anatomy).",
+        },
+        meta: { zh: "受驗資格不限・報名費約 ¥6,800", en: "Open entry · approx. ¥6,800" },
+      },
+      {
+        badge: { zh: "2 級", en: "Level 2" },
+        title: { zh: "沙龍實務水準", en: "Salon-Ready Skills" },
+        desc: {
+          zh: "限 3 級合格者。實技前半 30 分（指甲護理）＋後半 55 分（甲片貼布延長 Tip&Wrap、上色、指甲彩繪）；筆記 30 分。",
+          en: "Requires Level 3. Practical: 30-min care + 55-min tip & wrap, coloring, art; 30-min written.",
+        },
+        meta: { zh: "需先取得 3 級・約 ¥9,800", en: "Needs Level 3 · approx. ¥9,800" },
+      },
+      {
+        badge: { zh: "1 級", en: "Level 1" },
+        title: { zh: "頂級綜合技術", en: "Top-Level Mastery" },
+        desc: {
+          zh: "限 2 級合格者，業界最高級。實技 150 分鐘：雕塑延甲 Sculpture、甲片延長 Tip&Overlay、複合媒材藝術 Mixed Media Art；筆記 40 分（化妝品學、皮膚科學）。",
+          en: "Requires Level 2; the top tier. 150-min practical: sculpture, tip & overlay, mixed-media art; 40-min written (cosmetics, dermatology).",
+        },
+        meta: { zh: "需先取得 2 級・約 ¥12,500", en: "Needs Level 2 · approx. ¥12,500" },
+      },
+    ],
   },
   {
-    badge: { zh: "2 級 / 中級", en: "Level 2 / Intermediate" },
-    zh: {
-      title: "進階技術與彩繪",
-      desc: "強化凝膠、卸甲與彩繪等進階技術，要求更高的完成度與穩定度。適合已具基礎、想精進實力的學員。",
+    org: { zh: "JNA 凝膠美甲技能檢定", en: "JNA Gel Nail Skill Test" },
+    sub: { zh: "凝膠專業檢定", en: "Gel Specialization" },
+    intro: {
+      zh: "由日本ネイリスト協会（JNA）主辦，專注凝膠技術的專業檢定，須依序應考（初級 → 中級 → 上級），各科達 80 分以上方合格。",
+      en: "Run by the Japan Nailist Association (JNA), focused on gel technique. Taken in order (Basic → Intermediate → Advanced); 80%+ to pass each part.",
     },
-    en: {
-      title: "Advanced Skills & Art",
-      desc: "Strengthens gel work, removal, and nail-art techniques with higher precision and consistency, for those building on the basics.",
-    },
-  },
-  {
-    badge: { zh: "1 級 / 上級", en: "Level 1 / Advanced" },
-    zh: {
-      title: "專業級綜合技術",
-      desc: "綜合性的高階檢定，著重整體完成度與專業表現，是邁向資深美甲師的進階目標。",
-    },
-    en: {
-      title: "Professional Mastery",
-      desc: "A comprehensive advanced level focused on overall quality and professional performance — a milestone toward senior expertise.",
-    },
+    levels: [
+      {
+        badge: { zh: "初級", en: "Basic" },
+        title: { zh: "凝膠基礎", en: "Gel Foundations" },
+        desc: {
+          zh: "凝膠施作入門。實技第 1 課題 30 分＋第 2 課題 60 分：指甲護理基本＋凝膠基礎（單色、基礎凝膠彩繪）；筆記 30 分（凝膠知識、衛生、指甲構造）。",
+          en: "Gel entry. Practical 30 + 60 min: nail-care basics + gel color & basic gel art; 30-min written.",
+        },
+        meta: { zh: "受驗資格不限・約 ¥9,900", en: "Open entry · approx. ¥9,900" },
+      },
+      {
+        badge: { zh: "中級", en: "Intermediate" },
+        title: { zh: "專業凝膠技術", en: "Professional Gel Work" },
+        desc: {
+          zh: "限初級合格者。實技第 1 課題 35 分＋第 2 課題 75 分：修補 Repair、甲片疊層 Chip Overlay、凝膠法式、漸層、延甲 Extension；筆記專業知識。",
+          en: "Requires Basic. Practical 35 + 75 min: repair, chip overlay, gel French, gradation, extension; written exam.",
+        },
+        meta: { zh: "需先取得初級・約 ¥13,200", en: "Needs Basic · approx. ¥13,200" },
+      },
+      {
+        badge: { zh: "上級", en: "Advanced" },
+        title: { zh: "凝膠最高階", en: "Advanced Gel Mastery" },
+        desc: {
+          zh: "限中級合格者，僅實技（無筆記）。事前審查 10 分＋實技 75 分：凝膠透明雕塑延甲、甲片疊層＋花卉設計、法式雕花 Carling 等高難度綜合技術。",
+          en: "Requires Intermediate; practical only (no written). 10-min pre-check + 75-min practical: clear gel sculpture, chip overlay + floral, French carling.",
+        },
+        meta: { zh: "需先取得中級・約 ¥16,500", en: "Needs Intermediate · approx. ¥16,500" },
+      },
+    ],
   },
 ];
 
@@ -204,11 +260,11 @@ export default async function CertificationPage({
           <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <BadgeCheck className="w-4 h-4 text-nail-gold" />
-              {isZh ? "JNEC 三級合格" : "JNEC Level 3 Certified"}
+              {isZh ? "JNEC 二級合格" : "JNEC Level 2 Certified"}
             </span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-nail-gold" />
-              {isZh ? "JNA 衛生士合格" : "JNA Certified Hygienist"}
+              {isZh ? "JNA 凝膠中級合格" : "JNA Gel Intermediate"}
             </span>
             <span className="flex items-center gap-1.5">
               <Trophy className="w-4 h-4 text-nail-gold" />
@@ -299,40 +355,59 @@ export default async function CertificationPage({
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-display font-bold text-foreground">
-              {isZh ? "檢定級別介紹" : "Certification Levels"}
+              {isZh ? "日本兩大美甲檢定體系" : "Japan's Two Major Nail Certifications"}
             </h2>
             <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
               {isZh
-                ? "JNEC 日本美甲檢定一般分為三個級別，由基礎到專業循序漸進。以下為通用說明，實際內容與報考方式以官方為準。"
-                : "JNEC Japanese nail certification is generally organized into three levels, progressing from fundamentals to professional mastery. The summary below is general; official sources govern exact requirements."}
+                ? "日本美甲檢定分為「JNEC 美甲師技能檢定（保養基礎）」與「JNA 凝膠美甲技能檢定」兩大體系，皆須由低階依序考取。以下為各級實際內容。"
+                : "Japanese nail certification has two systems — JNEC (foundational nailist skills) and JNA (gel nails) — each taken level by level. Actual content per level below."}
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {LEVELS.map((lv) => {
-              const t = isZh ? lv.zh : lv.en;
-              const badge = isZh ? lv.badge.zh : lv.badge.en;
-              return (
-                <div
-                  key={t.title}
-                  className="rounded-2xl border border-nail-pink/30 bg-nail-cream/40 p-6"
-                >
-                  <span className="inline-block text-xs font-medium px-3 py-1 rounded-full bg-nail-gold/15 text-nail-gold mb-4">
-                    {badge}
-                  </span>
-                  <h3 className="text-lg font-display font-semibold text-foreground mb-2">
-                    {t.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t.desc}
+
+          <div className="space-y-12">
+            {CERT_SYSTEMS.map((sys) => (
+              <div key={sys.org.en}>
+                <div className="mb-5">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <h3 className="text-xl font-display font-bold text-foreground">
+                      {isZh ? sys.org.zh : sys.org.en}
+                    </h3>
+                    <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-nail-gold/15 text-nail-gold">
+                      {isZh ? sys.sub.zh : sys.sub.en}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
+                    {isZh ? sys.intro.zh : sys.intro.en}
                   </p>
                 </div>
-              );
-            })}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {sys.levels.map((lv) => (
+                    <div
+                      key={lv.title.en}
+                      className="rounded-2xl border border-nail-pink/30 bg-nail-cream/40 p-6 flex flex-col"
+                    >
+                      <span className="inline-block self-start text-xs font-semibold px-3 py-1 rounded-full bg-nail-gold text-white mb-4">
+                        {isZh ? lv.badge.zh : lv.badge.en}
+                      </span>
+                      <h4 className="text-lg font-display font-semibold text-foreground mb-2">
+                        {isZh ? lv.title.zh : lv.title.en}
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                        {isZh ? lv.desc.zh : lv.desc.en}
+                      </p>
+                      <p className="mt-4 text-xs text-nail-gold/90 border-t border-nail-pink/30 pt-3">
+                        {isZh ? lv.meta.zh : lv.meta.en}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
           <p className="mt-8 text-center text-sm text-muted-foreground">
             {isZh
-              ? "各級別的報考資格、費用與考期等細節，歡迎詢問我們做進一步諮詢。"
-              : "For eligibility, fees, and exam dates of each level, feel free to reach out for a detailed consultation."}
+              ? "報名費為日本官方參考金額，實際考期、報名與最新規範以 JNEC／JNA 官方公告為準；歡迎諮詢適合你的考照路線。"
+              : "Fees are official Japan reference amounts; exact dates and rules follow JNEC/JNA announcements. Reach out for the right path for you."}
           </p>
         </div>
       </section>

@@ -83,8 +83,9 @@ export function InstructorProfile() {
                     專業證照
                   </h3>
                   <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>JNA 日本美甲師協會 衛生士合格</li>
-                    <li>JNEC 三級日本美甲師檢定合格</li>
+                    <li>JNEC 三級・二級 日本美甲師檢定合格</li>
+                    <li>JNA 凝膠初級・中級檢定合格</li>
+                    <li>JNA 日本美甲師協會 衛生管理士合格</li>
                     <li>國家美容乙級/丙級證照</li>
                   </ul>
                 </div>
