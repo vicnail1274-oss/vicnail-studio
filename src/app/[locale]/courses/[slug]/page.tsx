@@ -19,6 +19,9 @@ import { CourseReviews } from "@/components/courses/CourseReviews";
 import { AddCourseToCartButton } from "@/components/courses/AddCourseToCartButton";
 import type { Course } from "@/lib/supabase/types";
 
+// 課程詳情依使用者購買狀態與即時章節資料渲染，停用 fetch 快取避免顯示過期內容
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
 }

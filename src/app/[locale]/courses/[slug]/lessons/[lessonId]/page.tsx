@@ -12,6 +12,9 @@ import { createClient } from "@/lib/supabase/server";
 import { MarkCompleteButton } from "@/components/video/VideoPlayer";
 import { LessonMediaPanel } from "@/components/video/LessonMediaPanel";
 
+// 觀看頁依使用者購買/進度與即時章節渲染，停用 fetch 快取避免過期內容
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ locale: string; slug: string; lessonId: string }>;
 }
