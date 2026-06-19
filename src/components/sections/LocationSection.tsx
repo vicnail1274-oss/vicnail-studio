@@ -1,3 +1,5 @@
+import { LINE_URL } from "@/lib/line";
+
 export function LocationSection({ locale }: { locale: string }) {
   const isZh = locale === "zh-TW";
 
@@ -39,7 +41,7 @@ export function LocationSection({ locale }: { locale: string }) {
                 : "Enroll and ask via LINE — easiest way, usually replies within 30 min."}
             </p>
             <a
-              href="https://lin.ee/vicnail"
+              href={LINE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-white bg-[#06C755] hover:bg-[#05a847] rounded-full px-5 py-2 transition-colors"

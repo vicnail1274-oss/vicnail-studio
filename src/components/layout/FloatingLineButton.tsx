@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
+import { LINE_URL } from "@/lib/line";
 
-const LINE_URL =
-  process.env.NEXT_PUBLIC_LINE_URL || "https://line.me/R/ti/p/@vicnail";
 const DISMISS_KEY = "vicnail_line_btn_dismissed";
 
 export function FloatingLineButton() {

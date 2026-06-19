@@ -8,6 +8,7 @@ import {
   CourseFilterBar,
   type CourseCard,
 } from "@/components/courses/CourseFilterBar";
+import { LINE_URL } from "@/lib/line";
 
 // 依登入者 online_access 即時判斷門禁，停用快取
 export const dynamic = "force-dynamic";
@@ -62,7 +63,7 @@ export default async function OnlineCoursesPage({
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             {user ? (
               <a
-                href="https://lin.ee/vicnail"
+                href={LINE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#06C755] hover:bg-[#06C755]/90 text-white font-medium px-8 py-3 transition-colors"

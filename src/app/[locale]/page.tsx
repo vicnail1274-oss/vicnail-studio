@@ -8,8 +8,6 @@ import { LatestArticles } from "@/components/sections/LatestArticles";
 import { CategoryGrid } from "@/components/sections/CategoryGrid";
 import { ToolsSection } from "@/components/sections/ToolsSection";
 import { FounderSection } from "@/components/sections/FounderSection";
-import { NewsletterCTA } from "@/components/sections/NewsletterCTA";
-import { AdSlot } from "@/components/ads/AdSlot";
 import { HomepageFAQJsonLd } from "@/components/seo/JsonLd";
 import { getArticles } from "@/lib/mdx";
 import { setRequestLocale } from "next-intl/server";
@@ -95,13 +93,9 @@ export default async function Home({
       <FounderSection />
       <FAQSection locale={locale} />
       <LatestArticles articles={allArticles} locale={locale} />
-      <div className="flex justify-center py-6 bg-white">
-        <AdSlot size="leaderboard" slotId="home-mid" />
-      </div>
       <CategoryGrid locale={locale} />
       <ToolsSection locale={locale} />
       <LocationSection locale={locale} />
-      <NewsletterCTA locale={locale} />
     </>
   );
 }

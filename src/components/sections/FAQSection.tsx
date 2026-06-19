@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { LINE_URL } from "@/lib/line";
 
 interface FAQItem {
   questionZh: string;
@@ -118,7 +119,7 @@ export function FAQSection({ locale }: { locale: string }) {
             {isZh ? "還有其他關於課程的問題嗎？直接 LINE 我們！" : "Still have questions about the courses? Just ask us on LINE!"}
           </p>
           <a
-            href="https://lin.ee/vicnail"
+            href={LINE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm font-medium text-white bg-[#06C755] hover:bg-[#05a847] rounded-full px-6 py-2.5 transition-colors"

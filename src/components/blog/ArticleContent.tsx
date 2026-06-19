@@ -2,8 +2,6 @@ import { Link } from "@/i18n/navigation";
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
 import type { Article } from "@/lib/mdx";
 import { cn } from "@/lib/utils";
-import { AdSlot } from "@/components/ads/AdSlot";
-import { SidebarAds } from "@/components/ads/SidebarAds";
 import { NewsletterCTA } from "@/components/sections/NewsletterCTA";
 
 export function ArticleContent({
@@ -21,11 +19,6 @@ export function ArticleContent({
   dark?: boolean;
   relatedArticles?: React.ReactNode;
 }) {
-  // Split content in half for mid-article ad
-  const midPoint = article.content.indexOf("</p>", Math.floor(article.content.length / 2));
-  const contentFirst = midPoint > 0 ? article.content.slice(0, midPoint + 4) : article.content;
-  const contentSecond = midPoint > 0 ? article.content.slice(midPoint + 4) : "";
-
   return (
     <article className={cn("py-12 px-4", dark && "bg-ai-dark min-h-screen")}>
       <div className="max-w-7xl mx-auto">
@@ -42,11 +35,6 @@ export function ArticleContent({
           <ArrowLeft size={14} />
           {backLabel}
         </Link>
-
-        {/* Top leaderboard ad */}
-        <div className="flex justify-center mb-8">
-          <AdSlot size="leaderboard" slotId="article-top" dark={dark} />
-        </div>
 
         {/* Two-column layout */}
         <div className="flex gap-8">
@@ -114,7 +102,7 @@ export function ArticleContent({
               )}
             </header>
 
-            {/* Content first half */}
+            {/* Content */}
             <div
               className={cn(
                 "prose max-w-none",
@@ -122,33 +110,8 @@ export function ArticleContent({
                   ? "prose-invert prose-headings:text-white prose-a:text-ai-cyan"
                   : "prose-headings:text-foreground prose-a:text-nail-gold"
               )}
-              dangerouslySetInnerHTML={{ __html: contentFirst }}
+              dangerouslySetInnerHTML={{ __html: article.content }}
             />
-
-            {/* Mid-article ad */}
-            {contentSecond && (
-              <>
-                <div className="flex justify-center my-8">
-                  <AdSlot size="rectangle" slotId="article-mid" dark={dark} />
-                </div>
-
-                {/* Content second half */}
-                <div
-                  className={cn(
-                    "prose max-w-none",
-                    dark
-                      ? "prose-invert prose-headings:text-white prose-a:text-ai-cyan"
-                      : "prose-headings:text-foreground prose-a:text-nail-gold"
-                  )}
-                  dangerouslySetInnerHTML={{ __html: contentSecond }}
-                />
-              </>
-            )}
-
-            {/* Bottom leaderboard ad */}
-            <div className="flex justify-center mt-10 mb-8">
-              <AdSlot size="leaderboard" slotId="article-bottom" dark={dark} />
-            </div>
 
             {/* Newsletter CTA */}
             <NewsletterCTA locale={locale} dark={dark} />
@@ -156,9 +119,6 @@ export function ArticleContent({
             {/* Related articles slot */}
             {relatedArticles}
           </div>
-
-          {/* Sidebar ads */}
-          <SidebarAds dark={dark} />
         </div>
       </div>
     </article>

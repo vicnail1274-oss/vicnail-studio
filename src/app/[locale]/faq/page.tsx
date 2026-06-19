@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { ChevronDown, Mail, MessageCircle, Truck, CreditCard, RefreshCw, Package } from "lucide-react";
+import { LINE_URL } from "@/lib/line";
 
 export const metadata: Metadata = {
   title: "常見問題 FAQ",
@@ -167,7 +168,7 @@ export default function FaqPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href={process.env.NEXT_PUBLIC_LINE_URL || "https://line.me/R/ti/p/@vicnail"}
+              href={LINE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#06C755] text-white rounded-xl font-semibold hover:bg-[#05a847] transition-colors"

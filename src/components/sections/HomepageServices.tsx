@@ -2,6 +2,7 @@
 
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { LINE_URL } from "@/lib/line";
 
 interface Service {
   emoji: string;
@@ -94,7 +95,7 @@ export function HomepageServices({ locale }: { locale: string }) {
             size="lg"
             className="bg-nail-gold hover:bg-nail-gold/90 text-white rounded-full px-8"
           >
-            <a href="https://lin.ee/vicnail" target="_blank" rel="noopener noreferrer">
+            <a href={LINE_URL} target="_blank" rel="noopener noreferrer">
               {isZh ? "LINE 立即預約" : "Book via LINE"}
             </a>
           </Button>

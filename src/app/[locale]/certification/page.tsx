@@ -11,6 +11,7 @@ import {
   Sparkles,
   ChevronRight,
 } from "lucide-react";
+import { LINE_URL } from "@/lib/line";
 
 const BASE_URL = "https://vicnail-studio.com";
 
@@ -485,7 +486,7 @@ export default async function CertificationPage({
               : "Reach out via LINE to ask about our certification courses — we'll recommend the best path for your level and goals."}
           </p>
           <a
-            href="https://lin.ee/vicnail"
+            href={LINE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#06C755] text-white text-base font-semibold hover:bg-[#05b04c] transition-colors shadow-md"

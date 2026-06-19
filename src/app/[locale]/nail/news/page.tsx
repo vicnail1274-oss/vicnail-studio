@@ -1,6 +1,5 @@
 import { getArticles } from "@/lib/mdx";
 import { ArticleGrid } from "@/components/blog/ArticleGrid";
-import { AdSlot } from "@/components/ads/AdSlot";
 import { ItemListJsonLd } from "@/components/seo/JsonLd";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
@@ -82,10 +81,6 @@ export default async function NailNewsPage({
           </p>
         </div>
       </section>
-
-      <div className="flex justify-center py-4">
-        <AdSlot size="leaderboard" slotId="news-top" />
-      </div>
 
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">

@@ -9,6 +9,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LINE_URL } from "@/lib/line";
 
 export function ContactCTA() {
   return (
@@ -81,7 +82,7 @@ export function ContactCTA() {
                 className="bg-[#06C755] hover:bg-[#06C755]/90 text-white rounded-full px-8"
               >
                 <a
-                  href="https://line.me/ti/p/vicnail_studio"
+                  href={LINE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -5,6 +5,7 @@ import { TextGenerateEffect } from "@/components/aceternity/TextGenerateEffect";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { LINE_URL } from "@/lib/line";
 
 export function HeroSection() {
   const t = useTranslations("hero");
@@ -69,7 +70,7 @@ export function HeroSection() {
         {/* Secondary link: course consultation via LINE */}
         <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center text-sm animate-fade-up">
           <a
-            href="https://lin.ee/vicnail"
+            href={LINE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-nail-gold transition-colors underline underline-offset-4"
