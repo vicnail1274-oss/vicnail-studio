@@ -3,40 +3,40 @@ const REVIEWS = [
     name: "Emily C.",
     avatar: "E",
     rating: 5,
-    textZh: "凝膠美甲做得超好看！色澤飽滿，持久度也非常棒，做完三週還沒脫落。Vic 老師很細心，強烈推薦！",
-    textEn: "The gel nails look gorgeous! Rich color and great lasting power — still perfect three weeks later. Vic is so attentive. Highly recommended!",
+    textZh: "完全零基礎報名，從沒拿過工具到現在能獨立完成凝膠美甲。Vic 老師教得超細，每個步驟都顧到，還能無限複習，真的學到紮實技術！",
+    textEn: "I enrolled with zero experience — from never holding a tool to now completing a full gel set on my own. Vic teaches in incredible detail and covers every step, plus unlimited review. I really learned solid skills!",
     date: "2025-12",
   },
   {
     name: "Jessica L.",
     avatar: "J",
     rating: 5,
-    textZh: "第一次做凝膠延甲，本來很擔心不自然，但成品完全超越預期！甲型漂亮又耐用，下次還要來。",
-    textEn: "First time doing gel extensions — was worried they'd look unnatural, but the result exceeded my expectations! Beautiful shape and very durable.",
+    textZh: "本來只是興趣，學完延甲課程後居然開始接單了！老師把甲型、結構講得很清楚，現在客人都稱讚我做的延甲自然又耐用。",
+    textEn: "I started just as a hobby, but after the extensions course I'm actually taking clients now! Vic explained nail shape and structure so clearly — my clients love how natural and durable my extensions are.",
     date: "2026-01",
   },
   {
     name: "Mandy W.",
     avatar: "M",
     rating: 5,
-    textZh: "凝膠保養做完手好嫩！老師講解得很清楚，讓我了解如何在家保養。環境整潔，服務很專業。",
-    textEn: "My hands felt so soft after the gel care treatment! The nail artist explained everything clearly. Clean environment, very professional service.",
+    textZh: "跟著老師考過了 JNEC 日本檢定！考照輔導非常到位，每個評分細節都帶我練到熟，應試一點都不緊張，順利拿到證照。",
+    textEn: "I passed the JNEC Japanese certification with Vic's guidance! The exam prep was thorough — she drilled every scoring detail until I was confident. I wasn't nervous on test day and got certified smoothly.",
     date: "2026-01",
   },
   {
     name: "Amy H.",
     avatar: "A",
     rating: 5,
-    textZh: "預約很方便，LINE 回覆超快速！做的過程很舒服，老師也會建議適合的顏色，完全滿意！",
-    textEn: "Booking was so easy and LINE replies were super fast! The process was comfortable and Vic suggested great colors. Completely satisfied!",
+    textZh: "結業後成功開了自己的工作室！除了技術，老師也分享很多開店與接案經驗，讓我少走很多冤枉路。遇到問題回來跟課還是很熱心解答。",
+    textEn: "After graduating I opened my own studio! Beyond technique, Vic shared so much about running a studio and taking clients — it saved me from countless mistakes. Whenever I come back to re-attend, she's always happy to help.",
     date: "2026-02",
   },
   {
     name: "Claire T.",
     avatar: "C",
     rating: 5,
-    textZh: "已經是回頭客了，每次凝膠美甲都讓我愛不釋手。Vic 技術很棒，而且很懂最新流行趨勢，每次都有驚喜！",
-    textEn: "I'm a returning client. Every set of gel nails makes me fall in love all over again. Vic's technique is amazing and she always knows the latest trends!",
+    textZh: "上過很多課，Vic 老師是教最細的一位。進度依我的程度調整，不會的地方一遍遍帶到會為止，還能無限複習，真心推薦給想認真學的人！",
+    textEn: "I've taken many classes, and Vic teaches with the most detail by far. She paces to my level and walks me through tricky parts again and again until I get it — plus unlimited review. Highly recommend for anyone serious about learning!",
     date: "2026-03",
   },
 ];
@@ -50,15 +50,15 @@ export function TestimonialsSection({ locale }: { locale: string }) {
         {/* Header */}
         <div className="text-center mb-12">
           <p className="text-sm font-medium text-nail-gold uppercase tracking-widest mb-2">
-            {isZh ? "顧客見證" : "Reviews"}
+            {isZh ? "學員見證" : "Student Stories"}
           </p>
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-            {isZh ? "真實顧客好評" : "What Our Clients Say"}
+            {isZh ? "學員真實回饋" : "What Our Students Say"}
           </h2>
           <div className="mt-3 flex items-center justify-center gap-2">
             <span className="text-yellow-400 text-lg">★★★★★</span>
             <span className="text-muted-foreground text-sm">
-              {isZh ? "Google 5.0 · 50+ 則評論" : "Google 5.0 · 50+ Reviews"}
+              {isZh ? "5.0 · 50+ 位結業學員好評" : "5.0 · 50+ Graduate Reviews"}
             </span>
           </div>
         </div>

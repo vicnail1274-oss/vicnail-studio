@@ -11,44 +11,52 @@ interface FAQItem {
 
 const FAQ_ITEMS: FAQItem[] = [
   {
-    questionZh: "如何預約凝膠美甲？",
-    questionEn: "How do I book a gel nail appointment?",
+    questionZh: "完全零基礎可以學嗎？",
+    questionEn: "Can I learn with zero experience?",
     answerZh:
-      "透過 LINE 加入好友後傳訊預約最方便。請告知希望的服務項目（凝膠美甲／凝膠延甲／凝膠保養）、日期與時間，我會在 30 分鐘內回覆確認。",
+      "可以！我們的課程專為零基礎設計，從持工具、手部結構到上色、延甲一步步帶。Vic 老師手把手教學、進度依個人調整，承諾教到你真正學會為止。",
     answerEn:
-      "The easiest way is to add us on LINE and send a message. Let us know the service you want (gel nails / gel extensions / gel care), your preferred date and time, and we'll confirm within 30 minutes.",
+      "Absolutely! Our courses are built for complete beginners — we start from holding the tools and nail anatomy, then walk you step by step through color application and extensions. Vic teaches hands-on, paces each student individually, and commits to teaching until you've truly mastered it.",
   },
   {
-    questionZh: "凝膠美甲可以維持多久？",
-    questionEn: "How long do gel nails last?",
+    questionZh: "怎麼報名上課？",
+    questionEn: "How do I sign up for a course?",
     answerZh:
-      "一般凝膠美甲在正常保養下可以維持 3–4 週，凝膠延甲約 3 週。日常使用凝膠保養油、避免指甲受力，可延長持久度。",
+      "透過 LINE 加入好友後傳訊諮詢最方便。告訴我們你想學的方向（凝膠美甲／凝膠延甲／彩繪）與目前程度，我會在 30 分鐘內回覆，協助你安排適合的課程與上課時間。",
     answerEn:
-      "Gel nails typically last 3–4 weeks with proper care, and gel extensions about 3 weeks. Using cuticle oil daily and avoiding stress on nails can extend longevity.",
+      "The easiest way is to add us on LINE and send a message. Tell us what you'd like to learn (gel nails / gel extensions / nail art) and your current level — we'll reply within 30 minutes and help you arrange the right course and class schedule.",
   },
   {
-    questionZh: "凝膠美甲和凝膠延甲有什麼差別？",
-    questionEn: "What's the difference between gel nails and gel extensions?",
+    questionZh: "課程可以無限複習、跟課嗎？",
+    questionEn: "Can I review and re-attend classes without limit?",
     answerZh:
-      "凝膠美甲是在原本甲面上塗覆凝膠色彩，適合有一定長度的自然甲。凝膠延甲則利用凝膠雕塑延長甲型，適合想讓指甲更長或修飾甲型的客人。",
+      "可以！結業後仍可無限次免費回來跟課複習，遇到瓶頸或想精進都歡迎再來。我們在意的是你真的學會、做得出來，而不是上完幾堂課就結束。",
     answerEn:
-      "Gel nails apply gel color on top of your natural nails, ideal if you have decent length. Gel extensions sculpt and lengthen the nail using gel, perfect if you want longer nails or to reshape your nail form.",
+      "Yes! After completing your course you're welcome to come back and re-attend classes for free, as many times as you need — whether you hit a wall or just want to sharpen your skills. We care that you can truly do it, not just that you finished a set number of lessons.",
   },
   {
-    questionZh: "凝膠保養包含哪些項目？",
-    questionEn: "What's included in the gel care treatment?",
+    questionZh: "有教 JNEC 日本美甲檢定考照嗎？",
+    questionEn: "Do you offer JNEC Japanese nail certification prep?",
     answerZh:
-      "凝膠保養包含：去除老廢角質、整修甲緣、手部滋潤按摩、塗覆凝膠護甲油。整個療程約 60 分鐘，讓雙手更柔嫩有光澤。",
+      "有！我們提供 JNEC 日本美甲檢定的考照輔導，針對檢定項目與評分標準逐項練習，從手法到應試細節全程指導，協助你穩穩拿證照。",
     answerEn:
-      "Gel care includes: dead skin removal, nail shaping, moisturizing hand massage, and a gel nail treatment coat. The full treatment takes about 60 minutes for softer, more radiant hands.",
+      "Yes! We offer prep for the JNEC Japanese nail certification, practicing each exam component against the official scoring criteria. From technique to test-day details, we guide you all the way to passing with confidence.",
   },
   {
-    questionZh: "如需取消或改期，需要提前多久通知？",
-    questionEn: "How far in advance should I notify you to cancel or reschedule?",
+    questionZh: "上課地點與時間？",
+    questionEn: "Where and when are the classes?",
     answerZh:
-      "請於預約時間 24 小時前透過 LINE 告知，以便安排其他客人。若臨時無法到場，請盡早通知，感謝您的配合！",
+      "上課地點在新北市板橋區（捷運亞東醫院站步行約 5 分鐘）。採預約諮詢制，上課時間可依你的需求彈性安排，請先透過 LINE 與我們約定。",
     answerEn:
-      "Please notify us via LINE at least 24 hours before your appointment so we can accommodate other clients. If something comes up last minute, please let us know as early as possible. Thank you!",
+      "Classes are held in Banqiao District, New Taipei City (about a 5-minute walk from Yadong Hospital MRT Station). We run by appointment, and class times can be arranged flexibly around your schedule — just reach out on LINE to set it up.",
+  },
+  {
+    questionZh: "學完可以開店、接案接單嗎？",
+    questionEn: "Can I open a studio or take clients after the course?",
+    answerZh:
+      "可以！課程以實戰接單為目標，除了紮實技術，也會分享開店與接案的實務經驗。學會後你就具備獨立接單、經營個人工作室的能力，許多學員結業後都已開始接客。",
+    answerEn:
+      "Yes! The course is built around real-world readiness — alongside solid technique, we share practical experience on opening a studio and taking clients. Once you've mastered the skills you'll be ready to take bookings and run your own studio, and many graduates are already serving clients.",
   },
 ];
 
@@ -65,7 +73,7 @@ export function FAQSection({ locale }: { locale: string }) {
             {isZh ? "常見問題" : "FAQ"}
           </p>
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-            {isZh ? "預約前您想知道的" : "Everything You Want to Know"}
+            {isZh ? "報名上課前想知道的" : "Everything You Want to Know Before Enrolling"}
           </h2>
         </div>
 
@@ -107,7 +115,7 @@ export function FAQSection({ locale }: { locale: string }) {
         {/* CTA at bottom */}
         <div className="mt-10 text-center">
           <p className="text-muted-foreground text-sm mb-4">
-            {isZh ? "還有其他問題嗎？直接 LINE 我們！" : "Still have questions? Just ask us on LINE!"}
+            {isZh ? "還有其他關於課程的問題嗎？直接 LINE 我們！" : "Still have questions about the courses? Just ask us on LINE!"}
           </p>
           <a
             href="https://lin.ee/vicnail"

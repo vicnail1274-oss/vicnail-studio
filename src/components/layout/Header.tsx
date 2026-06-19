@@ -12,10 +12,10 @@ import type { User } from "@supabase/supabase-js";
 const navItems = [
   { href: "/", key: "home", zhOnly: false },
   { href: "/courses", key: "courses", zhOnly: true },
-  { href: "/shop", key: "shop", zhOnly: true },
-  { href: "/services", key: "services", zhOnly: false },
+  { href: "/certification", key: "certification", zhOnly: true },
   { href: "/nail/knowledge", key: "nailKnowledge", zhOnly: false },
   { href: "/nail/news", key: "nailNews", zhOnly: false },
+  { href: "/shop", key: "shop", zhOnly: true },
   { href: "/about", key: "about", zhOnly: false },
 ] as const;
 

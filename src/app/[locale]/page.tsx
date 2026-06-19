@@ -1,5 +1,7 @@
 import { HeroSection } from "@/components/sections/HeroSection";
-import { HomepageServices } from "@/components/sections/HomepageServices";
+import { TeachingFeatures } from "@/components/sections/TeachingFeatures";
+import { CoursesOverview } from "@/components/sections/CoursesOverview";
+import { CertificationSection } from "@/components/sections/CertificationSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { LocationSection } from "@/components/sections/LocationSection";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -88,19 +90,20 @@ export default async function Home({
     <>
       <HomepageFAQJsonLd locale={locale as "zh-TW" | "en"} />
       <HeroSection />
-      <HomepageServices locale={locale} />
+      <TeachingFeatures locale={locale} />
+      <CoursesOverview locale={locale} />
+      <CertificationSection locale={locale} />
+      <FounderSection />
       <TestimonialsSection locale={locale} />
-      <LocationSection locale={locale} />
       <FAQSection locale={locale} />
-      <NewsletterCTA locale={locale} />
       <LatestArticles articles={allArticles} locale={locale} />
       <div className="flex justify-center py-6 bg-white">
         <AdSlot size="leaderboard" slotId="home-mid" />
       </div>
       <CategoryGrid locale={locale} />
       <ToolsSection locale={locale} />
+      <LocationSection locale={locale} />
       <NewsletterCTA locale={locale} />
-      <FounderSection />
     </>
   );
 }

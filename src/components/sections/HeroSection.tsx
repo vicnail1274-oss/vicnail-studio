@@ -48,15 +48,13 @@ export function HeroSection() {
         </div>
 
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center animate-fade-up">
-          {/* Primary CTA: Book now via LINE */}
+          {/* Primary CTA: explore courses */}
           <Button
             asChild
             size="lg"
             className="bg-nail-gold hover:bg-nail-gold/90 text-white rounded-full px-8 text-base font-semibold shadow-lg shadow-nail-gold/20"
           >
-            <a href="https://lin.ee/vicnail" target="_blank" rel="noopener noreferrer">
-              {t("ctaBook")}
-            </a>
+            <Link href="/courses">{t("ctaCourses")}</Link>
           </Button>
           <Button
             asChild
@@ -64,15 +62,20 @@ export function HeroSection() {
             variant="outline"
             className="border-nail-gold/30 text-nail-gold hover:bg-nail-pink/30 rounded-full px-8 text-base"
           >
-            <Link href="/services">{t("ctaServices")}</Link>
+            <Link href="/certification">{t("ctaServices")}</Link>
           </Button>
         </div>
 
-        {/* Secondary links */}
+        {/* Secondary link: course consultation via LINE */}
         <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center text-sm animate-fade-up">
-          <Link href="/courses" className="text-muted-foreground hover:text-nail-gold transition-colors underline underline-offset-4">
-            {t("ctaCourses")}
-          </Link>
+          <a
+            href="https://lin.ee/vicnail"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-nail-gold transition-colors underline underline-offset-4"
+          >
+            {t("ctaBook")}
+          </a>
         </div>
       </div>
     </section>
