@@ -16,6 +16,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { CourseJsonLd } from "@/components/seo/JsonLd";
 import { CourseReviews } from "@/components/courses/CourseReviews";
+import { AddCourseToCartButton } from "@/components/courses/AddCourseToCartButton";
 import type { Course } from "@/lib/supabase/types";
 
 interface PageProps {
@@ -72,10 +73,21 @@ export default async function CourseDetailPage({ params }: PageProps) {
   const { data: lessons } = await supabase
     .from("lessons")
     .select(
-      "id, title, description, duration_seconds, sort_order, is_preview, upload_status"
+      "id, title, description, duration_seconds, sort_order, is_preview, upload_status, section_id"
     )
     .eq("course_id", course.id)
     .order("sort_order", { ascending: true });
+
+  const { data: sectionsData } = await supabase
+    .from("course_sections")
+    .select("id, title, sort_order")
+    .eq("course_id", course.id)
+    .order("sort_order", { ascending: true });
+  const sections = (sectionsData ?? []) as {
+    id: string;
+    title: string;
+    sort_order: number;
+  }[];
 
   // 評分摘要（無資料則不顯示）
   const { data: ratingSummary } = (await supabase
@@ -131,6 +143,27 @@ export default async function CourseDetailPage({ params }: PageProps) {
   ).length;
   const isCourseComplete =
     hasAccess && lessonList.length > 0 && completedCount === lessonList.length;
+
+  // 章節分組（無分組維持單一清單）
+  const lessonGlobalIndex = new Map(lessonList.map((l, i) => [l.id, i]));
+  const groupedLessons: {
+    section: { id: string; title: string } | null;
+    items: typeof lessonList;
+  }[] = [];
+  if (sections.length > 0) {
+    for (const s of sections) {
+      const items = lessonList.filter((l) => l.section_id === s.id);
+      if (items.length)
+        groupedLessons.push({ section: { id: s.id, title: s.title }, items });
+    }
+    const ungrouped = lessonList.filter(
+      (l) => !l.section_id || !sections.some((s) => s.id === l.section_id)
+    );
+    if (ungrouped.length) groupedLessons.push({ section: null, items: ungrouped });
+  } else {
+    groupedLessons.push({ section: null, items: lessonList });
+  }
+
   const whatYouLearn: string[] = Array.isArray(course.what_youll_learn)
     ? (course.what_youll_learn as string[])
     : [];
@@ -270,16 +303,25 @@ export default async function CourseDetailPage({ params }: PageProps) {
                     )}
                   </div>
                 ) : (
-                  <Link
-                    href={
-                      user
-                        ? `/zh-TW/courses/${course.slug}/buy`
-                        : `/zh-TW/auth/login?redirect=/zh-TW/courses/${course.slug}/buy`
-                    }
-                    className="w-full block py-3 bg-nail-gold text-white rounded-xl text-center font-semibold hover:bg-nail-gold/90 transition-colors"
-                  >
-                    立即購買 NT${displayPrice.toLocaleString()}
-                  </Link>
+                  <div className="space-y-2">
+                    <Link
+                      href={
+                        user
+                          ? `/zh-TW/courses/${course.slug}/buy`
+                          : `/zh-TW/auth/login?redirect=/zh-TW/courses/${course.slug}/buy`
+                      }
+                      className="w-full block py-3 bg-nail-gold text-white rounded-xl text-center font-semibold hover:bg-nail-gold/90 transition-colors"
+                    >
+                      立即購買 NT${displayPrice.toLocaleString()}
+                    </Link>
+                    <AddCourseToCartButton
+                      courseId={course.id}
+                      title={course.title}
+                      price={course.price}
+                      salePrice={course.sale_price}
+                      image={course.thumbnail_url}
+                    />
+                  </div>
                 )}
 
                 <p className="text-xs text-muted-foreground text-center">
@@ -328,8 +370,19 @@ export default async function CourseDetailPage({ params }: PageProps) {
                   章節準備中⋯⋯
                 </p>
               ) : (
-                lessonList.map((lesson, idx) => {
-                  const canWatch =
+                groupedLessons.map((group, gi) => (
+                  <div
+                    key={group.section?.id ?? `ug-${gi}`}
+                    className="space-y-2"
+                  >
+                    {group.section && (
+                      <h3 className="text-sm font-semibold text-foreground pt-2">
+                        {group.section.title}
+                      </h3>
+                    )}
+                    {group.items.map((lesson) => {
+                      const idx = lessonGlobalIndex.get(lesson.id) ?? 0;
+                      const canWatch =
                     (hasAccess && lesson.upload_status === "ready") ||
                     (lesson.is_preview && lesson.upload_status === "ready");
                   const progress = progressMap[lesson.id];
@@ -399,7 +452,9 @@ export default async function CourseDetailPage({ params }: PageProps) {
                       )}
                     </div>
                   );
-                })
+                    })}
+                  </div>
+                ))
               )}
             </div>
           </section>

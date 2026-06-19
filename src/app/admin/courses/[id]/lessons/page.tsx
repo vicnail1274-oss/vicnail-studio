@@ -28,12 +28,20 @@ interface Lesson {
   sort_order: number;
   is_preview: boolean;
   upload_status: string;
+  section_id?: string | null;
 }
 
 interface Course {
   id: string;
   title: string;
   slug: string;
+}
+
+interface Section {
+  id: string;
+  course_id: string;
+  title: string;
+  sort_order: number;
 }
 
 function formatDuration(seconds: number) {
@@ -60,6 +68,7 @@ export default function AdminCourseLessonsPage() {
 
   const [course, setCourse] = useState<Course | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({
@@ -71,9 +80,10 @@ export default function AdminCourseLessonsPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [cRes, lRes] = await Promise.all([
+    const [cRes, lRes, sRes] = await Promise.all([
       fetch("/api/admin/courses"),
       fetch(`/api/admin/lessons?course_id=${courseId}`),
+      fetch(`/api/admin/sections?course_id=${courseId}`),
     ]);
     if (cRes.ok) {
       const list = await cRes.json();
@@ -82,6 +92,9 @@ export default function AdminCourseLessonsPage() {
     }
     if (lRes.ok) {
       setLessons(await lRes.json());
+    }
+    if (sRes.ok) {
+      setSections(await sRes.json());
     }
     setLoading(false);
   }, [courseId]);
@@ -168,6 +181,40 @@ export default function AdminCourseLessonsPage() {
     load();
   }
 
+  async function addSection() {
+    const title = prompt("分組名稱？（例如：第一章 基礎入門）");
+    if (!title) return;
+    const res = await fetch("/api/admin/sections", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        course_id: courseId,
+        title,
+        sort_order: sections.length,
+      }),
+    });
+    if (!res.ok) {
+      alert("新增分組失敗");
+      return;
+    }
+    load();
+  }
+
+  async function deleteSection(id: string, title: string) {
+    if (!confirm(`刪除分組「${title}」？其下章節會變回未分組。`)) return;
+    await fetch(`/api/admin/sections?id=${id}`, { method: "DELETE" });
+    load();
+  }
+
+  async function assignSection(lessonId: string, sectionId: string) {
+    await fetch("/api/admin/lessons", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: lessonId, section_id: sectionId || null }),
+    });
+    load();
+  }
+
   if (loading) {
     return <div className="p-6 text-gray-500">載入中...</div>;
   }
@@ -203,6 +250,44 @@ export default function AdminCourseLessonsPage() {
         >
           <Plus size={18} /> 新增章節
         </button>
+      </div>
+
+      {/* 章節分組管理 */}
+      <div className="bg-white rounded-xl border p-4 mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold text-gray-700">
+            章節分組（選填）
+          </h2>
+          <button
+            onClick={addSection}
+            className="text-xs text-pink-500 hover:text-pink-600 flex items-center gap-1"
+          >
+            <Plus size={14} /> 新增分組
+          </button>
+        </div>
+        {sections.length === 0 ? (
+          <p className="text-xs text-gray-400">
+            尚無分組。建立分組後可在下方每個章節指定所屬分組，學員端會分組顯示。
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {sections.map((s) => (
+              <span
+                key={s.id}
+                className="inline-flex items-center gap-1 bg-pink-50 text-pink-700 text-xs px-2 py-1 rounded-full"
+              >
+                {s.title}
+                <button
+                  onClick={() => deleteSection(s.id, s.title)}
+                  className="hover:text-red-500"
+                  aria-label={`刪除分組 ${s.title}`}
+                >
+                  <Trash2 size={11} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {lessons.length === 0 ? (
@@ -330,6 +415,25 @@ export default function AdminCourseLessonsPage() {
                         </div>
                         {lesson.description && (
                           <p className="text-sm text-gray-500 mt-1">{lesson.description}</p>
+                        )}
+                        {sections.length > 0 && (
+                          <div className="mt-2">
+                            <select
+                              value={lesson.section_id ?? ""}
+                              onChange={(e) =>
+                                assignSection(lesson.id, e.target.value)
+                              }
+                              className="text-xs border rounded px-2 py-1 text-gray-600 bg-white"
+                              aria-label="所屬分組"
+                            >
+                              <option value="">未分組</option>
+                              {sections.map((s) => (
+                                <option key={s.id} value={s.id}>
+                                  {s.title}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         )}
                       </>
                     )}

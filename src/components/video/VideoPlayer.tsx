@@ -21,6 +21,12 @@ interface NextLessonInfo {
   href: string;
 }
 
+/** 播放器對外暴露的指令介面（給筆記/書籤面板抓目前時間、跳轉用） */
+export interface LessonPlayerApi {
+  getCurrentTime: () => number;
+  seekTo: (seconds: number) => void;
+}
+
 interface VideoPlayerProps {
   lessonId: string;
   initialPosition?: number;
@@ -28,6 +34,8 @@ interface VideoPlayerProps {
   onComplete?: () => void;
   /** 下一堂課資訊 — 由觀看頁算好傳入，播完顯示倒數自動播放 */
   nextLesson?: NextLessonInfo | null;
+  /** 播放器就緒時回傳指令介面（getCurrentTime / seekTo） */
+  onReady?: (api: LessonPlayerApi) => void;
 }
 
 interface PlaybackToken {
@@ -53,11 +61,23 @@ export function VideoPlayer({
   onProgress,
   onComplete,
   nextLesson = null,
+  onReady,
 }: VideoPlayerProps) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const onReadyRef = useRef(onReady);
+  onReadyRef.current = onReady;
+  const apiRef = useRef<LessonPlayerApi>({
+    getCurrentTime: () => videoRef.current?.currentTime ?? 0,
+    seekTo: (seconds: number) => {
+      const v = videoRef.current;
+      if (!v) return;
+      v.currentTime = Math.max(0, seconds);
+      v.play().catch(() => {});
+    },
+  });
   const [token, setToken] = useState<PlaybackToken | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deviceConflict, setDeviceConflict] = useState<ActiveDevice[]>([]);
@@ -120,6 +140,11 @@ export function VideoPlayer({
     fetchToken();
   }, [fetchToken]);
 
+  // 播放器就緒 → 回傳指令介面給外層（筆記/書籤面板用）
+  useEffect(() => {
+    onReadyRef.current?.(apiRef.current);
+  }, []);
+
   // 載入 HLS
   useEffect(() => {
     if (!token || !videoRef.current) return;
@@ -140,6 +165,10 @@ export function VideoPlayer({
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         if (initialPosition > 0) video.currentTime = initialPosition;
+        setLevelsVersion((v) => v + 1);
+      });
+      // 字幕軌（Bunny caption）解析完成 → 通知 PlayerControls 重讀字幕清單
+      hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, () => {
         setLevelsVersion((v) => v + 1);
       });
       hls.on(Hls.Events.ERROR, (_event, data) => {

@@ -13,6 +13,8 @@ export interface CartItem {
   image?: string;
   variant?: Record<string, string>;
   quantity: number;
+  /** 項目類型：商品（預設）或課程。課程數量固定 1、無 variant。 */
+  type?: "product" | "course";
 }
 
 const CART_KEY = "vicnail_cart";
@@ -21,6 +23,9 @@ const MAX_CART_ITEMS = 100;
 function isValidItem(x: unknown): x is CartItem {
   if (!x || typeof x !== "object") return false;
   const i = x as Record<string, unknown>;
+  if (i.type !== undefined && i.type !== "product" && i.type !== "course") {
+    return false;
+  }
   return (
     typeof i.productId === "string" &&
     i.productId.length > 0 &&
@@ -107,4 +112,9 @@ export function getCartTotal(cart: CartItem[]): number {
 
 export function getCartCount(cart: CartItem[]): number {
   return cart.reduce((sum, item) => sum + item.quantity, 0);
+}
+
+/** 取得指定類型的項目（course 沒設 type 視為 product） */
+export function getCartByType(cart: CartItem[], type: "product" | "course"): CartItem[] {
+  return cart.filter((item) => (item.type ?? "product") === type);
 }

@@ -22,6 +22,7 @@ import {
   PictureInPicture2,
   Loader2,
   Check,
+  Captions,
 } from "lucide-react";
 
 interface PlayerControlsProps {
@@ -73,12 +74,18 @@ export function PlayerControls({
   const [pipSupported, setPipSupported] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [menu, setMenu] = useState<null | "speed" | "quality">(null);
+  const [menu, setMenu] = useState<null | "speed" | "quality" | "subtitle">(
+    null
+  );
   const [scrubbing, setScrubbing] = useState(false);
   const [scrubPreview, setScrubPreview] = useState(0);
 
   const [levels, setLevels] = useState<QualityLevel[]>([]);
   const [currentLevel, setCurrentLevel] = useState(-1);
+  const [subtitleTracks, setSubtitleTracks] = useState<
+    { index: number; label: string }[]
+  >([]);
+  const [currentSubtitle, setCurrentSubtitle] = useState(-1);
 
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTapRef = useRef(0);
@@ -237,6 +244,56 @@ export function PlayerControls({
     }, 1000);
     return () => clearInterval(id);
   }, [hlsRef, levelsVersion]);
+
+  // ---- 字幕軌（hls.subtitleTracks，原生 textTracks 後備）----
+  useEffect(() => {
+    const hls = hlsRef.current;
+    const video = videoRef.current;
+    if (hls && hls.subtitleTracks && hls.subtitleTracks.length > 0) {
+      setSubtitleTracks(
+        hls.subtitleTracks.map((t, i) => ({
+          index: i,
+          label: t.name || t.lang || `字幕 ${i + 1}`,
+        }))
+      );
+      setCurrentSubtitle(hls.subtitleDisplay ? hls.subtitleTrack : -1);
+    } else if (video && video.textTracks && video.textTracks.length > 0) {
+      const tracks = Array.from(video.textTracks).filter(
+        (t) => t.kind === "subtitles" || t.kind === "captions"
+      );
+      setSubtitleTracks(
+        tracks.map((t, i) => ({
+          index: i,
+          label: t.label || t.language || `字幕 ${i + 1}`,
+        }))
+      );
+      setCurrentSubtitle(tracks.findIndex((t) => t.mode === "showing"));
+    } else {
+      setSubtitleTracks([]);
+      setCurrentSubtitle(-1);
+    }
+  }, [hlsRef, videoRef, levelsVersion]);
+
+  const changeSubtitle = useCallback(
+    (index: number) => {
+      const hls = hlsRef.current;
+      const video = videoRef.current;
+      if (hls && hls.subtitleTracks && hls.subtitleTracks.length > 0) {
+        hls.subtitleTrack = index;
+        hls.subtitleDisplay = index >= 0;
+      } else if (video && video.textTracks) {
+        const tracks = Array.from(video.textTracks).filter(
+          (t) => t.kind === "subtitles" || t.kind === "captions"
+        );
+        tracks.forEach((t, i) => {
+          t.mode = i === index ? "showing" : "disabled";
+        });
+      }
+      setCurrentSubtitle(index);
+      setMenu(null);
+    },
+    [hlsRef, videoRef]
+  );
 
   // ---- 全螢幕狀態監聽 ----
   useEffect(() => {
@@ -673,6 +730,64 @@ export function PlayerControls({
                 </div>
               )}
             </div>
+
+            {/* 字幕（有字幕軌時顯示） */}
+            {subtitleTracks.length > 0 && (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMenu(menu === "subtitle" ? null : "subtitle")
+                  }
+                  className={`${btn} ${
+                    currentSubtitle >= 0 ? "text-nail-gold" : ""
+                  }`}
+                  aria-label="字幕"
+                  aria-haspopup="menu"
+                  aria-expanded={menu === "subtitle"}
+                >
+                  <Captions size={20} />
+                </button>
+                {menu === "subtitle" && (
+                  <div
+                    role="menu"
+                    className="absolute bottom-full right-0 mb-2 bg-gray-900/95 backdrop-blur rounded-lg py-1 min-w-[7rem] shadow-xl border border-white/10"
+                  >
+                    <button
+                      type="button"
+                      role="menuitemradio"
+                      aria-checked={currentSubtitle === -1}
+                      onClick={() => changeSubtitle(-1)}
+                      className={`flex items-center justify-between w-full px-3 py-1.5 text-sm hover:bg-white/10 ${
+                        currentSubtitle === -1
+                          ? "text-nail-gold"
+                          : "text-white/90"
+                      }`}
+                    >
+                      <span>關閉</span>
+                      {currentSubtitle === -1 && <Check size={14} />}
+                    </button>
+                    {subtitleTracks.map((t) => (
+                      <button
+                        key={t.index}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={currentSubtitle === t.index}
+                        onClick={() => changeSubtitle(t.index)}
+                        className={`flex items-center justify-between w-full px-3 py-1.5 text-sm hover:bg-white/10 ${
+                          currentSubtitle === t.index
+                            ? "text-nail-gold"
+                            : "text-white/90"
+                        }`}
+                      >
+                        <span>{t.label}</span>
+                        {currentSubtitle === t.index && <Check size={14} />}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* 畫質（僅 hls.js 有 levels 時顯示） */}
             {levels.length > 1 && (

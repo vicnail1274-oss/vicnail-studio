@@ -9,10 +9,8 @@ import {
   PlayCircle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import {
-  VideoPlayer,
-  MarkCompleteButton,
-} from "@/components/video/VideoPlayer";
+import { MarkCompleteButton } from "@/components/video/VideoPlayer";
+import { LessonMediaPanel } from "@/components/video/LessonMediaPanel";
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string; lessonId: string }>;
@@ -77,33 +75,47 @@ export default async function LessonWatchPage({ params }: PageProps) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 權限檢查：非預覽課需登入 + enrollment
-  if (!lesson.is_preview) {
-    if (!user) {
-      redirect(
-        `/zh-TW/auth/login?redirect=/zh-TW/courses/${slug}/lessons/${lessonId}`
-      );
-    }
+  // 權限檢查：算出是否已購買；非試看課未購買就導走（未登入導登入）
+  let isEnrolled = false;
+  if (user) {
     const { data: enrollment } = await supabase
       .from("enrollments")
       .select("id, expires_at")
       .eq("user_id", user.id)
       .eq("course_id", course.id)
       .maybeSingle();
-    const hasAccess =
+    isEnrolled =
       !!enrollment &&
       (!enrollment.expires_at || new Date(enrollment.expires_at) > new Date());
-    if (!hasAccess) {
-      redirect(`/zh-TW/courses/${slug}`);
-    }
+  }
+  if (!lesson.is_preview && !isEnrolled) {
+    redirect(
+      user
+        ? `/zh-TW/courses/${slug}`
+        : `/zh-TW/auth/login?redirect=/zh-TW/courses/${slug}/lessons/${lessonId}`
+    );
   }
 
   // 取得章節列表（用於 sidebar 跟前後章）
   const { data: lessons } = await supabase
     .from("lessons")
-    .select("id, title, sort_order, is_preview, upload_status, duration_seconds")
+    .select(
+      "id, title, sort_order, is_preview, upload_status, duration_seconds, section_id"
+    )
     .eq("course_id", course.id)
     .order("sort_order", { ascending: true });
+
+  // 章節分組
+  const { data: sectionsData } = await supabase
+    .from("course_sections")
+    .select("id, title, sort_order")
+    .eq("course_id", course.id)
+    .order("sort_order", { ascending: true });
+  const sections = (sectionsData ?? []) as {
+    id: string;
+    title: string;
+    sort_order: number;
+  }[];
 
   const lessonList = lessons ?? [];
   const currentIdx = lessonList.findIndex((l) => l.id === lessonId);
@@ -153,6 +165,25 @@ export default async function LessonWatchPage({ params }: PageProps) {
         }
       : null;
 
+  // 依章節分組（無分組則維持單一清單）；用 flat lessonList 位置算全域序號
+  const globalIndex = new Map(lessonList.map((l, i) => [l.id, i]));
+  const grouped: {
+    section: { id: string; title: string } | null;
+    items: typeof lessonList;
+  }[] = [];
+  if (sections.length > 0) {
+    for (const s of sections) {
+      const items = lessonList.filter((l) => l.section_id === s.id);
+      if (items.length) grouped.push({ section: { id: s.id, title: s.title }, items });
+    }
+    const ungrouped = lessonList.filter(
+      (l) => !l.section_id || !sections.some((s) => s.id === l.section_id)
+    );
+    if (ungrouped.length) grouped.push({ section: null, items: ungrouped });
+  } else {
+    grouped.push({ section: null, items: lessonList });
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -166,10 +197,12 @@ export default async function LessonWatchPage({ params }: PageProps) {
             {course.title}
           </Link>
 
-          <VideoPlayer
+          <LessonMediaPanel
             lessonId={lesson.id}
+            courseId={course.id}
             initialPosition={initialPosition}
             nextLesson={nextLessonInfo}
+            showNotes={isEnrolled}
           />
 
           <div className="bg-white border rounded-xl p-5">
@@ -266,10 +299,19 @@ export default async function LessonWatchPage({ params }: PageProps) {
                 </div>
               )}
             </div>
-            <div className="max-h-[600px] overflow-y-auto divide-y divide-gray-50">
-              {lessonList.map((l, idx) => {
-                const isCurrent = l.id === lessonId;
-                const isWatchable =
+            <div className="max-h-[600px] overflow-y-auto">
+              {grouped.map((group, gi) => (
+                <div key={group.section?.id ?? `ungrouped-${gi}`}>
+                  {group.section && (
+                    <div className="px-3 py-2 bg-gray-50 text-xs font-semibold text-gray-600 border-b border-gray-100 sticky top-0 z-10">
+                      {group.section.title}
+                    </div>
+                  )}
+                  <div className="divide-y divide-gray-50">
+                    {group.items.map((l) => {
+                      const idx = globalIndex.get(l.id) ?? 0;
+                      const isCurrent = l.id === lessonId;
+                      const isWatchable =
                   l.upload_status === "ready" &&
                   (l.is_preview || lesson.is_preview === false);
                 const progress = progressMap[l.id];
@@ -324,7 +366,10 @@ export default async function LessonWatchPage({ params }: PageProps) {
                     </div>
                   </Link>
                 );
-              })}
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </aside>

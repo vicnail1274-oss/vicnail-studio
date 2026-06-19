@@ -146,6 +146,7 @@ export type Database = {
             | "ready"
             | "failed";
           uploaded_at: string | null;
+          section_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -169,6 +170,7 @@ export type Database = {
             | "ready"
             | "failed";
           uploaded_at?: string | null;
+          section_id?: string | null;
         };
         Update: {
           title?: string;
@@ -189,6 +191,7 @@ export type Database = {
             | "ready"
             | "failed";
           uploaded_at?: string | null;
+          section_id?: string | null;
         };
         Relationships: [
           {
@@ -295,6 +298,75 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      course_sections: {
+        Row: {
+          id: string;
+          course_id: string;
+          title: string;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          course_id: string;
+          title: string;
+          sort_order?: number;
+        };
+        Update: {
+          title?: string;
+          sort_order?: number;
+        };
+        Relationships: [];
+      };
+      lesson_notes: {
+        Row: {
+          id: string;
+          user_id: string;
+          lesson_id: string;
+          course_id: string;
+          position_seconds: number;
+          content: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          lesson_id: string;
+          course_id: string;
+          position_seconds?: number;
+          content: string;
+        };
+        Update: {
+          position_seconds?: number;
+          content?: string;
+        };
+        Relationships: [];
+      };
+      lesson_bookmarks: {
+        Row: {
+          id: string;
+          user_id: string;
+          lesson_id: string;
+          course_id: string;
+          position_seconds: number;
+          label: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          lesson_id: string;
+          course_id: string;
+          position_seconds: number;
+          label?: string | null;
+        };
+        Update: {
+          label?: string | null;
+        };
+        Relationships: [];
       };
       promo_codes: {
         Row: {
@@ -1008,3 +1080,8 @@ export type VideoViewSession =
   Database["public"]["Tables"]["video_view_sessions"]["Row"];
 export type MyEnrolledCourse =
   Database["public"]["Views"]["my_enrolled_courses"]["Row"];
+export type CourseSection =
+  Database["public"]["Tables"]["course_sections"]["Row"];
+export type LessonNote = Database["public"]["Tables"]["lesson_notes"]["Row"];
+export type LessonBookmark =
+  Database["public"]["Tables"]["lesson_bookmarks"]["Row"];
