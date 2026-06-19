@@ -362,7 +362,7 @@ export async function POST(req: NextRequest) {
 
     // #取消 指令
     if (text.startsWith("#取消")) {
-      const orderNum = text.replace("#取消", "").trim();
+      const orderNum = text.replace("#取消", "").trim().toUpperCase();
       if (!orderNum) {
         await replyMessage(replyToken, "請輸入訂單編號，例如：#取消 VNxxxx");
         continue;
@@ -370,24 +370,40 @@ export async function POST(req: NextRequest) {
 
       const admin = await createAdminClient();
 
-      // 驗證是否為此使用者的訂單
+      // 以訂單編號比對，且限定此 LINE 使用者自己的訂單
+      // （orders!inner 讓對嵌入表的編號過濾真正生效，不再抓任意一筆）
       const { data: lineOrder } = await admin
         .from("line_orders")
-        .select("order_id, orders(id, order_number, status)")
+        .select("order_id, orders!inner(id, order_number, status)")
         .eq("line_user_id", userId)
-        .limit(1)
-        .single();
+        .eq("orders.order_number", orderNum)
+        .maybeSingle();
 
-      if (!lineOrder?.orders) {
-        await replyMessage(replyToken, `找不到訂單 ${orderNum}。`);
+      const order = lineOrder?.orders as
+        | { id: string; order_number: string; status: string }
+        | undefined;
+
+      if (!order) {
+        await replyMessage(
+          replyToken,
+          `找不到訂單 ${orderNum}，或這不是您的訂單。`
+        );
         continue;
       }
 
-      const order = lineOrder.orders as { id: string; order_number: string; status: string };
       if (order.status !== "pending") {
+        const statusLabel =
+          ({
+            pending: "待付款",
+            paid: "已付款",
+            shipped: "已出貨",
+            completed: "已完成",
+            cancelled: "已取消",
+            refunded: "已退款",
+          } as Record<string, string>)[order.status] || order.status;
         await replyMessage(
           replyToken,
-          `訂單 ${order.order_number} 狀態為「${order.status}」，無法取消。`
+          `訂單 ${order.order_number} 狀態為「${statusLabel}」，無法取消。`
         );
         continue;
       }

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
+  Award,
   CheckCircle2,
   Clock,
   Film,
@@ -125,6 +126,11 @@ export default async function CourseDetailPage({ params }: PageProps) {
   }
 
   const lessonList = lessons ?? [];
+  const completedCount = lessonList.filter(
+    (l) => progressMap[l.id]?.completed
+  ).length;
+  const isCourseComplete =
+    hasAccess && lessonList.length > 0 && completedCount === lessonList.length;
   const whatYouLearn: string[] = Array.isArray(course.what_youll_learn)
     ? (course.what_youll_learn as string[])
     : [];
@@ -245,13 +251,24 @@ export default async function CourseDetailPage({ params }: PageProps) {
                 </div>
 
                 {hasAccess ? (
-                  <Link
-                    href={`/zh-TW/account/courses`}
-                    className="w-full block py-3 bg-green-500 text-white rounded-xl text-center font-semibold hover:bg-green-600 transition-colors"
-                  >
-                    <CheckCircle2 className="inline mr-1" size={18} />
-                    已購買 · 前往觀看
-                  </Link>
+                  <div className="space-y-2">
+                    <Link
+                      href={`/zh-TW/account/courses`}
+                      className="w-full block py-3 bg-green-500 text-white rounded-xl text-center font-semibold hover:bg-green-600 transition-colors"
+                    >
+                      <CheckCircle2 className="inline mr-1" size={18} />
+                      已購買 · 前往觀看
+                    </Link>
+                    {isCourseComplete && (
+                      <Link
+                        href={`/zh-TW/account/courses/${course.slug}/certificate`}
+                        className="w-full block py-3 bg-nail-gold/10 text-nail-gold border border-nail-gold/30 rounded-xl text-center font-semibold hover:bg-nail-gold/20 transition-colors"
+                      >
+                        <Award className="inline mr-1" size={18} />
+                        領取結業證書
+                      </Link>
+                    )}
+                  </div>
                 ) : (
                   <Link
                     href={

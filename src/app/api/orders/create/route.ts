@@ -200,28 +200,30 @@ export async function POST(req: NextRequest) {
 
     await admin.from("order_items").insert(itemsWithOrderId);
 
-    // 扣庫存（現貨商品）— 用 WHERE stock >= quantity 防止競態條件
-    for (const item of items) {
-      const product = products.find((p) => p.id === item.productId);
-      if (product?.purchase_type === "instock") {
-        const { data: updated, error: stockError } = await admin
-          .from("products")
-          .update({ stock: product.stock - item.quantity })
-          .eq("id", product.id)
-          .gte("stock", item.quantity)
-          .select("id");
+    // 扣庫存（現貨商品）— 單一原子 RPC，全有或全無，取代 N+1 迴圈
+    // 任一現貨項目庫存不足即整批 rollback，不會「扣了一部分又取消訂單漏庫存」
+    const instockItems = items
+      .filter((item) => {
+        const product = products.find((p) => p.id === item.productId);
+        return product?.purchase_type === "instock";
+      })
+      .map((item) => ({ product_id: item.productId, quantity: item.quantity }));
 
-        if (stockError || !updated?.length) {
-          // 庫存不足，取消訂單
-          await admin
-            .from("orders")
-            .update({ status: "cancelled" })
-            .eq("id", order.id);
-          return NextResponse.json(
-            { error: `${product.title} 庫存不足，訂單已取消` },
-            { status: 409 }
-          );
-        }
+    if (instockItems.length > 0) {
+      const { error: stockError } = await admin.rpc("decrement_stock_batch", {
+        p_items: instockItems,
+      });
+
+      if (stockError) {
+        // 庫存不足（或扣庫存失敗）→ 取消整筆訂單
+        await admin
+          .from("orders")
+          .update({ status: "cancelled" })
+          .eq("id", order.id);
+        return NextResponse.json(
+          { error: "商品庫存不足，訂單已取消" },
+          { status: 409 }
+        );
       }
     }
 

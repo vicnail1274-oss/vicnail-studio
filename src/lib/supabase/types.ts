@@ -969,6 +969,10 @@ export type Database = {
         Args: Record<string, never>;
         Returns: number;
       };
+      decrement_stock_batch: {
+        Args: { p_items: { product_id: string; quantity: number }[] };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
   };
