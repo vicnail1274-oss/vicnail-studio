@@ -36,7 +36,7 @@ const SHIPPING_OPTIONS: {
   { key: "cvs_hilife", label: "萊爾富超商取貨", icon: Store, desc: "2-3 天到店" },
   { key: "home_tcat", label: "黑貓宅急便", icon: Truck, desc: "1-2 天到府" },
   { key: "home_sf", label: "順豐速運", icon: Truck, desc: "1-3 天到府" },
-  { key: "self_pickup", label: "工作室自取", icon: MapPin, desc: "台北信義區" },
+  { key: "self_pickup", label: "工作室自取", icon: MapPin, desc: "新北板橋・亞東醫院站" },
 ];
 
 const PAYMENT_OPTIONS = [

@@ -59,8 +59,8 @@ export function HomepageServices({ locale }: { locale: string }) {
           </h2>
           <p className="mt-3 text-muted-foreground max-w-lg mx-auto">
             {isZh
-              ? "台北信義區專業美甲工作室，嚴選日本品牌凝膠，讓您的指尖煥發光彩。"
-              : "Nail studio in Taipei's Xinyi District. Premium Japanese gel brands for stunning nails."}
+              ? "新北板橋專業美甲工作室，嚴選日本品牌凝膠，讓您的指尖煥發光彩。"
+              : "Nail studio in Banqiao, New Taipei. Premium Japanese gel brands for stunning nails."}
           </p>
         </div>
 

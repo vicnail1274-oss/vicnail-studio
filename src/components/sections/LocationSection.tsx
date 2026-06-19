@@ -22,8 +22,8 @@ export function LocationSection({ locale }: { locale: string }) {
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {isZh
-                ? "台北市信義區\n（詳細地址預約後提供）"
-                : "Xinyi District, Taipei\n(Address provided upon booking)"}
+                ? "新北市板橋區南雅南路二段144巷42號7樓\n（捷運亞東醫院站 2 號出口步行約 5 分鐘）"
+                : "7F, Banqiao District, New Taipei City\n(5-min walk from Yadong Hospital MRT Stn Exit 2)"}
             </p>
           </div>
 

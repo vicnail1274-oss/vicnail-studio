@@ -128,16 +128,26 @@ export function NailServicesJsonLd({
     "@type": "NailSalon",
     name: "VicNail Studio",
     description: isZh
-      ? "台北信義區專業美甲工作室，提供凝膠美甲、凝膠延甲、凝膠保養、日式彩繪及美甲課程。"
-      : "Professional nail salon in Taipei's Xinyi District offering gel nails, gel extensions, gel care, Japanese nail art, and nail courses.",
+      ? "新北板橋專業美甲工作室，提供凝膠美甲、凝膠延甲、凝膠保養、日式彩繪及美甲課程。"
+      : "Professional nail salon in Banqiao, New Taipei offering gel nails, gel extensions, gel care, Japanese nail art, and nail courses.",
     url: pageUrl,
     image: "https://vicnail-studio.com/og-default.png",
     priceRange: "$$",
     currenciesAccepted: "TWD",
     paymentAccepted: "Cash, Line Pay",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: isZh
+        ? "南雅南路二段144巷42號7樓"
+        : "7F, No. 42, Lane 144, Sec. 2, Nanya S. Rd.",
+      addressLocality: isZh ? "板橋區" : "Banqiao District",
+      addressRegion: isZh ? "新北市" : "New Taipei City",
+      postalCode: "220",
+      addressCountry: "TW",
+    },
     areaServed: {
       "@type": "City",
-      name: isZh ? "台北市" : "Taipei",
+      name: isZh ? "新北市" : "New Taipei City",
     },
     hasOfferCatalog: {
       "@type": "OfferCatalog",
