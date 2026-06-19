@@ -219,22 +219,7 @@ export function VideoPlayer({
         }
         setError("影片載入失敗，請稍後重試");
       });
-      // 暫時診斷：記錄 hls 生命週期以定位 fragment 不載入問題
-      hls.on(Hls.Events.MEDIA_ATTACHED, () => console.log("[HLSDBG] media_attached"));
-      hls.on(Hls.Events.BUFFER_CREATED, () => console.log("[HLSDBG] buffer_created"));
-      hls.on(Hls.Events.LEVEL_LOADED, (_e, d) =>
-        console.log("[HLSDBG] level_loaded frags=", d.details?.fragments?.length)
-      );
-      hls.on(Hls.Events.FRAG_LOADING, (_e, d) =>
-        console.log("[HLSDBG] frag_loading sn=", d.frag?.sn)
-      );
-      hls.on(Hls.Events.FRAG_LOADED, (_e, d) =>
-        console.log("[HLSDBG] frag_loaded sn=", d.frag?.sn)
-      );
       hlsRef.current = hls;
-      if (typeof window !== "undefined") {
-        (window as unknown as { __hlsDebug?: Hls }).__hlsDebug = hls;
-      }
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       // Safari 原生支援 HLS
       video.src = token.hlsUrl;
