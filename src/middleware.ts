@@ -6,11 +6,14 @@ import { updateSession } from "./lib/supabase/middleware";
 const intlMiddleware = createIntlMiddleware(routing);
 
 // 需要登入才能訪問的路徑（locale 前綴後的路徑）
-const PROTECTED_PATHS = ["/account", "/checkout", "/courses/"];
+const PROTECTED_PATHS = ["/account", "/checkout"];
 
-// 需要登入但只判斷 watch 子路徑
+// 需要登入：帳號/結帳，以及課程「觀看頁」（/courses/{slug}/lessons/...）。
+// 課程詳情頁（/courses/{slug}）公開，方便行銷與吸引購買；影片本身仍由觀看頁登入檢查
+// 與 playback-token API（驗 enrollment）雙重保護。
 function isProtectedPath(pathname: string): boolean {
   const withoutLocale = pathname.replace(/^\/(zh-TW|en)/, "");
+  if (/^\/courses\/[^/]+\/lessons(\/|$)/.test(withoutLocale)) return true;
   return PROTECTED_PATHS.some((p) => withoutLocale.startsWith(p));
 }
 
