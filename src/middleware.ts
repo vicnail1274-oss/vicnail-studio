@@ -105,6 +105,14 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // === 2.5 其他 /api 路由：刷新 session 即可，不套 i18n locale 導向 ===
+  // 否則 next-intl 會把 /api/* 用 307 導到 /zh-TW/api/* → 404，打掛所有
+  // client 端 API 呼叫（播放憑證、課程篩選、購物車、筆記/字幕…）。
+  if (pathname.startsWith("/api")) {
+    const { supabaseResponse } = await updateSession(req);
+    return supabaseResponse;
+  }
+
   // === 3. Supabase session 刷新（所有非 admin 路由） ===
   const { supabaseResponse, user } = await updateSession(req);
 
