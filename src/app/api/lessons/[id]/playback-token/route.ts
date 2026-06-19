@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { signHlsUrl, getCaptionTracks } from "@/lib/bunny/stream";
+import {
+  signHlsUrl,
+  getCaptionTracks,
+  fetchCaptionVtt,
+} from "@/lib/bunny/stream";
 import { getClientIp } from "@/lib/rate-limit";
 
 /**
@@ -162,13 +166,22 @@ export async function POST(
     });
 
     // 6. 字幕（Bunny 不放 HLS manifest，改以同源 proxy URL 給 <track> 載入）
-    const captions = (await getCaptionTracks(lesson.bunny_video_id)).map(
-      (c) => ({
-        lang: c.lang,
-        label: c.label,
-        url: `/api/lessons/${lessonId}/captions/${c.lang}`,
-      })
-    );
+    let captionInfos = await getCaptionTracks(lesson.bunny_video_id);
+    // 後備：getCaptionTracks 走 Bunny API（需 API_KEY）；若環境變數未設妥列不到，
+    // 直接用 CDN 探測 zh 字幕是否存在（只需 CDN_HOSTNAME，不需 API_KEY）。
+    if (captionInfos.length === 0) {
+      const probe = await fetchCaptionVtt(
+        lesson.bunny_video_id,
+        "zh",
+        `${req.nextUrl.origin}/`
+      );
+      if (probe !== null) captionInfos = [{ lang: "zh", label: "中文" }];
+    }
+    const captions = captionInfos.map((c) => ({
+      lang: c.lang,
+      label: c.label,
+      url: `/api/lessons/${lessonId}/captions/${c.lang}`,
+    }));
 
     return NextResponse.json({
       hlsUrl: url,
