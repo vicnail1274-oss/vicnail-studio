@@ -31,7 +31,11 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      "connect-src 'self' https://dkyiyjadlnpzbsjkpoly.supabase.co https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net",
+      "connect-src 'self' https://dkyiyjadlnpzbsjkpoly.supabase.co https://*.b-cdn.net https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net",
+      // 課程影片走 Bunny Stream HLS：hls.js 以 connect-src 抓 m3u8/分段，MSE 以 blob: 餵 <video>
+      "media-src 'self' blob: https://*.b-cdn.net",
+      // hls.js 解多工 Web Worker 由 blob: 建立
+      "worker-src 'self' blob:",
       "frame-src 'self' https://www.googletagmanager.com https://www.youtube.com",
       "object-src 'none'",
       "base-uri 'self'",

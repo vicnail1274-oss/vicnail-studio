@@ -74,6 +74,9 @@ export function VideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  // HLS 錯誤重試計數（成功解析後歸零）— 避免無限重試風暴打爆 CDN
+  const netRetryRef = useRef(0);
+  const tokenRetryRef = useRef(0);
   const onReadyRef = useRef(onReady);
   onReadyRef.current = onReady;
   const apiRef = useRef<LessonPlayerApi>({
@@ -171,6 +174,8 @@ export function VideoPlayer({
       hls.loadSource(token.hlsUrl);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        netRetryRef.current = 0;
+        tokenRetryRef.current = 0;
         if (initialPosition > 0) video.currentTime = initialPosition;
         setLevelsVersion((v) => v + 1);
       });
@@ -179,15 +184,40 @@ export function VideoPlayer({
         setLevelsVersion((v) => v + 1);
       });
       hls.on(Hls.Events.ERROR, (_event, data) => {
-        if (data.fatal) {
-          console.error("HLS fatal error:", data);
-          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-            // Token 可能過期，重新拿一次
+        if (!data.fatal) return;
+        console.error(
+          "HLS fatal error:",
+          data.type,
+          data.details,
+          data.response?.code
+        );
+        // 媒體錯誤 → hls 內建復原
+        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          hls.recoverMediaError();
+          return;
+        }
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          const code = data.response?.code;
+          // 僅在憑證過期/未授權時重新取 token，且有上限避免風暴
+          if ((code === 401 || code === 403) && tokenRetryRef.current < 2) {
+            tokenRetryRef.current += 1;
             fetchToken();
-          } else {
-            setError("影片播放失敗");
+            return;
+          }
+          // 其他網路錯誤 → 用 hls 內建重載並退避，不重建播放器（避免無限風暴）
+          if (netRetryRef.current < 4) {
+            netRetryRef.current += 1;
+            setTimeout(() => {
+              try {
+                hls.startLoad();
+              } catch {
+                /* 已銷毀則忽略 */
+              }
+            }, 1000 * netRetryRef.current);
+            return;
           }
         }
+        setError("影片載入失敗，請稍後重試");
       });
       hlsRef.current = hls;
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
