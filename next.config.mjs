@@ -36,7 +36,7 @@ const securityHeaders = [
       "media-src 'self' blob: https://*.b-cdn.net",
       // hls.js 解多工 Web Worker 由 blob: 建立
       "worker-src 'self' blob:",
-      "frame-src 'self' https://www.googletagmanager.com https://www.youtube.com",
+      "frame-src 'self' https://www.googletagmanager.com https://www.youtube.com https://maps.google.com https://www.google.com",
       "object-src 'none'",
       "base-uri 'self'",
       // ECPay 付款 / 物流選店需要 form submit 到 ecpay 網域

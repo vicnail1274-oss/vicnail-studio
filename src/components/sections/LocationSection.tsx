@@ -8,10 +8,10 @@ export function LocationSection({ locale }: { locale: string }) {
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-10">
           <p className="text-sm font-medium text-nail-gold uppercase tracking-widest mb-2">
-            {isZh ? "上課・諮詢" : "Classes & Enrollment"}
+            {isZh ? "上課・交通・諮詢" : "Location, Transit & Enrollment"}
           </p>
           <h2 className="text-3xl font-display font-bold text-foreground">
-            {isZh ? "上課地點・課程諮詢" : "Class Location & Course Enrollment"}
+            {isZh ? "上課地點・交通・諮詢" : "Location, Transit & Enrollment"}
           </h2>
         </div>
 
@@ -22,10 +22,15 @@ export function LocationSection({ locale }: { locale: string }) {
             <h3 className="font-semibold text-foreground mb-2">
               {isZh ? "上課地點" : "Class Location"}
             </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-foreground/90 leading-relaxed">
               {isZh
-                ? "新北市板橋區\n（詳細上課地點於報名後提供）"
-                : "Banqiao District, New Taipei City\n(exact address provided after enrollment)"}
+                ? "新北市板橋區南雅南路二段144巷42號7樓"
+                : "7F, No. 42, Ln. 144, Sec. 2, Nanya S. Rd., Banqiao Dist., New Taipei City"}
+            </p>
+            <p className="text-xs text-nail-gold/80 mt-2">
+              {isZh
+                ? "捷運亞東醫院站 2 號出口・步行約 5 分鐘"
+                : "Yadong Hospital MRT Stn. Exit 2 · 5-min walk"}
             </p>
           </div>
 
@@ -69,22 +74,55 @@ export function LocationSection({ locale }: { locale: string }) {
           </div>
         </div>
 
-        {/* Class scheduling slots */}
-        <div className="mt-6 rounded-2xl bg-nail-cream/40 border border-nail-pink/30 p-6 text-center">
-          <h3 className="flex items-center justify-center gap-2 font-semibold text-foreground mb-2">
-            <span className="text-xl">🗓️</span>
-            {isZh ? "排課時段" : "Class Schedule"}
+        {/* Google 地圖嵌入 */}
+        <div className="mt-6 overflow-hidden rounded-2xl border border-nail-pink/30">
+          <iframe
+            title={isZh ? "VIC NAIL 教室位置" : "VIC NAIL Studio Location"}
+            src="https://maps.google.com/maps?q=%E6%96%B0%E5%8C%97%E5%B8%82%E6%9D%BF%E6%A9%8B%E5%8D%80%E5%8D%97%E9%9B%85%E5%8D%97%E8%B7%AF%E4%BA%8C%E6%AE%B5144%E5%B7%B742%E8%99%9F&t=&z=17&ie=UTF8&iwloc=&output=embed"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="block h-72 w-full border-0"
+          />
+        </div>
+
+        {/* 交通方式 */}
+        <div className="mt-6 rounded-2xl bg-nail-cream/40 border border-nail-pink/30 p-6">
+          <h3 className="flex items-center justify-center gap-2 font-semibold text-foreground mb-4 text-center">
+            <span className="text-xl">🚇</span>
+            {isZh ? "交通方式" : "Getting Here"}
           </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {isZh
-              ? "每週開放 週三 / 週五 / 週六 / 週日"
-              : "Open weekly on Wed / Fri / Sat / Sun"}
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {isZh
-              ? "上午 10:00–13:00 ・ 下午 14:00–17:00 ・ 晚間 19:00–22:00"
-              : "Morning 10:00–13:00 · Afternoon 14:00–17:00 · Evening 19:00–22:00"}
-          </p>
+          <ul className="space-y-3 text-sm text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            <li className="flex gap-2">
+              <span className="font-medium text-nail-gold flex-shrink-0">
+                {isZh ? "公車" : "Bus"}
+              </span>
+              <span>
+                {isZh
+                  ? "搭乘至「亞東科技大學站」(51、99、805、810 等)下車即達巷口。"
+                  : "Get off at Asia Eastern Univ. of Tech. stop (51, 99, 805, 810, etc.) — right by the lane entrance."}
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-medium text-nail-gold flex-shrink-0">
+                {isZh ? "捷運" : "MRT"}
+              </span>
+              <span>
+                {isZh
+                  ? "亞東醫院站 2 號出口步行約 5 分鐘。"
+                  : "Yadong Hospital Station, Exit 2 — about a 5-minute walk."}
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-medium text-nail-gold flex-shrink-0">
+                {isZh ? "外縣市學員" : "From other cities"}
+              </span>
+              <span>
+                {isZh
+                  ? "搭乘至板橋車站，轉乘捷運板南線或公車(99、805、810)直達。"
+                  : "Take a train to Banqiao Station, then transfer to the MRT Bannan Line or bus (99, 805, 810)."}
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
     </section>
