@@ -68,6 +68,24 @@ export function LocationSection({ locale }: { locale: string }) {
             </div>
           </div>
         </div>
+
+        {/* Class scheduling slots */}
+        <div className="mt-6 rounded-2xl bg-nail-cream/40 border border-nail-pink/30 p-6 text-center">
+          <h3 className="flex items-center justify-center gap-2 font-semibold text-foreground mb-2">
+            <span className="text-xl">🗓️</span>
+            {isZh ? "排課時段" : "Class Schedule"}
+          </h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {isZh
+              ? "每週開放 週三 / 週五 / 週六 / 週日"
+              : "Open weekly on Wed / Fri / Sat / Sun"}
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {isZh
+              ? "上午 10:00–13:00 ・ 下午 14:00–17:00 ・ 晚間 19:00–22:00"
+              : "Morning 10:00–13:00 · Afternoon 14:00–17:00 · Evening 19:00–22:00"}
+          </p>
+        </div>
       </div>
     </section>
   );

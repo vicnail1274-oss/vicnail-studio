@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { CourseList } from "@/components/courses/CourseList";
+import { ClassSystemSection } from "@/components/sections/ClassSystemSection";
 import { InstructorProfile } from "@/components/courses/InstructorProfile";
 import { ContactCTA } from "@/components/courses/ContactCTA";
 
@@ -35,6 +36,7 @@ export default async function CoursesPage({
       </section>
 
       <CourseList />
+      <ClassSystemSection />
       <InstructorProfile />
       <ContactCTA />
     </>
