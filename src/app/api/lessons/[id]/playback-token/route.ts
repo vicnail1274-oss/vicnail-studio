@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { signHlsUrl } from "@/lib/bunny/stream";
+import { signHlsUrl, getCaptionTracks } from "@/lib/bunny/stream";
 import { getClientIp } from "@/lib/rate-limit";
 
 /**
@@ -161,9 +161,19 @@ export async function POST(
       expiresInSeconds: 900,
     });
 
+    // 6. 字幕（Bunny 不放 HLS manifest，改以同源 proxy URL 給 <track> 載入）
+    const captions = (await getCaptionTracks(lesson.bunny_video_id)).map(
+      (c) => ({
+        lang: c.lang,
+        label: c.label,
+        url: `/api/lessons/${lessonId}/captions/${c.lang}`,
+      })
+    );
+
     return NextResponse.json({
       hlsUrl: url,
       expiresAt,
+      captions,
       watermark: {
         email: userEmail,
         timestamp: new Date().toISOString(),

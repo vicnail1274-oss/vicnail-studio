@@ -180,3 +180,57 @@ export function getThumbnailUrl(videoId: string): string {
   const cdnHostname = requireEnv("BUNNY_STREAM_CDN_HOSTNAME");
   return `https://${cdnHostname}/${videoId}/thumbnail.jpg`;
 }
+
+export interface CaptionInfo {
+  lang: string;
+  label: string;
+}
+
+/**
+ * 取得 Bunny video 已上傳的字幕清單（srclang / label）。
+ * Bunny 不會把字幕放進 HLS manifest，需另外以 <track> 載入。
+ */
+export async function getCaptionTracks(videoId: string): Promise<CaptionInfo[]> {
+  const libraryId = requireEnv("BUNNY_STREAM_LIBRARY_ID");
+  const apiKey = requireEnv("BUNNY_STREAM_API_KEY");
+  try {
+    const res = await fetch(
+      `${BUNNY_API_BASE}/library/${libraryId}/videos/${videoId}`,
+      { headers: { AccessKey: apiKey } }
+    );
+    if (!res.ok) return [];
+    const data = (await res.json()) as {
+      captions?: { srclang: string; label?: string }[];
+    };
+    return (data.captions ?? [])
+      .filter((c) => c.srclang)
+      .map((c) => ({ lang: c.srclang, label: c.label || c.srclang }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * 伺服器端抓 Bunny 字幕 .vtt 原始內容。
+ * Bunny CDN 有 referrer 防盜連 + 字幕 content-type 是 octet-stream，
+ * 故由 server 帶 Referer 抓回、再以 text/vtt 同源回傳給播放器。
+ */
+export async function fetchCaptionVtt(
+  videoId: string,
+  lang: string,
+  referer: string
+): Promise<string | null> {
+  const cdnHostname = requireEnv("BUNNY_STREAM_CDN_HOSTNAME");
+  const safeLang = lang.replace(/[^a-zA-Z-]/g, "");
+  if (!safeLang) return null;
+  try {
+    const res = await fetch(
+      `https://${cdnHostname}/${videoId}/captions/${safeLang}.vtt`,
+      { headers: { Referer: referer } }
+    );
+    if (!res.ok) return null;
+    return await res.text();
+  } catch {
+    return null;
+  }
+}

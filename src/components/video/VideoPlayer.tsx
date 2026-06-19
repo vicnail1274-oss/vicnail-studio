@@ -38,9 +38,16 @@ interface VideoPlayerProps {
   onReady?: (api: LessonPlayerApi) => void;
 }
 
+interface CaptionTrack {
+  lang: string;
+  label: string;
+  url: string;
+}
+
 interface PlaybackToken {
   hlsUrl: string;
   expiresAt: number;
+  captions?: CaptionTrack[];
   watermark: { email: string; timestamp: string };
 }
 
@@ -356,7 +363,19 @@ export function VideoPlayer({
         playsInline
         onContextMenu={(e) => e.preventDefault()}
         className="w-full h-full"
-      />
+      >
+        {/* Bunny 字幕（同源 proxy）；CC 由 PlayerControls 控制開關 */}
+        {token.captions?.map((c, i) => (
+          <track
+            key={c.lang}
+            kind="subtitles"
+            src={c.url}
+            srcLang={c.lang}
+            label={c.label}
+            default={i === 0}
+          />
+        ))}
+      </video>
       <Watermark email={token.watermark.email} />
 
       <PlayerControls
