@@ -2,6 +2,7 @@
   "nav": {
     "home": "首頁",
     "courses": "美甲課程",
+    "onlineCourses": "線上課程",
     "certification": "檢定考照",
     "services": "服務項目",
     "nailKnowledge": "美甲知識",
@@ -18,9 +19,9 @@
     "ctaServices": "檢定考照",
     "ctaCourses": "探索課程",
     "ctaAi": "AI 不務正業",
-    "trustReviews": "50+ Google 好評",
+    "trustReviews": "PRESTO 認證講師",
     "trustCertified": "JNEC・JNA 日本檢定認證",
-    "trustLocation": "板橋・亞東醫院站"
+    "trustLocation": "實體小班・手把手教學"
   },
   "sections": {
     "courses": "美甲課程",

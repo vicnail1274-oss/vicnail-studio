@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "courses": "Nail Courses",
+    "onlineCourses": "Online Courses",
     "certification": "Certification",
     "services": "Services",
     "nailKnowledge": "Nail Knowledge",
@@ -18,9 +19,9 @@
     "ctaServices": "Certification",
     "ctaCourses": "Explore Courses",
     "ctaAi": "AI Side Hustle",
-    "trustReviews": "50+ Google Reviews",
+    "trustReviews": "PRESTO Certified Instructor",
     "trustCertified": "JNEC・JNA Certified",
-    "trustLocation": "Banqiao · Yadong Hospital"
+    "trustLocation": "Hands-on Small Classes"
   },
   "sections": {
     "courses": "Nail Courses",

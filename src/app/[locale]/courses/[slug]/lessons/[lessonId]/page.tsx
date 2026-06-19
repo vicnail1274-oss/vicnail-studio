@@ -78,6 +78,22 @@ export default async function LessonWatchPage({ params }: PageProps) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // 線上課程門禁：影片暫時只開放給 Vic 開通的帳號（profiles.online_access = true）
+  // 未登入或未開通 → 導去線上課程專區（未登入帶 next 以利登入後返回）
+  if (!user) {
+    redirect(
+      `/${locale}/auth/login?next=/${locale}/courses/${slug}/lessons/${lessonId}`
+    );
+  }
+  const { data: accessProfile } = await supabase
+    .from("profiles")
+    .select("online_access")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (accessProfile?.online_access !== true) {
+    redirect(`/${locale}/online-courses`);
+  }
+
   // 權限檢查：算出是否已購買；非試看課未購買就導走（未登入導登入）
   let isEnrolled = false;
   if (user) {

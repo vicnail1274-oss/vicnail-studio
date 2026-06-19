@@ -2,7 +2,6 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { TeachingFeatures } from "@/components/sections/TeachingFeatures";
 import { CoursesOverview } from "@/components/sections/CoursesOverview";
 import { CertificationSection } from "@/components/sections/CertificationSection";
-import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { LocationSection } from "@/components/sections/LocationSection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { LatestArticles } from "@/components/sections/LatestArticles";
@@ -94,7 +93,6 @@ export default async function Home({
       <CoursesOverview locale={locale} />
       <CertificationSection locale={locale} />
       <FounderSection />
-      <TestimonialsSection locale={locale} />
       <FAQSection locale={locale} />
       <LatestArticles articles={allArticles} locale={locale} />
       <div className="flex justify-center py-6 bg-white">

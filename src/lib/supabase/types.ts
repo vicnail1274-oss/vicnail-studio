@@ -22,6 +22,7 @@ export type Database = {
           avatar_url: string | null;
           phone: string | null;
           locale: string;
+          online_access: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -31,6 +32,7 @@ export type Database = {
           avatar_url?: string | null;
           phone?: string | null;
           locale?: string;
+          online_access?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -39,6 +41,7 @@ export type Database = {
           avatar_url?: string | null;
           phone?: string | null;
           locale?: string;
+          online_access?: boolean;
           updated_at?: string;
         };
         Relationships: [

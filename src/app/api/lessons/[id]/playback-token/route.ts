@@ -63,6 +63,26 @@ export async function POST(
       );
     }
 
+    // 線上課程門禁：影片串流暫時只開放給 Vic 開通的帳號（profiles.online_access = true）
+    // 直連此 API 也要擋（用 admin client 讀，繞過 RLS 確保判斷可靠）
+    if (!user) {
+      return NextResponse.json(
+        { error: "線上課程尚未開放給此帳號" },
+        { status: 403 }
+      );
+    }
+    const { data: accessProfile } = await admin
+      .from("profiles")
+      .select("online_access")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (accessProfile?.online_access !== true) {
+      return NextResponse.json(
+        { error: "線上課程尚未開放給此帳號" },
+        { status: 403 }
+      );
+    }
+
     // 2. 預覽課無需驗 enrollment（但無浮水印）
     let userEmail = "guest";
 
