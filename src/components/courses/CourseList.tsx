@@ -106,7 +106,7 @@ const courses: Course[] = [
         { name: "毛呢紋設計", hours: 3 },
         { name: "細膩蕾絲彩繪", hours: 3 },
         { name: "貼紙應用、星空貼應用", hours: 3 },
-        { name: "造型鑽、立體鑽黏貼（鑲鑽凝膠使用方式）", hours: 3 },
+        { name: "水鑽及貼飾應用、大型飾品", hours: 3 },
         { name: "檢定彩繪：愛心、格紋、五瓣尖花、五瓣水滴花、玫瑰花（額外贈送）", hours: 3 },
         // 進階課（81 小時・22 項）
         { section: "進階課", name: "可卸式橢圓短延甲（含架紙模）", hours: 6 },
@@ -174,7 +174,7 @@ const courses: Course[] = [
         { name: "可卸式橢圓短延甲（含架紙模）", hours: 6 },
         { name: "硬式方形長延甲", hours: 6 },
         { name: "貼紙應用、星空貼應用", hours: 3 },
-        { name: "造型鑽、立體鑽黏貼（鑲鑽凝膠使用方式）", hours: 3 },
+        { name: "水鑽及貼飾應用、大型飾品", hours: 3 },
         { name: "檢定彩繪：愛心、格紋、五瓣尖花、五瓣水滴花、玫瑰花", hours: 3 },
         { name: "檢定考流程：雙手手部保養、卸甲及漸層流程、得分技巧、考試規章", hours: 3 },
       ],
@@ -211,7 +211,7 @@ const courses: Course[] = [
         { name: "不傷甲凝膠卸甲（包卸、一層殘、磨甲機全卸）", hours: 3 },
         { name: "建構邏輯及不倒手建構", hours: 3 },
         { name: "凝膠法式設計", hours: 3 },
-        { name: "璀璨與單色漸層技法", hours: 3 },
+        { name: "罐裝凝膠漸層（彩膠、亮片）", hours: 3 },
         { name: "可卸式橢圓短延甲（含架紙模）", hours: 6 },
         { name: "基礎暈染技法", hours: 3 },
       ],
@@ -252,7 +252,7 @@ const courses: Course[] = [
     subtitle: "One-Day Intensive",
     price: "$7,500",
     priceUnit: "／堂",
-    meta: ["每主題全日 6 小時", "7 大主題擇一"],
+    meta: ["每主題全日 6 小時", "8 大主題擇一"],
     highlights: [
       "可卸式橢圓短延甲・硬式方形長延甲",
       "足部深層保養",
@@ -262,7 +262,7 @@ const courses: Course[] = [
     category: "single",
     curriculum: {
       heading: "一日專修 - 精選主題（擇一）",
-      sub: "請從以下 7 大主題中，選擇一項進行全日（6 小時）的深度特訓",
+      sub: "請從以下 8 大主題中，選擇一項進行全日（6 小時）的深度特訓",
       unit: "主題",
       lessons: [
         { name: "可卸式橢圓短延甲（含架紙模）", hours: 6 },
@@ -270,6 +270,7 @@ const courses: Course[] = [
         { name: "足部深層保養", hours: 6 },
         { name: "凝膠暈染技巧", hours: 6 },
         { name: "暈染液應用", hours: 6 },
+        { name: "沙龍快速暈染款式實作", hours: 6 },
         { name: "花磚技巧", hours: 6 },
         { name: "各式素材應用", hours: 6 },
       ],
@@ -318,7 +319,7 @@ const courses: Course[] = [
         { name: "毛呢紋設計", hours: 3 },
         { name: "細膩蕾絲彩繪", hours: 3 },
         { name: "貼紙應用、星空貼應用", hours: 3 },
-        { name: "造型鑽、立體鑽黏貼（鑲鑽凝膠使用方式）", hours: 3 },
+        { name: "水鑽及貼飾應用、大型飾品", hours: 3 },
         { name: "檢定彩繪：愛心、格紋、五瓣尖花、五瓣水滴花、玫瑰花", hours: 3 },
         // 創業班進階課
         { section: "進階課", name: "可卸式橢圓短延甲（含架紙模）", hours: 6 },
