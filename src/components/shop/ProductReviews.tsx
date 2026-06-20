@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Star, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -67,6 +68,8 @@ function formatDate(iso: string) {
 }
 
 export function ProductReviews({ productId }: { productId: string }) {
+  const params = useParams();
+  const locale = (params?.locale as string) || "zh-TW";
   const [reviews, setReviews] = useState<Review[]>([]);
   const [avg, setAvg] = useState<number | null>(null);
   const [count, setCount] = useState(0);
@@ -224,7 +227,7 @@ export function ProductReviews({ productId }: { productId: string }) {
         <p className="mb-6 text-sm text-muted-foreground p-4 rounded-xl bg-gray-50">
           想留下評價嗎？
           <a
-            href="/auth/login"
+            href={`/${locale}/auth/login`}
             className="text-nail-gold hover:underline ml-1"
           >
             登入帳號

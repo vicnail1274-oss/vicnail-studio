@@ -14,25 +14,32 @@ import crypto from "crypto";
 
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 天
 
-function getSecret(): string {
+function getSecret(): string | null {
   const explicit = process.env.ADMIN_SESSION_SECRET;
   if (explicit) return explicit;
-  return `${process.env.ADMIN_PASSWORD ?? ""}:vicnail-admin-session`;
+  const pw = process.env.ADMIN_PASSWORD;
+  if (pw) return `${pw}:vicnail-admin-session`;
+  // 兩者皆未設定：fail-closed，不用可猜測的固定字串簽發/驗證 token
+  return null;
 }
 
 function base64url(buf: Buffer): string {
   return buf.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-function hmac(payloadB64: string): Buffer {
-  return crypto.createHmac("sha256", getSecret()).update(payloadB64).digest();
+function hmac(payloadB64: string, secret: string): Buffer {
+  return crypto.createHmac("sha256", secret).update(payloadB64).digest();
 }
 
 /** 簽發新的 admin session token（7 天有效） */
 export function createAdminToken(): string {
+  const secret = getSecret();
+  if (!secret) {
+    throw new Error("未設定 ADMIN_SESSION_SECRET 或 ADMIN_PASSWORD，無法簽發 admin token");
+  }
   const payload = JSON.stringify({ exp: Date.now() + SESSION_TTL_MS });
   const payloadB64 = base64url(Buffer.from(payload, "utf-8"));
-  const sigB64 = base64url(hmac(payloadB64));
+  const sigB64 = base64url(hmac(payloadB64, secret));
   return `${payloadB64}.${sigB64}`;
 }
 
@@ -44,6 +51,9 @@ export function createAdminToken(): string {
  */
 export function verifyAdminToken(token: string | undefined): boolean {
   if (!token) return false;
+
+  const secret = getSecret();
+  if (!secret) return false; // fail-closed：未設定密鑰時一律拒絕
 
   const parts = token.split(".");
   if (parts.length !== 2) return false;
@@ -58,7 +68,7 @@ export function verifyAdminToken(token: string | undefined): boolean {
     return false;
   }
 
-  const expectedSig = hmac(payloadB64);
+  const expectedSig = hmac(payloadB64, secret);
   if (providedSig.length !== expectedSig.length) return false;
   if (!crypto.timingSafeEqual(providedSig, expectedSig)) return false;
 

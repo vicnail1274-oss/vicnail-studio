@@ -89,13 +89,16 @@ export async function POST(
         : null,
     };
 
-    if (existing) {
-      await admin
-        .from("lesson_progress")
-        .update(payload)
-        .eq("id", existing.id);
-    } else {
-      await admin.from("lesson_progress").insert(payload);
+    const { error: writeError } = existing
+      ? await admin
+          .from("lesson_progress")
+          .update(payload)
+          .eq("id", existing.id)
+      : await admin.from("lesson_progress").insert(payload);
+
+    if (writeError) {
+      console.error("Progress write error:", writeError);
+      return NextResponse.json({ error: "儲存進度失敗" }, { status: 500 });
     }
 
     return NextResponse.json({

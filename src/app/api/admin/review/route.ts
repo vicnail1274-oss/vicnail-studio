@@ -43,7 +43,15 @@ function runClaudeCLI(prompt: string): Promise<string> {
 export async function POST(req: NextRequest) {
   if (!isAdminAuthed(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { title, content, locale } = await req.json();
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "請求格式錯誤" }, { status: 400 });
+  }
+  const { title, content, locale } = body as {
+    title?: string;
+    content?: string;
+    locale?: string;
+  };
 
   if (!title || !content) {
     return NextResponse.json({ error: "缺少 title 或 content" }, { status: 400 });

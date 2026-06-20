@@ -22,10 +22,13 @@ function isProtectedPath(pathname: string): boolean {
  * middleware 跑在 Edge，不能用 node:crypto，改用 Web Crypto（crypto.subtle）。
  * token 格式：base64url(payloadJson).base64url(HMAC-SHA256)，payload = { exp }。
  */
-function getAdminSessionSecret(): string {
+function getAdminSessionSecret(): string | null {
   const explicit = process.env.ADMIN_SESSION_SECRET;
   if (explicit) return explicit;
-  return `${process.env.ADMIN_PASSWORD ?? ""}:vicnail-admin-session`;
+  const pw = process.env.ADMIN_PASSWORD;
+  if (pw) return `${pw}:vicnail-admin-session`;
+  // 兩者皆未設定：fail-closed，不用可猜測的固定字串驗證 token
+  return null;
 }
 
 /** base64url → ArrayBuffer（直接回 ArrayBuffer，餵給 Web Crypto 不會撞 ArrayBufferLike 型別） */
@@ -54,10 +57,13 @@ async function verifyAdminTokenEdge(token: string | undefined): Promise<boolean>
   const [payloadB64, sigB64] = parts;
   if (!payloadB64 || !sigB64) return false;
 
+  const secret = getAdminSessionSecret();
+  if (!secret) return false; // fail-closed：未設定密鑰時一律拒絕
+
   try {
     const key = await crypto.subtle.importKey(
       "raw",
-      utf8ToArrayBuffer(getAdminSessionSecret()),
+      utf8ToArrayBuffer(secret),
       { name: "HMAC", hash: "SHA-256" },
       false,
       ["verify"]

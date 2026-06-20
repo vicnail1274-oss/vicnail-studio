@@ -41,7 +41,17 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   if (!isAdminAuthed(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { section, locale, slug, frontmatter, content } = await req.json();
+  const body = (await req.json().catch(() => null)) as {
+    section?: string;
+    locale?: string;
+    slug?: string;
+    frontmatter?: Record<string, unknown>;
+    content?: string;
+  } | null;
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "請求格式錯誤" }, { status: 400 });
+  }
+  const { section, locale, slug, frontmatter, content } = body;
 
   if (!section || !locale || !slug || frontmatter === undefined || content === undefined) {
     return NextResponse.json({ error: "缺少必要欄位" }, { status: 400 });
@@ -66,7 +76,15 @@ export async function PUT(req: NextRequest) {
 export async function POST(req: NextRequest) {
   if (!isAdminAuthed(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { section, locale } = await req.json();
+  const body = (await req.json().catch(() => null)) as {
+    section?: string;
+    locale?: string;
+  } | null;
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "請求格式錯誤" }, { status: 400 });
+  }
+  const section = body.section ?? "";
+  const locale = body.locale ?? "";
 
   if (!ALLOWED_SECTIONS.has(section) || !ALLOWED_LOCALES.has(locale)) {
     return NextResponse.json({ error: "section / locale 不合法" }, { status: 400 });

@@ -334,22 +334,15 @@ export default async function LessonWatchPage({ params }: PageProps) {
                   l.upload_status === "ready" &&
                   (l.is_preview || lesson.is_preview === false);
                 const progress = progressMap[l.id];
-                return (
-                  <Link
-                    key={l.id}
-                    href={
-                      isWatchable
-                        ? `/zh-TW/courses/${slug}/lessons/${l.id}`
-                        : "#"
-                    }
-                    className={`flex items-start gap-2 p-3 text-sm transition-colors ${
-                      isCurrent
-                        ? "bg-nail-gold/10 border-l-2 border-nail-gold"
-                        : isWatchable
-                          ? "hover:bg-gray-50"
-                          : "opacity-50 cursor-not-allowed"
-                    }`}
-                  >
+                const rowClassName = `flex items-start gap-2 p-3 text-sm transition-colors ${
+                  isCurrent
+                    ? "bg-nail-gold/10 border-l-2 border-nail-gold"
+                    : isWatchable
+                      ? "hover:bg-gray-50"
+                      : "opacity-50 cursor-not-allowed"
+                }`;
+                const rowInner = (
+                  <>
                     {progress?.completed ? (
                       <CheckCircle2
                         size={16}
@@ -383,7 +376,25 @@ export default async function LessonWatchPage({ params }: PageProps) {
                         {l.is_preview && " · 試看"}
                       </div>
                     </div>
+                  </>
+                );
+                // 鎖定章節不可點：用 div 取代 Link，避免 href="#" 跳頁首/弄髒網址
+                return isWatchable ? (
+                  <Link
+                    key={l.id}
+                    href={`/zh-TW/courses/${slug}/lessons/${l.id}`}
+                    className={rowClassName}
+                  >
+                    {rowInner}
                   </Link>
+                ) : (
+                  <div
+                    key={l.id}
+                    className={rowClassName}
+                    aria-disabled="true"
+                  >
+                    {rowInner}
+                  </div>
                 );
                     })}
                   </div>
