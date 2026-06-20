@@ -21,8 +21,12 @@ import {
   getCartTotal,
   type CartItem,
 } from "@/lib/cart-store";
-import { calculateShippingFee, getLogisticsLabel, type LogisticsType } from "@/lib/ecpay";
-import { FREE_SHIPPING_THRESHOLD } from "@/lib/ecpay/logistics";
+import {
+  calculateShippingFee,
+  getLogisticsLabel,
+  FREE_SHIPPING_THRESHOLD,
+  type LogisticsType,
+} from "@/lib/ecpay/shipping";
 import { AddressPicker } from "./AddressPicker";
 
 const SHIPPING_OPTIONS: {

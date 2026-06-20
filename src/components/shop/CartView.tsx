@@ -25,7 +25,7 @@ import {
   getCartByType,
   type CartItem,
 } from "@/lib/cart-store";
-import { FREE_SHIPPING_THRESHOLD } from "@/lib/ecpay/logistics";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/ecpay/shipping";
 
 export function CartView() {
   const [items, setItems] = useState<CartItem[]>([]);

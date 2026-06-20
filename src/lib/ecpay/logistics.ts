@@ -1,34 +1,22 @@
 /**
- * ECPay 綠界物流整合
+ * ECPay 綠界物流整合（server only — 含 CheckMacValue 簽章）
  * 支援：7-11 / 全家 / 萊爾富 / OK 超商取貨 + 黑貓宅配
  * 文件：https://developers.ecpay.com.tw/10075/
+ *
+ * 注意：本檔 import ./payment（含 node crypto），僅供 server 端使用。
+ * 純運費常數/計算（client 也會用到的部分）已抽到 ./shipping（不含 crypto），
+ * 避免 crypto polyfill 被打進 /cart、/checkout 的 client bundle。
  */
 import { generateCheckMacValue } from "./payment";
+import { LOGISTICS_SUB_TYPE, type LogisticsType } from "./shipping";
+
+// 純運費常數/計算 re-export，維持既有 "@/lib/ecpay/logistics" import 路徑相容（server 端）
+export * from "./shipping";
 
 const LOGISTICS_BASE =
   process.env.ECPAY_SANDBOX === "true"
     ? "https://logistics-stage.ecpay.com.tw"
     : "https://logistics.ecpay.com.tw";
-
-export type LogisticsType =
-  | "cvs_711"
-  | "cvs_fami"
-  | "cvs_hilife"
-  | "cvs_ok"
-  | "home_tcat"
-  | "home_post"
-  | "home_sf"
-  | "self_pickup";
-
-// ECPay LogisticsSubType 對應
-const LOGISTICS_SUB_TYPE: Record<string, string> = {
-  cvs_711: "UNIMARTC2C",
-  cvs_fami: "FAMIC2C",
-  cvs_hilife: "HILIFEC2C",
-  cvs_ok: "OKMARTC2C",
-  home_tcat: "TCAT",
-  home_post: "POST",
-};
 
 /**
  * 取得超商門市地圖 URL
@@ -159,55 +147,4 @@ export async function createShipment(
   } catch (err) {
     return { success: false, error: String(err) };
   }
-}
-
-/**
- * 物流類型的中文名稱
- */
-export function getLogisticsLabel(type: LogisticsType): string {
-  const labels: Record<LogisticsType, string> = {
-    cvs_711: "7-11 超商取貨",
-    cvs_fami: "全家超商取貨",
-    cvs_hilife: "萊爾富超商取貨",
-    cvs_ok: "OK 超商取貨",
-    home_tcat: "黑貓宅急便",
-    home_post: "中華郵政",
-    home_sf: "順豐速運",
-    self_pickup: "自取",
-  };
-  return labels[type] || type;
-}
-
-/**
- * 運費基礎價
- */
-export const BASE_SHIPPING_FEES: Record<LogisticsType, number> = {
-  cvs_711: 65,
-  cvs_fami: 65,
-  cvs_hilife: 65,
-  cvs_ok: 65,
-  home_tcat: 120,
-  home_post: 80,
-  home_sf: 180,
-  self_pickup: 0,
-};
-
-/**
- * 免運門檻（商品小計達此金額免運費）
- */
-export const FREE_SHIPPING_THRESHOLD = 1500;
-
-/**
- * 計算運費（考慮免運門檻）
- */
-export function calculateShippingFee(
-  type: LogisticsType,
-  subtotal?: number
-): number {
-  const base = BASE_SHIPPING_FEES[type] ?? 0;
-  if (base === 0) return 0;
-  if (typeof subtotal === "number" && subtotal >= FREE_SHIPPING_THRESHOLD) {
-    return 0;
-  }
-  return base;
 }

@@ -57,8 +57,9 @@ function parseOrderMessage(text: string): ParsedOrder | null {
     if (/^(商品|品項|產品)[：:]/.test(line)) {
       data.product = line.replace(/^(商品|品項|產品)[：:]\s*/, "");
     } else if (/^(數量|qty)[：:]/.test(lower)) {
-      const num = parseInt(line.replace(/^(數量|qty)[：:]\s*/i, ""));
-      data.quantity = isNaN(num) ? 1 : num;
+      const num = parseInt(line.replace(/^(數量|qty)[：:]\s*/i, ""), 10);
+      // 僅接受 1~999 的正整數，擋負數/0/超大值（負數會反向加庫存＋產生負金額訂單）
+      data.quantity = Number.isInteger(num) && num >= 1 && num <= 999 ? num : 1;
     } else if (/^(取貨|配送|物流|寄送)[：:]/.test(line)) {
       data.shipping = line.replace(/^(取貨|配送|物流|寄送)[：:]\s*/, "");
     } else if (/^(姓名|收件人|名字)[：:]/.test(line)) {

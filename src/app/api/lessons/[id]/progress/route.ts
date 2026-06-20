@@ -89,12 +89,11 @@ export async function POST(
         : null,
     };
 
-    const { error: writeError } = existing
-      ? await admin
-          .from("lesson_progress")
-          .update(payload)
-          .eq("id", existing.id)
-      : await admin.from("lesson_progress").insert(payload);
+    // upsert（on conflict user_id+lesson_id）取代 check-then-write，
+    // 避免併發回報時兩筆都判定 existing=null 各自 insert → 撞唯一鍵回 500
+    const { error: writeError } = await admin
+      .from("lesson_progress")
+      .upsert(payload, { onConflict: "user_id,lesson_id" });
 
     if (writeError) {
       console.error("Progress write error:", writeError);
