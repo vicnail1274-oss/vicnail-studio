@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import { CheckCircle2, Package, ArrowRight, Home } from "lucide-react";
 import { CartClearOnMount } from "@/components/shop/CartClearOnMount";
@@ -30,9 +30,26 @@ const PAYMENT_LABELS: Record<string, string> = {
   cvs_code: "超商代碼繳費",
 };
 
+// 訂單完成頁用 service_role 查詢（讓未登入訪客也能看到自己的訂單確認），
+// 但 order_number 可被枚舉，故遮蔽姓名/地址等個資。完整資訊請登入後至「我的訂單」查看。
+function maskName(name: string | null): string {
+  if (!name) return "—";
+  const s = name.trim();
+  if (s.length <= 1) return s || "—";
+  if (s.length === 2) return s[0] + "○";
+  return s[0] + "○".repeat(s.length - 2) + s[s.length - 1];
+}
+
+function maskAddress(addr: string | null): string {
+  if (!addr) return "—";
+  const s = addr.trim();
+  if (s.length <= 6) return s;
+  return s.slice(0, 6) + "○○○…";
+}
+
 export default async function CheckoutSuccessPage({ searchParams }: Props) {
   const { order: orderNumber } = await searchParams;
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   type OrderSummary = {
     id: string;
@@ -155,11 +172,11 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
               </div>
               <div className="flex">
                 <span className="w-20 text-muted-foreground">收件人</span>
-                <span>{order.shipping_name}</span>
+                <span>{maskName(order.shipping_name)}</span>
               </div>
               <div className="flex">
                 <span className="w-20 text-muted-foreground">寄送地址</span>
-                <span className="flex-1">{order.shipping_address}</span>
+                <span className="flex-1">{maskAddress(order.shipping_address)}</span>
               </div>
             </div>
           </div>

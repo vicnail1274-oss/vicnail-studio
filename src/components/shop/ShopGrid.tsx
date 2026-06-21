@@ -232,7 +232,7 @@ export function ShopGrid({
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  transition={{ duration: 0.4, delay: Math.min(i, 8) * 0.05 }}
                   viewport={{ once: true }}
                   className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group relative"
                 >

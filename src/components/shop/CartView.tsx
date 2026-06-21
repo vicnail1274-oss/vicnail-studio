@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Link as I18nLink } from "@/i18n/navigation";
 import {
   Minus,
@@ -399,12 +398,12 @@ export function CartView() {
             {needLogin && (
               <div className="mt-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg px-4 py-3 text-sm">
                 請先登入會員才能購買課程。
-                <Link
-                  href="/zh-TW/auth/login?redirect=/zh-TW/cart"
+                <I18nLink
+                  href="/auth/login?redirect=/cart"
                   className="ml-1 font-semibold underline hover:text-amber-800"
                 >
                   前往登入
-                </Link>
+                </I18nLink>
               </div>
             )}
 

@@ -19,6 +19,7 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import {
   getCart,
+  getCartByType,
   getCartTotal,
   getShippingNature,
   type CartItem,
@@ -68,7 +69,8 @@ export function CheckoutForm() {
   });
 
   useEffect(() => {
-    setItems(getCart());
+    // 商品結帳頁只處理「商品」項目，課程走購物車頁的課程結帳，避免課程被當實體商品送單
+    setItems(getCartByType(getCart(), "product"));
     try {
       const saved = localStorage.getItem("vicnail_checkout");
       if (saved) {
@@ -106,6 +108,16 @@ export function CheckoutForm() {
     const cleanPhone = form.phone.replace(/[-\s]/g, "");
     if (!phoneRegex.test(cleanPhone)) {
       alert("請輸入正確的台灣手機或市話號碼（例如 0912345678）");
+      return;
+    }
+
+    // 超商取貨需填門市資訊；宅配需填完整地址，避免送出殘缺物流單
+    if (isCvs && (!form.storeId.trim() || !form.storeName.trim())) {
+      alert("超商取貨請填寫門市代號與門市名稱");
+      return;
+    }
+    if (isHomeDelivery && form.address.trim().length < 8) {
+      alert("請填寫完整的配送地址（含縣市、區、路名與門牌）");
       return;
     }
 

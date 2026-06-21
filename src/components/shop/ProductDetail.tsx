@@ -74,6 +74,7 @@ export function ProductDetail({ product }: { product: Product }) {
         ? selectedVariants
         : undefined,
       quantity,
+      purchaseType: product.purchase_type as "instock" | "preorder" | "proxy",
     });
     setAdded(true);
     showToast("已加入購物車");
