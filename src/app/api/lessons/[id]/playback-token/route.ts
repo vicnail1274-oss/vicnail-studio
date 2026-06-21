@@ -5,7 +5,7 @@ import {
   getCaptionTracks,
   fetchCaptionVtt,
 } from "@/lib/bunny/stream";
-import { getClientIp } from "@/lib/rate-limit";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 /**
  * 簽 HLS 播放 URL（15 分鐘有效）
@@ -25,6 +25,15 @@ export async function POST(
 ) {
   try {
     const { id: lessonId } = await params;
+
+    // rate limit：防已開通帳號腳本化批次簽全站影片 URL 盜連/散播
+    if (!rateLimit(`playback:${getClientIp(req)}`, 30, 60_000).ok) {
+      return NextResponse.json(
+        { error: "請求過於頻繁，請稍後再試" },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const deviceFingerprint = String(body.deviceFingerprint || "").slice(0, 128);
     const deviceLabel = body.deviceLabel

@@ -15,7 +15,8 @@ function verifySignature(body: string, signature: string): boolean {
     .createHmac("SHA256", channelSecret)
     .update(body)
     .digest("base64");
-  return hash === signature;
+  if (!signature || hash.length !== signature.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signature));
 }
 
 // 回覆 LINE 訊息

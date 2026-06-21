@@ -8,7 +8,11 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  // 防開放重定向：只接受站內單斜線相對路徑（擋 //evil.com、/\evil.com 等跨站跳轉）
+  let next = searchParams.get("next") ?? "/";
+  if (!next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) {
+    next = "/";
+  }
 
   if (code) {
     const supabase = await createClient();
