@@ -43,7 +43,12 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "請求格式錯誤" }, { status: 400 });
+  }
   if (!body.id) {
     return NextResponse.json({ error: "缺少訂單 ID" }, { status: 400 });
   }
@@ -56,6 +61,38 @@ export async function PUT(req: NextRequest) {
   }
 
   const admin = await createAdminClient();
+
+  // 退單回補庫存：訂單從「已扣庫存」狀態轉為取消/退款時，把現貨項目的 stock 還回去。
+  // （現貨在付款成功時才扣，預購/代購未扣故不回補；只在狀態真的轉換時做，避免重複回補）
+  const STOCK_DEDUCTED = new Set(["paid", "shipped", "completed"]);
+  if (body.status === "cancelled" || body.status === "refunded") {
+    const { data: current } = await admin
+      .from("orders")
+      .select("status, order_items(item_type, item_id, quantity)")
+      .eq("id", body.id)
+      .single();
+    if (current && STOCK_DEDUCTED.has(current.status)) {
+      const productItems = (
+        (current.order_items as
+          | { item_type: string; item_id: string; quantity: number }[]
+          | null) || []
+      ).filter((it) => it.item_type === "product");
+      for (const it of productItems) {
+        const { data: prod } = await admin
+          .from("products")
+          .select("stock, purchase_type")
+          .eq("id", it.item_id)
+          .single();
+        if (prod && prod.purchase_type === "instock") {
+          await admin
+            .from("products")
+            .update({ stock: (prod.stock ?? 0) + it.quantity })
+            .eq("id", it.item_id);
+        }
+      }
+    }
+  }
+
   const updateData: Record<string, unknown> = {};
 
   if (body.status) updateData.status = body.status;

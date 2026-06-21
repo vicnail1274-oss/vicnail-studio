@@ -22,7 +22,12 @@ export async function POST(req: NextRequest) {
   if (!isAdminAuthed(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "請求格式錯誤" }, { status: 400 });
+  }
   const admin = await createAdminClient();
 
   const { data, error } = await admin
@@ -56,7 +61,12 @@ export async function PUT(req: NextRequest) {
   if (!isAdminAuthed(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "請求格式錯誤" }, { status: 400 });
+  }
   if (!body.id) {
     return NextResponse.json({ error: "缺少商品 ID" }, { status: 400 });
   }
