@@ -13,7 +13,7 @@ BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.tables
              WHERE table_schema = 'public' AND table_name = 'newsletter_subscribers') THEN
     REVOKE SELECT ON public.newsletter_subscribers FROM anon, authenticated;
-    GRANT SELECT (id, is_active, created_at) ON public.newsletter_subscribers TO anon, authenticated;
+    GRANT SELECT (id, is_active, subscribed_at) ON public.newsletter_subscribers TO anon, authenticated;
   END IF;
 END $$;
 
