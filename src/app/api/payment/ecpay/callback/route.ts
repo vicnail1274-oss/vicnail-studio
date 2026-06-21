@@ -45,6 +45,53 @@ async function tryRecordPromoRedemption(admin: AdminClient, orderId: string) {
   }
 }
 
+/** 付款成功後扣現貨庫存。只在訂單「首次轉 paid」時呼叫（見下方冪等判斷），故天然冪等、
+ *  重送 callback 不會重複扣。罕見競態（付款後才不足）→ 訂單仍 paid，標記 notes 供後台安排預購。 */
+async function tryDecrementOrderStock(admin: AdminClient, orderId: string) {
+  try {
+    const { data: rows } = await admin
+      .from("order_items")
+      .select("item_id, quantity")
+      .eq("order_id", orderId)
+      .eq("item_type", "product");
+    if (!rows?.length) return;
+
+    const ids = rows.map((r) => r.item_id);
+    const { data: prods } = await admin
+      .from("products")
+      .select("id, purchase_type")
+      .in("id", ids);
+    const instock = new Set(
+      (prods ?? [])
+        .filter((p) => p.purchase_type === "instock")
+        .map((p) => p.id)
+    );
+
+    const p_items = rows
+      .filter((r) => instock.has(r.item_id))
+      .map((r) => ({ product_id: r.item_id, quantity: r.quantity }));
+    if (!p_items.length) return;
+
+    const { error } = await admin.rpc("decrement_stock_batch", { p_items });
+    if (error) {
+      // 付款後才發現庫存不足（罕見：兩筆同時付款搶最後一件）→ 訂單維持 paid，標記供後台預購/補貨
+      console.error(`Stock decrement after payment failed for ${orderId}:`, error);
+      const { data: o } = await admin
+        .from("orders")
+        .select("notes")
+        .eq("id", orderId)
+        .single();
+      const flag = "⚠️ 付款後庫存不足，需安排預購/補貨";
+      await admin
+        .from("orders")
+        .update({ notes: o?.notes ? `${o.notes}\n${flag}` : flag })
+        .eq("id", orderId);
+    }
+  } catch (err) {
+    console.error(`Stock decrement exception for ${orderId}:`, err);
+  }
+}
+
 /**
  * ECPay 付款結果通知（server-to-server callback）
  * ECPay 會 POST 付款結果到這裡
@@ -144,6 +191,8 @@ export async function POST(req: NextRequest) {
         // 課程訂單：自動建 enrollments + 記錄優惠碼兌換
         await tryGrantCourseEnrollments(admin, orderRow.id);
         await tryRecordPromoRedemption(admin, orderRow.id);
+        // 現貨商品：付款成功才扣庫存（首次轉 paid 才進到此區塊，故冪等）
+        await tryDecrementOrderStock(admin, orderRow.id);
 
         console.log(
           `ECPay payment success: ${merchantTradeNo}, TradeNo: ${tradeNo}, Type: ${paymentType}`

@@ -923,6 +923,7 @@ export type Database = {
             | "refunded";
           payment_id?: string | null;
           tracking_number?: string | null;
+          notes?: string | null;
           logistics_id?: string | null;
           logistics_status?: string | null;
           ecpay_trade_no?: string | null;
