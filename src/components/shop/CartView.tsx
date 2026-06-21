@@ -14,6 +14,7 @@ import {
   Sparkles,
   GraduationCap,
   Loader2,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -23,6 +24,7 @@ import {
   removeFromCart,
   getCartTotal,
   getCartByType,
+  getShippingNature,
   type CartItem,
 } from "@/lib/cart-store";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/ecpay/shipping";
@@ -153,6 +155,24 @@ export function CartView() {
             <ShoppingBag size={18} className="text-nail-gold" />
             商品
           </h2>
+
+          {/* 出貨方式提示（純現貨盡速出貨 vs 混單一起等） */}
+          {getShippingNature(products) === "instock" ? (
+            <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 flex items-start gap-2 text-sm text-green-800">
+              <Truck size={16} className="flex-shrink-0 mt-0.5 text-green-600" />
+              <span>
+                全部為<span className="font-semibold">現貨</span>商品，付款完成後將<span className="font-semibold">盡速出貨</span> 🚀
+              </span>
+            </div>
+          ) : (
+            <div className="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-2 text-sm text-amber-800">
+              <Clock size={16} className="flex-shrink-0 mt-0.5 text-amber-600" />
+              <span>
+                此訂單含<span className="font-semibold">預購／代購</span>商品（先付款後代購），所有商品將於<span className="font-semibold">到齊後一併寄出</span>。想單獨快速取得現貨，請分開下單。
+              </span>
+            </div>
+          )}
+
           <div className="space-y-4">
             {products.map((item) => {
               const price = item.salePrice ?? item.price;

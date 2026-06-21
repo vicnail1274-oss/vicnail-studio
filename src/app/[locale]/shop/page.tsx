@@ -18,7 +18,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ShopPage() {
+export default async function ShopPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
+  const { type } = await searchParams;
+  const VALID_TYPES = ["instock", "preorder", "proxy"];
+  const initialType = type && VALID_TYPES.includes(type) ? type : "all";
+
   const supabase = await createClient();
 
   const { data: products } = await supabase
@@ -50,6 +58,7 @@ export default async function ShopPage() {
       <ShopGrid
         products={(products || []) as Product[]}
         groupBuys={(activeGroupBuys || []) as unknown as GroupBuy[]}
+        initialType={initialType}
       />
     </>
   );

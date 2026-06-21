@@ -52,14 +52,24 @@ const CATEGORIES = [
   { key: "other", label: "其他" },
 ];
 
+const PURCHASE_TYPES: { key: string; label: string; icon?: typeof Package }[] = [
+  { key: "all", label: "全部" },
+  { key: "instock", label: "現貨", icon: Package },
+  { key: "preorder", label: "預購", icon: Clock },
+  { key: "proxy", label: "代購", icon: Truck },
+];
+
 export function ShopGrid({
   products,
   groupBuys,
+  initialType = "all",
 }: {
   products: Product[];
   groupBuys: GroupBuy[];
+  initialType?: string;
 }) {
   const [category, setCategory] = useState("all");
+  const [purchaseType, setPurchaseType] = useState(initialType);
   const [search, setSearch] = useState("");
   const [addedId, setAddedId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -67,12 +77,13 @@ export function ShopGrid({
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return products.filter((p) => {
+      if (purchaseType !== "all" && p.purchase_type !== purchaseType) return false;
       if (category !== "all" && p.category !== category) return false;
       if (!q) return true;
       const hay = `${p.title} ${p.description ?? ""} ${p.category ?? ""}`.toLowerCase();
       return hay.includes(q);
     });
-  }, [products, category, search]);
+  }, [products, category, purchaseType, search]);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -87,6 +98,7 @@ export function ShopGrid({
       salePrice: product.sale_price ?? undefined,
       image: product.images?.[0],
       quantity: 1,
+      purchaseType: product.purchase_type,
     });
     setAddedId(product.id);
     showToast("已加入購物車");
@@ -135,6 +147,38 @@ export function ShopGrid({
           )}
         </div>
 
+        {/* 購買方式篩選（現貨／預購／代購） */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          {PURCHASE_TYPES.map((pt) => {
+            const Icon = pt.icon;
+            return (
+              <button
+                key={pt.key}
+                onClick={() => setPurchaseType(pt.key)}
+                className={cn(
+                  "px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5",
+                  purchaseType === pt.key
+                    ? "bg-nail-gold text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                )}
+              >
+                {Icon && <Icon size={14} />}
+                {pt.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 現貨專區說明 */}
+        {purchaseType === "instock" && (
+          <div className="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 flex items-start gap-2">
+            <Package size={18} className="text-green-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-green-800">
+              <span className="font-semibold">現貨專區</span>：商品在台、付款完成後<span className="font-semibold">盡速出貨</span> 🚀。若與預購／代購商品一起下單，將等候所有商品到齊後一併寄出。
+            </p>
+          </div>
+        )}
+
         {/* 分類篩選 */}
         <div className="flex flex-wrap gap-2 mb-8">
           {CATEGORIES.map((cat) => (
@@ -158,15 +202,16 @@ export function ShopGrid({
           <div className="text-center py-20 text-muted-foreground">
             <Package size={48} className="mx-auto mb-4 opacity-30" />
             <p>
-              {search.trim() || category !== "all"
+              {search.trim() || category !== "all" || purchaseType !== "all"
                 ? "找不到符合條件的商品，試試其他關鍵字或分類"
                 : "目前沒有商品，敬請期待！"}
             </p>
-            {(search.trim() || category !== "all") && (
+            {(search.trim() || category !== "all" || purchaseType !== "all") && (
               <button
                 onClick={() => {
                   setSearch("");
                   setCategory("all");
+                  setPurchaseType("all");
                 }}
                 className="mt-4 text-sm text-nail-gold hover:underline"
               >

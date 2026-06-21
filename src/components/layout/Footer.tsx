@@ -41,6 +41,26 @@ export function Footer({ locale }: { locale: string }) {
                   </Link>
                 </li>
               )}
+              {locale === "zh-TW" && (
+                <li>
+                  <Link
+                    href="/shop"
+                    className="text-sm text-gray-400 hover:text-nail-gold transition-colors"
+                  >
+                    {nav("shop")}
+                  </Link>
+                </li>
+              )}
+              {locale === "zh-TW" && (
+                <li>
+                  <Link
+                    href="/shop?type=instock"
+                    className="text-sm text-gray-400 hover:text-nail-gold transition-colors"
+                  >
+                    現貨專區
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link
                   href="/nail/knowledge"

@@ -15,6 +15,8 @@ export interface CartItem {
   quantity: number;
   /** 項目類型：商品（預設）或課程。課程數量固定 1、無 variant。 */
   type?: "product" | "course";
+  /** 購買方式：現貨 / 預購 / 代購。決定出貨時程（混單一起等）。舊購物車資料可能無此欄位。 */
+  purchaseType?: "instock" | "preorder" | "proxy";
 }
 
 const CART_KEY = "vicnail_cart";
@@ -117,4 +119,18 @@ export function getCartCount(cart: CartItem[]): number {
 /** 取得指定類型的項目（course 沒設 type 視為 product） */
 export function getCartByType(cart: CartItem[], type: "product" | "course"): CartItem[] {
   return cart.filter((item) => (item.type ?? "product") === type);
+}
+
+/**
+ * 判斷購物車「商品」的出貨性質（course 不計）：
+ * - "instock"：全部現貨 → 付款後盡速出貨
+ * - "mixed"：含預購／代購 → 需等所有商品到齊一併寄出
+ * 未標 purchaseType 的舊資料視為現貨。
+ */
+export function getShippingNature(cart: CartItem[]): "instock" | "mixed" {
+  const products = cart.filter((item) => (item.type ?? "product") === "product");
+  const hasWait = products.some(
+    (item) => item.purchaseType === "preorder" || item.purchaseType === "proxy"
+  );
+  return hasWait ? "mixed" : "instock";
 }

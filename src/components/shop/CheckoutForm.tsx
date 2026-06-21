@@ -13,12 +13,14 @@ import {
   ShieldCheck,
   Lock,
   RefreshCw,
+  Clock,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import {
   getCart,
   getCartTotal,
+  getShippingNature,
   type CartItem,
 } from "@/lib/cart-store";
 import {
@@ -204,6 +206,17 @@ export function CheckoutForm() {
       {/* 訂單摘要 */}
       <div className="bg-gray-50 rounded-xl p-4 space-y-2">
         <h2 className="font-semibold text-foreground mb-2">訂單商品</h2>
+        {getShippingNature(items) === "instock" ? (
+          <div className="mb-2 flex items-start gap-2 text-xs text-green-700">
+            <Truck size={14} className="flex-shrink-0 mt-0.5" />
+            <span>全部現貨，付款後盡速出貨 🚀</span>
+          </div>
+        ) : (
+          <div className="mb-2 flex items-start gap-2 text-xs text-amber-700">
+            <Clock size={14} className="flex-shrink-0 mt-0.5" />
+            <span>含預購／代購商品，所有商品到齊後一併寄出</span>
+          </div>
+        )}
         {items.map((item) => (
           <div
             key={`${item.productId}_${JSON.stringify(item.variant || {})}`}
